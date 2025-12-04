@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: healthcare-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./backend/healthcare.db:/app/healthcare.db
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DATABASE_PATH=/app/healthcare.db
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - healthcare-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: healthcare-web
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      # API base URL for browser (browser runs on host, accesses via localhost)
+      - VITE_API_BASE_URL=http://localhost:8000
+      # Docker service name for Vite dev server proxy (internal Docker network)
+      - DOCKER_SERVICE_API=http://api:8000
+    command: pnpm run dev -- --host 0.0.0.0
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - healthcare-network
+
+networks:
+  healthcare-network:
+    driver: bridge
