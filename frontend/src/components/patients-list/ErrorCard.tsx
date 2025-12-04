@@ -1,19 +1,21 @@
 import { memo } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui';
+import { getErrorMessage, ERROR_MESSAGES } from '@/utils/errorMessages';
 
 interface ErrorCardProps {
   error: Error | null;
+  fallbackMessage?: string;
 }
 
-export const ErrorCard = memo(({ error }: ErrorCardProps) => {
+export const ErrorCard = memo(({ error, fallbackMessage }: ErrorCardProps) => {
   if (!error) return null;
 
   return (
-    <Card>
+    <Card className="border-destructive" role="alert" aria-live="polite">
       <CardHeader>
         <CardTitle>Error</CardTitle>
         <CardDescription>
-          {error instanceof Error ? error.message : 'Failed to fetch patients'}
+          {getErrorMessage(error, fallbackMessage || ERROR_MESSAGES.FAILED_TO_FETCH_PATIENTS)}
         </CardDescription>
       </CardHeader>
     </Card>

@@ -47,6 +47,8 @@ const PatientSearch = memo(({ searchValue, onSearch, onClear }: PatientSearchPro
           value={inputValue}
           onChange={handleInputChange}
           className="pl-9 text-sm sm:text-base"
+          aria-label="Search patients by name, email, or phone"
+          type="search"
         />
       </div>
       {inputValue && (

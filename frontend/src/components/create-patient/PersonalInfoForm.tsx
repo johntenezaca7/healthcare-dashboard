@@ -47,6 +47,9 @@ const PersonalInfoForm = memo(({ form }: PersonalInfoFormProps) => {
                   onBlur={field.handleBlur}
                   onChange={e => field.handleChange(e.target.value)}
                   className={getFieldClassName(field)}
+                  aria-required="true"
+                  aria-invalid={hasFieldError(field)}
+                  aria-describedby={hasFieldError(field) ? `${field.name}-error` : undefined}
                 />
                 {hasFieldError(field) && (
                   <p className="text-xs text-destructive">{getFieldError(field)}</p>
@@ -73,6 +76,9 @@ const PersonalInfoForm = memo(({ form }: PersonalInfoFormProps) => {
                   onBlur={field.handleBlur}
                   onChange={e => field.handleChange(e.target.value)}
                   className={getFieldClassName(field)}
+                  aria-required="true"
+                  aria-invalid={hasFieldError(field)}
+                  aria-describedby={hasFieldError(field) ? `${field.name}-error` : undefined}
                 />
                 {hasFieldError(field) && (
                   <p className="text-xs text-destructive">{getFieldError(field)}</p>
@@ -228,6 +234,9 @@ const PersonalInfoForm = memo(({ form }: PersonalInfoFormProps) => {
                   onBlur={field.handleBlur}
                   onChange={e => field.handleChange(e.target.value)}
                   className={getFieldClassName(field)}
+                  aria-required="true"
+                  aria-invalid={hasFieldError(field)}
+                  aria-describedby={hasFieldError(field) ? `${field.name}-error` : undefined}
                 />
                 {hasFieldError(field) && (
                   <p className="text-xs text-destructive">{getFieldError(field)}</p>
@@ -251,6 +260,9 @@ const PersonalInfoForm = memo(({ form }: PersonalInfoFormProps) => {
                   onBlur={field.handleBlur}
                   onChange={e => field.handleChange(e.target.value)}
                   className={getFieldClassName(field)}
+                  aria-required="true"
+                  aria-invalid={hasFieldError(field)}
+                  aria-describedby={hasFieldError(field) ? `${field.name}-error` : undefined}
                 />
                 {hasFieldError(field) && (
                   <p className="text-xs text-destructive">{getFieldError(field)}</p>
@@ -274,6 +286,9 @@ const PersonalInfoForm = memo(({ form }: PersonalInfoFormProps) => {
                   onBlur={field.handleBlur}
                   onChange={e => field.handleChange(e.target.value)}
                   className={getFieldClassName(field)}
+                  aria-required="true"
+                  aria-invalid={hasFieldError(field)}
+                  aria-describedby={hasFieldError(field) ? `${field.name}-error` : undefined}
                 />
                 {hasFieldError(field) && (
                   <p className="text-xs text-destructive">{getFieldError(field)}</p>

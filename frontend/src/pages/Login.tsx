@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from '@/components/ui';
 import { ROUTES } from '@/utils/constants';
+import { getErrorMessage, ERROR_MESSAGES } from '@/utils/errorMessages';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -31,7 +32,7 @@ const Login = () => {
       await login(response.access_token);
       navigate(from, { replace: true });
     } catch (err) {
-      console.error('Login error:', err);
+      // Error is handled by loginMutation.error and displayed in the UI
     }
   };
 
@@ -57,6 +58,8 @@ const Login = () => {
                 onChange={e => setEmail(e.target.value)}
                 required
                 placeholder="admin@example.com"
+                aria-required="true"
+                aria-invalid={loginMutation.error ? 'true' : 'false'}
               />
             </div>
             <div className="space-y-2">
@@ -70,13 +73,17 @@ const Login = () => {
                 onChange={e => setPassword(e.target.value)}
                 required
                 placeholder="Enter your password"
+                aria-required="true"
+                aria-invalid={loginMutation.error ? 'true' : 'false'}
               />
             </div>
             {loginMutation.error && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-                {loginMutation.error instanceof Error
-                  ? loginMutation.error.message
-                  : 'Login failed'}
+              <div 
+                className="rounded-md bg-destructive/10 p-3 text-sm text-destructive" 
+                role="alert"
+                aria-live="polite"
+              >
+                {getErrorMessage(loginMutation.error, ERROR_MESSAGES.LOGIN_FAILED)}
               </div>
             )}
             <Button type="submit" className="w-full" disabled={loginMutation.isPending}>

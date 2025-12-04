@@ -8,6 +8,7 @@ import {
   CardContent,
   Button,
 } from '@/components/ui';
+import { getErrorMessage, ERROR_MESSAGES } from '@/utils/errorMessages';
 import {
   PersonalInfoForm,
   EmergencyContactForm,
@@ -37,7 +38,7 @@ const PatientCreate = () => {
         const createdPatient = await createPatientMutation.mutateAsync(patientData);
         navigate(getPatientDetailRoute(createdPatient.id));
       } catch (err) {
-        // Error is handled by mutation
+        // Error is handled by createPatientMutation.error and displayed in the UI
       }
     },
   });
@@ -69,12 +70,10 @@ const PatientCreate = () => {
       </div>
 
       {createPatientMutation.error && (
-        <Card className="border-destructive">
+        <Card className="border-destructive" role="alert" aria-live="polite">
           <CardContent className="pt-6">
             <div className="text-destructive">
-              {createPatientMutation.error instanceof Error
-                ? createPatientMutation.error.message
-                : 'Failed to create patient'}
+              {getErrorMessage(createPatientMutation.error, ERROR_MESSAGES.FAILED_TO_CREATE_PATIENT)}
             </div>
           </CardContent>
         </Card>

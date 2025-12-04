@@ -22,10 +22,16 @@ import type { PatientDataUnion } from '@/components/patient-details/types';
 
 const PatientDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const { data: patient, isLoading: loading, error, refetch } = useGetPatient(id || '');
   const [activeTab, setActiveTab] = useState('information');
 
-  if (loading) {
+  // Handle missing patient ID
+  if (!id) {
+    return <PatientDetailError error={new Error('Patient ID is required')} />;
+  }
+
+  const { data: patient, isLoading, error, refetch } = useGetPatient(id);
+
+  if (isLoading) {
     return <PatientDetailSkeleton />;
   }
 

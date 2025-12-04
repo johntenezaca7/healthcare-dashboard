@@ -34,7 +34,7 @@ const PatientList = () => {
 
   const {
     data,
-    isLoading: loading,
+    isLoading,
     error,
   } = useGetAllPatients({
     page,
@@ -78,7 +78,7 @@ const PatientList = () => {
   }, [clearFilters]);
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-6">
       <PatientListHeader total={total} />
       <PaginationDetails page={page} pageSize={pageSize} total={total} totalPages={totalPages} />
       <PatientFilters
@@ -99,7 +99,7 @@ const PatientList = () => {
 
       <ErrorCard error={error} />
 
-      {loading ? (
+      {isLoading ? (
         <PatientTableSkeleton />
       ) : patients.length === 0 ? (
         <EmptyStateCard hasActiveFilters={activeFilters} />
