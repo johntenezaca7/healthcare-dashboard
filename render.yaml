@@ -1,0 +1,37 @@
+services:
+  # Backend API Service
+  - type: web
+    name: healthcare-api
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: https://healthcare-dashboard.onrender.com
+    healthCheckPath: /health
+
+  # Frontend Static Site
+  - type: web
+    name: healthcare-web
+    env: docker
+    dockerfilePath: ./frontend/Dockerfile.prod
+    dockerContext: ./frontend
+    plan: free
+    buildCommand: docker build --build-arg VITE_API_BASE_URL=$VITE_API_BASE_URL -f Dockerfile.prod -t healthcare-web .
+    envVars:
+      - key: VITE_API_BASE_URL
+        sync: false
+        # This should be set to your backend URL, e.g.:
+        # https://healthcare-api.onrender.com
+
+databases:
+  - name: healthcare-db
+    plan: free
+    databaseName: healthcare_db
+    user: healthcare_user
+

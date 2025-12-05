@@ -27,7 +27,7 @@ class Settings:
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
     # Database Settings
-    DATABASE_PATH: str = os.getenv("DATABASE_PATH", "healthcare.db")
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "")
     
     # Pagination Settings
     DEFAULT_PAGE_SIZE: int = 25

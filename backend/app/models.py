@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Date, Float, ForeignKey, Text, Boolean, DateTime, JSON, Enum as SQLEnum, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Date, Float, ForeignKey, Text, Boolean, DateTime, Enum as SQLEnum, UniqueConstraint
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from datetime import datetime
@@ -55,9 +56,9 @@ class Patient(Base):
     emergency_contact_phone = Column(String, nullable=False)
     emergency_contact_email = Column(String)
     
-    # Medical Info as JSON
-    allergies = Column(JSON, default=list)  # List of strings
-    conditions = Column(JSON, default=list)  # List of strings
+    # Medical Info as JSONB (PostgreSQL optimized JSON)
+    allergies = Column(JSONB, default=list)  # List of strings
+    conditions = Column(JSONB, default=list)  # List of strings
     blood_type = Column(String)
     last_visit = Column(Date)
     status = Column(String, default="active")

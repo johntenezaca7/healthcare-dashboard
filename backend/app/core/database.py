@@ -8,34 +8,27 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Get database path from environment or use default
-DB_PATH = os.getenv("DATABASE_PATH", "healthcare.db")
+# Get database URL from environment
+# Format: postgresql://user:password@host:port/database
+# For local dev with docker-compose: postgresql://healthcare_user:healthcare_pass@postgres:5432/healthcare_db
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Convert to absolute path
-if os.path.isabs(DB_PATH):
-    abs_db_path = DB_PATH
-else:
-    # Relative path - resolve from current working directory
-    abs_db_path = os.path.abspath(DB_PATH)
+if not DATABASE_URL:
+    raise ValueError(
+        "DATABASE_URL environment variable is required. "
+        "Format: postgresql://user:password@host:port/database"
+    )
 
-# Ensure directory exists and is writable
-db_dir = os.path.dirname(abs_db_path)
-if db_dir:
-    os.makedirs(db_dir, exist_ok=True)
-    # Ensure directory is writable
-    if not os.access(db_dir, os.W_OK):
-        raise PermissionError(f"Directory {db_dir} is not writable")
+logger.info(f"Connecting to PostgreSQL database")
 
-# SQLite connection string - use 3 slashes for absolute path
-SQLALCHEMY_DATABASE_URL = f"sqlite:///{abs_db_path}"
-
-# Debug output (can be removed in production)
-logger.info(f"Database path: {abs_db_path}")
-logger.info(f"Database URL: {SQLALCHEMY_DATABASE_URL}")
-
+# Create engine with connection pooling
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+    DATABASE_URL,
+    pool_pre_ping=True,  # Verify connections before using
+    pool_size=5,
+    max_overflow=10,
 )
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

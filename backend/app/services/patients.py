@@ -2,7 +2,8 @@
 Patient service - Business logic for patient operations
 """
 from sqlalchemy.orm import Session
-from sqlalchemy import or_, and_, func as sql_func, String
+from sqlalchemy import or_, and_, func as sql_func, cast
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.exc import IntegrityError
 from typing import Optional, List
 from datetime import date, timedelta, datetime
@@ -178,24 +179,24 @@ def get_paginated_patients(
             ]
             filters.append(or_(*insurance_filters))
     
-    # Filter by allergies (JSON array contains)
-    # SQLite: cast JSON to text and use LIKE for array search
+    # Filter by allergies (JSONB array contains)
+    # PostgreSQL: use JSONB containment operator @>
     if allergies:
-        # Check if allergy string exists in the JSON array (as text)
+        # Check if allergy string exists in the JSONB array
         filters.append(
-            sql_func.cast(models.Patient.allergies, String).like(f'%"{allergies}"%')
+            models.Patient.allergies.op("@>")(cast(f'["{allergies}"]', JSONB))
         )
     
-    # Filter by conditions (JSON array contains - can be multiple)
+    # Filter by conditions (JSONB array contains - can be multiple)
     if conditions:
         if len(conditions) == 1:
             filters.append(
-                sql_func.cast(models.Patient.conditions, String).like(f'%"{conditions[0]}"%')
+                models.Patient.conditions.op("@>")(cast(f'["{conditions[0]}"]', JSONB))
             )
         else:
             # Multiple conditions - use OR condition
             condition_filters = [
-                sql_func.cast(models.Patient.conditions, String).like(f'%"{condition}"%')
+                models.Patient.conditions.op("@>")(cast(f'["{condition}"]', JSONB))
                 for condition in conditions
             ]
             filters.append(or_(*condition_filters))

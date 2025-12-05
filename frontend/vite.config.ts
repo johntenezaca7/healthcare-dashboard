@@ -15,6 +15,9 @@ export default defineConfig({
     },
   },
   build: {
+    // Production optimizations
+    minify: 'esbuild',
+    sourcemap: false,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -44,6 +47,8 @@ export default defineConfig({
       },
     },
     chunkSizeWarningLimit: 600,
+    // Optimize chunk size
+    target: 'esnext',
   },
   server: {
     port: 5173,

@@ -1,6 +1,25 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: healthcare-postgres
+    environment:
+      - POSTGRES_USER=healthcare_user
+      - POSTGRES_PASSWORD=healthcare_pass
+      - POSTGRES_DB=healthcare_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - healthcare-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U healthcare_user -d healthcare_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   api:
     build:
       context: ./backend
@@ -12,10 +31,13 @@ services:
       - ./backend:/app
     environment:
       - PYTHONUNBUFFERED=1
-      - DATABASE_PATH=/app/healthcare.db
+      - DATABASE_URL=postgresql://healthcare_user:healthcare_pass@postgres:5432/healthcare_db
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     networks:
       - healthcare-network
+    depends_on:
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -44,6 +66,9 @@ services:
         condition: service_healthy
     networks:
       - healthcare-network
+
+volumes:
+  postgres_data:
 
 networks:
   healthcare-network:

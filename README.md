@@ -2,6 +2,15 @@
 
 A full-stack healthcare management application built with React (TypeScript) and FastAPI (Python).
 
+## 🚀 Production Deployment
+
+Ready for production deployment! See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions to Render or other platforms.
+
+**Quick Deploy:**
+- Backend: Docker-ready with PostgreSQL
+- Frontend: Production build with nginx (see `frontend/Dockerfile.prod`)
+- Static Site: Also supports static site hosting (Vite build)
+
 ## Prerequisites
 
 - **Docker & Docker Compose** (recommended) OR
@@ -10,26 +19,37 @@ A full-stack healthcare management application built with React (TypeScript) and
 
 ## Quick Start with Docker
 
-The easiest way to run the application is using Docker Compose:
+The easiest way to run the application is using Docker Compose. This will start PostgreSQL, the backend API, and the frontend:
 
-### 1. Start Both Services
+### 1. Start All Services
 
 ```bash
-# Build and start both frontend and backend
+# Build and start PostgreSQL, backend API, and frontend
 docker compose up --build
 
 # Or run in detached mode (background)
 docker compose up --build -d
 ```
 
+**Services started:**
+- **PostgreSQL** (port 5432) - Database service
+- **Backend API** (port 8000) - FastAPI application
+- **Frontend** (port 5173) - React development server
+
+**Note**: Services have health checks and dependencies configured:
+- `api` waits for `postgres` to be healthy
+- `web` waits for `api` to be healthy
+
 ### 2. Generate Sample Data
 
-Once the services are running, generate sample patient data:
+Once all services are running, generate sample patient data:
 
 ```bash
 # Generate 1500 sample patients
 docker compose exec api python -m app.generate_data
 ```
+
+The database tables are created automatically on first startup.
 
 ### 3. Access the Application
 
@@ -41,14 +61,24 @@ docker compose exec api python -m app.generate_data
 ### 4. Stop Services
 
 ```bash
-# Stop services
+# Stop all services
 docker compose down
 
-# Stop and remove volumes (clears database)
+# Stop and remove volumes (clears PostgreSQL data)
 docker compose down -v
+
+# Stop and remove volumes + images
+docker compose down -v --rmi all
 ```
 
 ## Local Development Setup
+
+### Prerequisites for Local Development
+
+For local development without Docker, you'll need:
+- **PostgreSQL** installed and running locally
+- Create a database: `createdb healthcare_db`
+- Or use Docker for PostgreSQL only: `docker compose up postgres -d`
 
 ### Backend Setup
 
@@ -68,12 +98,21 @@ docker compose down -v
    pip install -r requirements.txt
    ```
 
-4. **Start the backend server:**
+4. **Set environment variable:**
+   ```bash
+   # For local PostgreSQL
+   export DATABASE_URL="postgresql://your_user:your_password@localhost:5432/healthcare_db"
+   
+   # Or if using Docker PostgreSQL
+   export DATABASE_URL="postgresql://healthcare_user:healthcare_pass@localhost:5432/healthcare_db"
+   ```
+
+5. **Start the backend server:**
    ```bash
    uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
    ```
 
-5. **Generate sample data:**
+6. **Generate sample data:**
    ```bash
    python -m app.generate_data
    ```
@@ -205,9 +244,18 @@ This will generate types from `http://localhost:8000/openapi.json` into `src/typ
 │   ├── package.json
 │   ├── vite.config.ts          # Vite configuration
 │   ├── vitest.config.ts        # Vitest configuration
-│   └── tsconfig.json           # TypeScript configuration
+│   ├── tsconfig.json           # TypeScript configuration
+│   ├── Dockerfile              # Development Dockerfile
+│   ├── Dockerfile.prod         # Production Dockerfile (nginx)
+│   ├── nginx.conf              # Nginx configuration for production
+│   └── .dockerignore           # Docker ignore file
+│   ├── Dockerfile              # Development Dockerfile
+│   ├── Dockerfile.prod         # Production Dockerfile (nginx)
+│   ├── nginx.conf              # Nginx configuration for production
+│   └── .dockerignore           # Docker ignore file
 │
 └── docker-compose.yml           # Docker Compose configuration
+                                  # Services: postgres, api, web
 ```
 
 ### Frontend Architecture
@@ -258,27 +306,88 @@ Use these credentials to log in:
 
 ## Docker Commands
 
+### Viewing Logs
+
 ```bash
-# View logs
+# View logs for all services
 docker compose logs -f
 
 # View logs for specific service
+docker compose logs -f postgres
 docker compose logs -f api
 docker compose logs -f web
+
+# View last 100 lines for a service
+docker compose logs --tail=100 api
+```
+
+### Managing Services
+
+```bash
+# Start specific service
+docker compose up postgres -d
+docker compose up api -d
+
+# Stop specific service
+docker compose stop api
+docker compose stop postgres
+
+# Restart a specific service
+docker compose restart postgres
+docker compose restart api
+docker compose restart web
 
 # Rebuild without cache
 docker compose build --no-cache
 
-# Restart a specific service
-docker compose restart api
-docker compose restart web
+# Rebuild and restart
+docker compose up --build -d
+```
+
+### Database Commands
+
+```bash
+# Connect to PostgreSQL database
+docker compose exec postgres psql -U healthcare_user -d healthcare_db
+
+# Run SQL commands
+docker compose exec postgres psql -U healthcare_user -d healthcare_db -c "SELECT COUNT(*) FROM patients;"
+
+# Backup database
+docker compose exec postgres pg_dump -U healthcare_user healthcare_db > backup.sql
+
+# Restore database
+docker compose exec -T postgres psql -U healthcare_user healthcare_db < backup.sql
+
+# Reset database (drop and recreate)
+docker compose down -v
+docker compose up -d postgres
+docker compose exec api python -m app.generate_data
+```
+
+### Cleanup
+
+```bash
+# Stop and remove containers
+docker compose down
+
+# Stop and remove containers + volumes (clears database)
+docker compose down -v
+
+# Remove everything including images
+docker compose down -v --rmi all
+
+# Remove unused Docker resources
+docker system prune -a
 ```
 
 ## Environment Variables
 
 ### Backend
 
-- `DATABASE_PATH` - Path to SQLite database (default: `healthcare.db`)
+- `DATABASE_URL` - PostgreSQL connection string (required)
+  - Format: `postgresql://user:password@host:port/database`
+  - For local dev: `postgresql://healthcare_user:healthcare_pass@postgres:5432/healthcare_db`
 - `SECRET_KEY` - Secret key for JWT tokens (default: development key)
 
 ### Frontend
@@ -287,7 +396,23 @@ docker compose restart web
 
 ## Database
 
-The application uses SQLite for development. The database file (`healthcare.db`) is created automatically when you first run the backend or generate data.
+The application uses PostgreSQL. When running with Docker Compose, a PostgreSQL database is automatically set up. The database tables are created automatically when you first run the backend.
+
+**Local Development:**
+- PostgreSQL runs in a Docker container (configured in `docker-compose.yml`)
+- Connection string: `postgresql://healthcare_user:healthcare_pass@postgres:5432/healthcare_db`
+
+**Production:**
+- Use a managed PostgreSQL service (Render, Railway, etc.)
+- Set `DATABASE_URL` environment variable with your production database connection string
+
+## Race Condition Handling
+
+The application implements optimistic locking to prevent race conditions when updating patient data:
+
+- **Conflict Detection**: Patient updates include an `ifUnmodifiedSince` timestamp field. If the patient was modified after this timestamp, the update is rejected with a 409 Conflict error.
+- **Unique Constraint Handling**: Database-level unique constraint violations (e.g., duplicate emails) are caught and handled gracefully with appropriate error messages.
+- **Frontend Integration**: The frontend sends the patient's `updatedAt` timestamp when making updates, enabling conflict detection on the backend.
 
 ## API Documentation
 
@@ -323,7 +448,7 @@ Once the backend is running, visit:
 
 ### ✅ Part 2: Core Dashboard Implementation
 
-- ✅ **Backend Service**: FastAPI with SQLite database
+- ✅ **Backend Service**: FastAPI with PostgreSQL database
 - ✅ **Sample Data Generation**: Script generates 1500+ realistic patients
 - ✅ **Responsive Layout**:
   - Header with navigation
