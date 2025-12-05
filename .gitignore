@@ -19,3 +19,6 @@ Thumbs.db
 # Logs (root level)
 *.log
 logs/
+
+# Deployment files
+DEPLOYMENT.md
