@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save } from 'lucide-react';
-import { useForm } from '@tanstack/react-form';
+import { useForm, FormProvider } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import {
   Breadcrumb,
@@ -15,7 +16,7 @@ import {
   InsuranceForm,
   MedicalInfoForm,
 } from '@/components/create-patient';
-import { patientCreateSchema } from '@/components/create-patient/schemas';
+import { patientCreateSchema, type PatientCreateFormData } from '@/components/create-patient/schemas';
 import { getDefaultPatientFormValues, transformFormDataToPatientCreate } from '@/components/create-patient/util';
 import { useCreatePatient } from '@/hooks';
 import { ROUTES, getPatientDetailRoute } from '@/utils/constants';
@@ -24,24 +25,23 @@ const PatientCreate = () => {
   const navigate = useNavigate();
   const createPatientMutation = useCreatePatient();
 
-  const form = useForm({
+  const form = useForm<PatientCreateFormData>({
+    resolver: yupResolver(patientCreateSchema),
     defaultValues: getDefaultPatientFormValues(),
-    onSubmit: async ({ value }) => {
-      const result = patientCreateSchema.safeParse(value);
-      if (!result.success) {
-        // Errors will be handled by field-level validators
-        return;
-      }
-
-      try {
-        const patientData = transformFormDataToPatientCreate(result.data);
-        const createdPatient = await createPatientMutation.mutateAsync(patientData);
-        navigate(getPatientDetailRoute(createdPatient.id));
-      } catch (err) {
-        // Error is handled by createPatientMutation.error and displayed in the UI
-      }
-    },
+    mode: 'onChange',
   });
+
+  const { control, handleSubmit } = form;
+
+  const onSubmit = async (data: PatientCreateFormData) => {
+    try {
+      const patientData = transformFormDataToPatientCreate(data);
+      const createdPatient = await createPatientMutation.mutateAsync(patientData);
+      navigate(getPatientDetailRoute(createdPatient.id));
+    } catch (err) {
+      // Error is handled by createPatientMutation.error and displayed in the UI
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -79,18 +79,15 @@ const PatientCreate = () => {
         </Card>
       )}
 
-      <form
-        onSubmit={e => {
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
-        }}
-        className="space-y-6"
-      >
-        <PersonalInfoForm form={form} />
-        <EmergencyContactForm form={form} />
-        <InsuranceForm form={form} />
-        <MedicalInfoForm form={form} />
+      <FormProvider {...form}>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-6"
+        >
+          <PersonalInfoForm control={control} />
+          <EmergencyContactForm control={control} />
+          <InsuranceForm control={control} />
+          <MedicalInfoForm control={control} />
 
         <div className="flex flex-col-reverse gap-4 sm:flex-row sm:justify-end">
           <Button
@@ -102,21 +99,17 @@ const PatientCreate = () => {
           >
             Cancel
           </Button>
-          <form.Subscribe
-            selector={state => [state.canSubmit, state.isSubmitting]}
-            children={([canSubmit, isSubmitting]) => (
-              <Button
-                type="submit"
-                disabled={!canSubmit || createPatientMutation.isPending}
-                className="w-full sm:w-auto"
-              >
-                <Save className="h-4 w-4 mr-2" />
-                {isSubmitting || createPatientMutation.isPending ? 'Creating...' : 'Create Patient'}
-              </Button>
-            )}
-          />
+          <Button
+            type="submit"
+            disabled={!form.formState.isValid || createPatientMutation.isPending || form.formState.isSubmitting}
+            className="w-full sm:w-auto"
+          >
+            <Save className="h-4 w-4 mr-2" />
+            {form.formState.isSubmitting || createPatientMutation.isPending ? 'Creating...' : 'Create Patient'}
+          </Button>
         </div>
       </form>
+      </FormProvider>
     </div>
   );
 };

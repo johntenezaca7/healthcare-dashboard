@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useCurrentUser, useLogout, getAuthToken, removeAuthToken } from '@/hooks';
+import { useGetCurrentUser, useLogout, getAuthToken, removeAuthToken } from '@/hooks';
 import { setSessionExpiredCallback } from '@/utils/apiErrorHandler';
 import { User } from '@/types/auth';
 
@@ -23,7 +23,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: loading,
     refetch: refetchUser,
     error: userError,
-  } = useCurrentUser(false);
+  } = useGetCurrentUser(false);
   const logoutMutation = useLogout();
 
   useEffect(() => {

@@ -37,13 +37,13 @@ export function transformFormDataToPatientCreate(
       copay: formData.insurance.copay,
       deductible: formData.insurance.deductible,
     },
-    allergies: formData.allergies.length > 0 ? formData.allergies : undefined,
-    conditions: formData.conditions.length > 0 ? formData.conditions : undefined,
+    allergies: formData.allergies && formData.allergies.length > 0 ? formData.allergies.filter((a): a is string => typeof a === 'string') : undefined,
+    conditions: formData.conditions && formData.conditions.length > 0 ? formData.conditions.filter((c): c is string => typeof c === 'string') : undefined,
     lastVisit: formData.lastVisit || undefined,
     status: formData.status,
     medications:
       formData.medications.length > 0
-        ? formData.medications.map(med => ({
+        ? formData.medications.map((med: PatientCreateFormData['medications'][0]) => ({
             name: med.name,
             dosage: med.dosage,
             frequency: med.frequency,

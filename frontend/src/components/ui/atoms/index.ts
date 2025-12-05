@@ -1,6 +1,7 @@
 export { Badge, badgeVariants } from './badge';
 export { Button, buttonVariants } from './button';
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from './card';
+export { ControlledInput } from './controlled-input';
 export { Input } from './input';
 export { Label } from './label';
 export { Skeleton } from './skeleton';

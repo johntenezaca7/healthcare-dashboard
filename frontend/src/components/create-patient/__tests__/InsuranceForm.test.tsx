@@ -2,8 +2,10 @@ import { describe, it, expect } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '@/test/utils';
-import { useForm } from '@tanstack/react-form';
+import { useForm, FormProvider } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { InsuranceForm } from '../InsuranceForm';
+import { patientCreateSchema } from '../schemas';
 import type { PatientCreateFormData } from '../schemas';
 import type { PatientCreateFormApi } from '../types';
 
@@ -14,11 +16,13 @@ const FormWrapper = ({
   defaultValues: Partial<PatientCreateFormData>; 
   children: (form: PatientCreateFormApi) => React.ReactNode;
 }) => {
-  const form = useForm({
+  const form = useForm<PatientCreateFormData>({
+    resolver: yupResolver(patientCreateSchema),
     defaultValues: defaultValues as PatientCreateFormData,
-    onSubmit: async () => {},
+    mode: 'onChange',
+    criteriaMode: 'all',
   }) as PatientCreateFormApi;
-  return <>{children(form)}</>;
+  return <FormProvider {...form}>{children(form)}</FormProvider>;
 };
 
 describe('InsuranceForm', () => {
@@ -32,12 +36,34 @@ describe('InsuranceForm', () => {
       copay: 0,
       deductible: 0,
     },
+    firstName: '',
+    lastName: '',
+    dateOfBirth: '',
+    email: '',
+    phone: '',
+    address: {
+      street: '',
+      city: '',
+      state: '',
+      zipCode: '',
+      country: 'USA',
+    },
+    emergencyContact: {
+      name: '',
+      relationship: '',
+      phone: '',
+      email: undefined,
+    },
+    allergies: [],
+    conditions: [],
+    medications: [],
+    status: 'active' as const,
   };
 
   it('renders all form fields', () => {
     render(
       <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => <InsuranceForm form={form} />}
+        {(form) => <InsuranceForm control={form.control} />}
       </FormWrapper>
     );
 
@@ -55,6 +81,7 @@ describe('InsuranceForm', () => {
     render(
       <FormWrapper
         defaultValues={{
+          ...defaultFormValues,
           insurance: {
             provider: 'Aetna',
             policyNumber: 'POL123456',
@@ -66,7 +93,7 @@ describe('InsuranceForm', () => {
           },
         }}
       >
-        {(form) => <InsuranceForm form={form} />}
+        {(form) => <InsuranceForm control={form.control} />}
       </FormWrapper>
     );
 
@@ -79,10 +106,10 @@ describe('InsuranceForm', () => {
     render(
       <FormWrapper defaultValues={defaultFormValues}>
         {(form) => (
-          <div>
-            <InsuranceForm form={form} />
-            <button onClick={() => form.handleSubmit()}>Submit</button>
-          </div>
+          <form onSubmit={form.handleSubmit(() => {})}>
+            <InsuranceForm control={form.control} />
+            <button type="submit">Submit</button>
+          </form>
         )}
       </FormWrapper>
     );
@@ -103,8 +130,8 @@ describe('InsuranceForm', () => {
     await user.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/provider is required/i)).toBeInTheDocument();
-    });
+      expect(screen.getByText(/insurance provider is required/i)).toBeInTheDocument();
+    }, { timeout: 3000 });
   });
 
   it('validates policy number is required', async () => {
@@ -112,10 +139,10 @@ describe('InsuranceForm', () => {
     render(
       <FormWrapper defaultValues={defaultFormValues}>
         {(form) => (
-          <div>
-            <InsuranceForm form={form} />
-            <button onClick={() => form.handleSubmit()}>Submit</button>
-          </div>
+          <form onSubmit={form.handleSubmit(() => {})}>
+            <InsuranceForm control={form.control} />
+            <button type="submit">Submit</button>
+          </form>
         )}
       </FormWrapper>
     );
@@ -129,7 +156,7 @@ describe('InsuranceForm', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/policy number is required/i)).toBeInTheDocument();
-    });
+    }, { timeout: 3000 });
   });
 
   it('validates effective date is required', async () => {
@@ -137,10 +164,10 @@ describe('InsuranceForm', () => {
     render(
       <FormWrapper defaultValues={defaultFormValues}>
         {(form) => (
-          <div>
-            <InsuranceForm form={form} />
-            <button onClick={() => form.handleSubmit()}>Submit</button>
-          </div>
+          <form onSubmit={form.handleSubmit(() => {})}>
+            <InsuranceForm control={form.control} />
+            <button type="submit">Submit</button>
+          </form>
         )}
       </FormWrapper>
     );
@@ -154,7 +181,7 @@ describe('InsuranceForm', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/effective date is required/i)).toBeInTheDocument();
-    });
+    }, { timeout: 3000 });
   });
 
   it('validates copay is non-negative', async () => {
@@ -162,11 +189,12 @@ describe('InsuranceForm', () => {
     render(
       <FormWrapper
         defaultValues={{
+          ...defaultFormValues,
           insurance: {
-            provider: '',
-            policyNumber: '',
+            provider: 'Aetna',
+            policyNumber: 'POL123',
             groupNumber: undefined,
-            effectiveDate: '',
+            effectiveDate: '2024-01-01',
             expirationDate: undefined,
             copay: -10,
             deductible: 0,
@@ -174,10 +202,10 @@ describe('InsuranceForm', () => {
         }}
       >
         {(form) => (
-          <div>
-            <InsuranceForm form={form} />
-            <button onClick={() => form.handleSubmit()}>Submit</button>
-          </div>
+          <form onSubmit={form.handleSubmit(() => {})}>
+            <InsuranceForm control={form.control} />
+            <button type="submit">Submit</button>
+          </form>
         )}
       </FormWrapper>
     );
@@ -191,7 +219,7 @@ describe('InsuranceForm', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/copay.*>=.*0/i)).toBeInTheDocument();
-    });
+    }, { timeout: 3000 });
   });
 
   it('validates deductible is non-negative', async () => {
@@ -199,11 +227,12 @@ describe('InsuranceForm', () => {
     render(
       <FormWrapper
         defaultValues={{
+          ...defaultFormValues,
           insurance: {
-            provider: '',
-            policyNumber: '',
+            provider: 'Aetna',
+            policyNumber: 'POL123',
             groupNumber: undefined,
-            effectiveDate: '',
+            effectiveDate: '2024-01-01',
             expirationDate: undefined,
             copay: 0,
             deductible: -100,
@@ -211,10 +240,10 @@ describe('InsuranceForm', () => {
         }}
       >
         {(form) => (
-          <div>
-            <InsuranceForm form={form} />
-            <button onClick={() => form.handleSubmit()}>Submit</button>
-          </div>
+          <form onSubmit={form.handleSubmit(() => {})}>
+            <InsuranceForm control={form.control} />
+            <button type="submit">Submit</button>
+          </form>
         )}
       </FormWrapper>
     );
@@ -228,14 +257,14 @@ describe('InsuranceForm', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/deductible.*>=.*0/i)).toBeInTheDocument();
-    });
+    }, { timeout: 3000 });
   });
 
   it('allows group number to be optional', async () => {
     const user = userEvent.setup();
     render(
       <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => <InsuranceForm form={form} />}
+        {(form) => <InsuranceForm control={form.control} />}
       </FormWrapper>
     );
 
@@ -259,7 +288,7 @@ describe('InsuranceForm', () => {
     const user = userEvent.setup();
     render(
       <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => <InsuranceForm form={form} />}
+        {(form) => <InsuranceForm control={form.control} />}
       </FormWrapper>
     );
 
@@ -282,7 +311,7 @@ describe('InsuranceForm', () => {
   it('allows selecting insurance provider', () => {
     render(
       <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => <InsuranceForm form={form} />}
+        {(form) => <InsuranceForm control={form.control} />}
       </FormWrapper>
     );
 
@@ -303,7 +332,7 @@ describe('InsuranceForm', () => {
     const user = userEvent.setup();
     render(
       <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => <InsuranceForm form={form} />}
+        {(form) => <InsuranceForm control={form.control} />}
       </FormWrapper>
     );
 
@@ -317,7 +346,7 @@ describe('InsuranceForm', () => {
     const user = userEvent.setup();
     render(
       <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => <InsuranceForm form={form} />}
+        {(form) => <InsuranceForm control={form.control} />}
       </FormWrapper>
     );
 
@@ -333,7 +362,7 @@ describe('InsuranceForm', () => {
     const user = userEvent.setup();
     render(
       <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => <InsuranceForm form={form} />}
+        {(form) => <InsuranceForm control={form.control} />}
       </FormWrapper>
     );
 
@@ -350,10 +379,10 @@ describe('InsuranceForm', () => {
     render(
       <FormWrapper defaultValues={defaultFormValues}>
         {(form) => (
-          <div>
-            <InsuranceForm form={form} />
-            <button onClick={() => form.handleSubmit()}>Submit</button>
-          </div>
+          <form onSubmit={form.handleSubmit(() => {})}>
+            <InsuranceForm control={form.control} />
+            <button type="submit">Submit</button>
+          </form>
         )}
       </FormWrapper>
     );
@@ -367,7 +396,6 @@ describe('InsuranceForm', () => {
 
     await waitFor(() => {
       expect(policyNumberInput).toHaveClass('border-destructive');
-    });
+    }, { timeout: 3000 });
   });
 });
-

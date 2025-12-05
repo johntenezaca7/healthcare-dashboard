@@ -4,8 +4,6 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  Input,
-  Label,
   Select,
   SelectContent,
   SelectItem,
@@ -13,14 +11,24 @@ import {
   SelectValue,
 } from '@/components/ui';
 import { bloodTypes } from '@/components/constants';
-import type { PatientCreateFormApi, FormField } from './types';
-import { getFieldError, hasFieldError, getFieldClassName } from './utils';
+import { useController } from 'react-hook-form';
+import type { Control } from 'react-hook-form';
+import type { PatientCreateFormData } from '@/schemas/patient';
+import { ControlledInput } from '@/components/ui';
 
 interface PersonalInfoFormProps {
-  form: PatientCreateFormApi;
+  control: Control<PatientCreateFormData>;
 }
 
-const PersonalInfoForm = memo(({ form }: PersonalInfoFormProps) => {
+const PersonalInfoForm = memo(({ control }: PersonalInfoFormProps) => {
+  const {
+    field: bloodTypeField,
+    fieldState: { error: bloodTypeError },
+  } = useController({
+    name: 'bloodType',
+    control,
+  });
+  
   return (
     <Card>
       <CardHeader>
@@ -28,273 +36,104 @@ const PersonalInfoForm = memo(({ form }: PersonalInfoFormProps) => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <form.Field
+          <ControlledInput
             name="firstName"
-            validators={{
-              onChange: ({ value }: { value: string }) => {
-                if (!value || value.length < 1) return 'First name is required';
-                if (value.length < 2) return 'First name must be at least 2 characters';
-                return undefined;
-              },
-            }}
-            children={(field: FormField<string>) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>First Name *</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={e => field.handleChange(e.target.value)}
-                  className={getFieldClassName(field)}
-                  aria-required="true"
-                  aria-invalid={hasFieldError(field)}
-                  aria-describedby={hasFieldError(field) ? `${field.name}-error` : undefined}
-                />
-                {hasFieldError(field) && (
-                  <p className="text-xs text-destructive">{getFieldError(field)}</p>
-                )}
-              </div>
-            )}
+            control={control}
+            label="First Name"
+            required
           />
-          <form.Field
+          <ControlledInput
             name="lastName"
-            validators={{
-              onChange: ({ value }: { value: string }) => {
-                if (!value || value.length < 1) return 'Last name is required';
-                if (value.length < 2) return 'Last name must be at least 2 characters';
-                return undefined;
-              },
-            }}
-            children={(field: FormField<string>) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>Last Name *</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={e => field.handleChange(e.target.value)}
-                  className={getFieldClassName(field)}
-                  aria-required="true"
-                  aria-invalid={hasFieldError(field)}
-                  aria-describedby={hasFieldError(field) ? `${field.name}-error` : undefined}
-                />
-                {hasFieldError(field) && (
-                  <p className="text-xs text-destructive">{getFieldError(field)}</p>
-                )}
-              </div>
-            )}
+            control={control}
+            label="Last Name"
+            required
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <form.Field
+          <ControlledInput
             name="dateOfBirth"
-            validators={{
-              onChange: ({ value }: { value: string }) =>
-                !value || value.length < 1 ? 'Date of birth is required' : undefined,
-            }}
-            children={(field: FormField<string>) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>Date of Birth *</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  type="date"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={e => field.handleChange(e.target.value)}
-                  className={getFieldClassName(field)}
-                />
-                {hasFieldError(field) && (
-                  <p className="text-xs text-destructive">{getFieldError(field)}</p>
-                )}
-              </div>
-            )}
+            control={control}
+            label="Date of Birth"
+            type="date"
+            required
           />
-          <form.Field
-            name="bloodType"
-            children={(field: FormField<string | undefined>) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>Blood Type</Label>
-                <Select
-                  value={field.state.value || undefined}
-                  onValueChange={value => field.handleChange(value === 'none' ? undefined : value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select blood type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">None</SelectItem>
-                    {bloodTypes.map(type => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+          <div className="space-y-2">
+            <label htmlFor="bloodType" className="text-sm font-medium">
+              Blood Type
+            </label>
+            <Select
+              value={bloodTypeField.value || 'none'}
+              onValueChange={value => {
+                bloodTypeField.onChange(value === 'none' ? undefined : value);
+              }}
+              onOpenChange={open => {
+                // Notify on blur when select closes
+                if (!open) {
+                  bloodTypeField.onBlur();
+                }
+              }}
+            >
+              <SelectTrigger className={bloodTypeError ? 'border-destructive' : ''}>
+                <SelectValue placeholder="Select blood type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                {bloodTypes.map(type => (
+                  <SelectItem key={type} value={type}>
+                    {type}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {bloodTypeError && (
+              <p className="text-xs text-destructive">{bloodTypeError.message}</p>
             )}
-          />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <form.Field
+          <ControlledInput
             name="email"
-            validators={{
-              onChange: ({ value }: { value: string }) => {
-                if (!value || value.length < 1) return 'Email is required';
-                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Invalid email format';
-                return undefined;
-              },
-            }}
-            children={(field: FormField<string>) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>Email *</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  type="email"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={e => field.handleChange(e.target.value)}
-                  className={getFieldClassName(field)}
-                />
-                {hasFieldError(field) && (
-                  <p className="text-xs text-destructive">{getFieldError(field)}</p>
-                )}
-              </div>
-            )}
+            control={control}
+            label="Email"
+            type="email"
+            required
           />
-          <form.Field
+          <ControlledInput
             name="phone"
-            validators={{
-              onChange: ({ value }: { value: string }) =>
-                !value || value.length < 1 ? 'Phone is required' : undefined,
-            }}
-            children={(field: FormField<string>) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>Phone *</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  type="tel"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={e => field.handleChange(e.target.value)}
-                  className={getFieldClassName(field)}
-                />
-                {hasFieldError(field) && (
-                  <p className="text-xs text-destructive">{getFieldError(field)}</p>
-                )}
-              </div>
-            )}
+            control={control}
+            label="Phone"
+            type="tel"
+            required
           />
         </div>
 
-        <form.Field
+        <ControlledInput
           name="address.street"
-          validators={{
-            onChange: ({ value }: { value: string }) =>
-              !value || value.length < 1 ? 'Street address is required' : undefined,
-          }}
-          children={(field: FormField<string>) => (
-            <div className="space-y-2">
-              <Label htmlFor={field.name}>Street Address *</Label>
-              <Input
-                id={field.name}
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={e => field.handleChange(e.target.value)}
-                className={getFieldClassName(field)}
-              />
-              {hasFieldError(field) && (
-                <p className="text-xs text-destructive">{getFieldError(field)}</p>
-              )}
-            </div>
-          )}
+          control={control}
+          label="Street Address"
+          required
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <form.Field
+          <ControlledInput
             name="address.city"
-            validators={{
-              onChange: ({ value }: { value: string }) =>
-                !value || value.length < 1 ? 'City is required' : undefined,
-            }}
-            children={(field: FormField<string>) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>City *</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={e => field.handleChange(e.target.value)}
-                  className={getFieldClassName(field)}
-                  aria-required="true"
-                  aria-invalid={hasFieldError(field)}
-                  aria-describedby={hasFieldError(field) ? `${field.name}-error` : undefined}
-                />
-                {hasFieldError(field) && (
-                  <p className="text-xs text-destructive">{getFieldError(field)}</p>
-                )}
-              </div>
-            )}
+            control={control}
+            label="City"
+            required
           />
-          <form.Field
+          <ControlledInput
             name="address.state"
-            validators={{
-              onChange: ({ value }: { value: string }) =>
-                !value || value.length < 1 ? 'State is required' : undefined,
-            }}
-            children={(field: FormField<string>) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>State *</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={e => field.handleChange(e.target.value)}
-                  className={getFieldClassName(field)}
-                  aria-required="true"
-                  aria-invalid={hasFieldError(field)}
-                  aria-describedby={hasFieldError(field) ? `${field.name}-error` : undefined}
-                />
-                {hasFieldError(field) && (
-                  <p className="text-xs text-destructive">{getFieldError(field)}</p>
-                )}
-              </div>
-            )}
+            control={control}
+            label="State"
+            required
           />
-          <form.Field
+          <ControlledInput
             name="address.zipCode"
-            validators={{
-              onChange: ({ value }: { value: string }) =>
-                !value || value.length < 1 ? 'Zip code is required' : undefined,
-            }}
-            children={(field: FormField<string>) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>Zip Code *</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={e => field.handleChange(e.target.value)}
-                  className={getFieldClassName(field)}
-                  aria-required="true"
-                  aria-invalid={hasFieldError(field)}
-                  aria-describedby={hasFieldError(field) ? `${field.name}-error` : undefined}
-                />
-                {hasFieldError(field) && (
-                  <p className="text-xs text-destructive">{getFieldError(field)}</p>
-                )}
-              </div>
-            )}
+            control={control}
+            label="Zip Code"
+            required
           />
         </div>
       </CardContent>

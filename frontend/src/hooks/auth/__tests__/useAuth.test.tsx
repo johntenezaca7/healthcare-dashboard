@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
-import { useLogin } from '../useAuth';
+import { useLogin } from '../Auth';
 
 // Hoist mock functions using vi.hoisted
 const {
@@ -20,7 +20,7 @@ const {
 }));
 
 // Mock the auth utils
-vi.mock('../utils', () => ({
+vi.mock('../../utils', () => ({
   setAuthToken: mockSetAuthToken,
   removeAuthToken: mockRemoveAuthToken,
   getAuthToken: mockGetAuthToken,

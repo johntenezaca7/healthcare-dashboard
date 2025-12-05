@@ -11,7 +11,6 @@ export type {
   MedicationFormData,
   MedicationsFormData,
   EditablePatientFormApi,
-  FormField,
   FormComponentProps,
 } from './types';
 export { getFieldError, hasFieldError, getFieldClassName } from './utils';

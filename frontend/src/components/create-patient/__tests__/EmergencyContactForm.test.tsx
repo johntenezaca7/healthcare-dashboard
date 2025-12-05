@@ -2,8 +2,10 @@ import { describe, it, expect } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '@/test/utils';
-import { useForm } from '@tanstack/react-form';
+import { useForm, FormProvider } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { EmergencyContactForm } from '../EmergencyContactForm';
+import { patientCreateSchema } from '../schemas';
 import type { PatientCreateFormData } from '../schemas';
 import type { PatientCreateFormApi } from '../types';
 
@@ -14,11 +16,13 @@ const FormWrapper = ({
   defaultValues: Partial<PatientCreateFormData>; 
   children: (form: PatientCreateFormApi) => React.ReactNode;
 }) => {
-  const form = useForm({
+  const form = useForm<PatientCreateFormData>({
+    resolver: yupResolver(patientCreateSchema),
     defaultValues: defaultValues as PatientCreateFormData,
-    onSubmit: async () => {},
+    mode: 'onChange',
+    criteriaMode: 'all',
   }) as PatientCreateFormApi;
-  return <>{children(form)}</>;
+  return <FormProvider {...form}>{children(form)}</FormProvider>;
 };
 
 describe('EmergencyContactForm', () => {
@@ -29,12 +33,37 @@ describe('EmergencyContactForm', () => {
       phone: '',
       email: undefined as string | undefined,
     },
+    firstName: '',
+    lastName: '',
+    dateOfBirth: '',
+    email: '',
+    phone: '',
+    address: {
+      street: '',
+      city: '',
+      state: '',
+      zipCode: '',
+      country: 'USA',
+    },
+    insurance: {
+      provider: '',
+      policyNumber: '',
+      groupNumber: undefined,
+      effectiveDate: '',
+      expirationDate: undefined,
+      copay: 0,
+      deductible: 0,
+    },
+    allergies: [],
+    conditions: [],
+    medications: [],
+    status: 'active' as const,
   };
 
   it('renders all form fields', () => {
     render(
       <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => <EmergencyContactForm form={form} />}
+        {(form) => <EmergencyContactForm control={form.control} />}
       </FormWrapper>
     );
 
@@ -49,6 +78,7 @@ describe('EmergencyContactForm', () => {
     render(
       <FormWrapper
         defaultValues={{
+          ...defaultFormValues,
           emergencyContact: {
             name: 'Jane Doe',
             relationship: 'Spouse',
@@ -57,7 +87,7 @@ describe('EmergencyContactForm', () => {
           },
         }}
       >
-        {(form) => <EmergencyContactForm form={form} />}
+        {(form) => <EmergencyContactForm control={form.control} />}
       </FormWrapper>
     );
 
@@ -77,10 +107,10 @@ describe('EmergencyContactForm', () => {
     render(
       <FormWrapper defaultValues={defaultFormValues}>
         {(form) => (
-          <div>
-            <EmergencyContactForm form={form} />
-            <button onClick={() => form.handleSubmit()}>Submit</button>
-          </div>
+          <form onSubmit={form.handleSubmit(() => {})}>
+            <EmergencyContactForm control={form.control} />
+            <button type="submit">Submit</button>
+          </form>
         )}
       </FormWrapper>
     );
@@ -94,8 +124,8 @@ describe('EmergencyContactForm', () => {
     await user.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/name is required/i)).toBeInTheDocument();
-    });
+      expect(screen.getByText(/emergency contact name is required/i)).toBeInTheDocument();
+    }, { timeout: 3000 });
   });
 
   it('validates relationship is required', async () => {
@@ -103,10 +133,10 @@ describe('EmergencyContactForm', () => {
     render(
       <FormWrapper defaultValues={defaultFormValues}>
         {(form) => (
-          <div>
-            <EmergencyContactForm form={form} />
-            <button onClick={() => form.handleSubmit()}>Submit</button>
-          </div>
+          <form onSubmit={form.handleSubmit(() => {})}>
+            <EmergencyContactForm control={form.control} />
+            <button type="submit">Submit</button>
+          </form>
         )}
       </FormWrapper>
     );
@@ -120,7 +150,7 @@ describe('EmergencyContactForm', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/relationship is required/i)).toBeInTheDocument();
-    });
+    }, { timeout: 3000 });
   });
 
   it('validates phone is required', async () => {
@@ -128,10 +158,10 @@ describe('EmergencyContactForm', () => {
     render(
       <FormWrapper defaultValues={defaultFormValues}>
         {(form) => (
-          <div>
-            <EmergencyContactForm form={form} />
-            <button onClick={() => form.handleSubmit()}>Submit</button>
-          </div>
+          <form onSubmit={form.handleSubmit(() => {})}>
+            <EmergencyContactForm control={form.control} />
+            <button type="submit">Submit</button>
+          </form>
         )}
       </FormWrapper>
     );
@@ -144,15 +174,15 @@ describe('EmergencyContactForm', () => {
     await user.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/phone is required/i)).toBeInTheDocument();
-    });
+      expect(screen.getByText(/emergency contact phone is required/i)).toBeInTheDocument();
+    }, { timeout: 3000 });
   });
 
   it('validates email format when provided', async () => {
     const user = userEvent.setup();
     render(
       <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => <EmergencyContactForm form={form} />}
+        {(form) => <EmergencyContactForm control={form.control} />}
       </FormWrapper>
     );
 
@@ -162,14 +192,14 @@ describe('EmergencyContactForm', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/invalid email format/i)).toBeInTheDocument();
-    });
+    }, { timeout: 3000 });
   });
 
   it('allows email to be optional', async () => {
     const user = userEvent.setup();
     render(
       <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => <EmergencyContactForm form={form} />}
+        {(form) => <EmergencyContactForm control={form.control} />}
       </FormWrapper>
     );
 
@@ -193,7 +223,7 @@ describe('EmergencyContactForm', () => {
     const user = userEvent.setup();
     render(
       <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => <EmergencyContactForm form={form} />}
+        {(form) => <EmergencyContactForm control={form.control} />}
       </FormWrapper>
     );
 
@@ -208,10 +238,10 @@ describe('EmergencyContactForm', () => {
     render(
       <FormWrapper defaultValues={defaultFormValues}>
         {(form) => (
-          <div>
-            <EmergencyContactForm form={form} />
-            <button onClick={() => form.handleSubmit()}>Submit</button>
-          </div>
+          <form onSubmit={form.handleSubmit(() => {})}>
+            <EmergencyContactForm control={form.control} />
+            <button type="submit">Submit</button>
+          </form>
         )}
       </FormWrapper>
     );
@@ -225,7 +255,6 @@ describe('EmergencyContactForm', () => {
 
     await waitFor(() => {
       expect(nameInput).toHaveClass('border-destructive');
-    });
+    }, { timeout: 3000 });
   });
 });
-

@@ -282,13 +282,13 @@ describe('EditableCurrentMedicationsCard', () => {
       name: string;
       dosage: string;
       frequency: string;
-      prescribedBy?: string;
+      prescribedBy: string;
       prescribed_by?: string;
-      startDate?: string;
+      startDate: string;
       start_date?: string | null;
       endDate?: string | null;
       end_date?: string | null;
-      isActive?: boolean;
+      isActive: boolean;
       is_active?: boolean;
     }> = [
       {
@@ -296,9 +296,13 @@ describe('EditableCurrentMedicationsCard', () => {
         name: 'Lisinopril',
         dosage: '10mg',
         frequency: 'Once daily',
+        prescribedBy: 'Dr. Smith',
         prescribed_by: 'Dr. Smith',
+        startDate: '2024-01-01',
         start_date: '2024-01-01',
+        endDate: null,
         end_date: null,
+        isActive: true,
         is_active: true,
       },
     ];
@@ -306,7 +310,7 @@ describe('EditableCurrentMedicationsCard', () => {
     render(
       <EditableCurrentMedicationsCard
         patientId="patient-1"
-        medications={medicationWithSnakeCase}
+        medications={medicationWithSnakeCase as any}
         onUpdate={mockOnUpdate}
       />
     );

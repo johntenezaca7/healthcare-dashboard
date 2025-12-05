@@ -1,5 +1,6 @@
 import { useState, useEffect, memo, useMemo } from 'react';
 import { Edit, Plus, Heart, X } from 'lucide-react';
+import { useForm } from 'react-hook-form';
 import {
   Card,
   CardContent,
@@ -10,13 +11,12 @@ import {
   Label,
   Badge,
 } from '@/components/ui';
-import { useForm } from '@tanstack/react-form';
 import { useUpdatePatientMedicalInfo, type MedicalInfoUpdate } from '@/hooks';
 import { Patient } from '@/types';
 import { formatDate } from '@/utils/date';
 import { defaultNA } from '../constants';
 import { extractDatePart } from '../patients-list/utils';
-import type { FormField } from './types';
+import type { MedicalInfoFormData } from './types';
 
 interface EditableMedicalInfoCardProps {
   patientId: string;
@@ -38,7 +38,7 @@ const EditableMedicalInfoCard = memo(
     const updateMutation = useUpdatePatientMedicalInfo();
 
     const defaultValues = useMemo(
-      () => ({
+      (): MedicalInfoFormData => ({
         allergies: initialAllergies || [],
         conditions: initialConditions || [],
         lastVisit: extractDatePart(initialLastVisit),
@@ -48,23 +48,9 @@ const EditableMedicalInfoCard = memo(
       [initialAllergies, initialConditions, initialLastVisit]
     );
 
-    const form = useForm({
+    const form = useForm<MedicalInfoFormData>({
       defaultValues,
-      onSubmit: async ({ value }) => {
-        try {
-          const updateData: MedicalInfoUpdate = {
-            allergies: value.allergies.length > 0 ? value.allergies : undefined,
-            conditions: value.conditions.length > 0 ? value.conditions : undefined,
-            lastVisit: value.lastVisit || undefined,
-          };
-
-          await updateMutation.mutateAsync({ id: patientId, data: updateData });
-          setIsEditing(false);
-          onUpdate({} as Patient);
-        } catch (err) {
-          // Error is handled by mutation
-        }
-      },
+      mode: 'onChange',
     });
 
     // Reset form when initial values change and not editing
@@ -79,36 +65,52 @@ const EditableMedicalInfoCard = memo(
       setIsEditing(false);
     };
 
+    const onSubmit = async (data: MedicalInfoFormData) => {
+      try {
+        const updateData: MedicalInfoUpdate = {
+          allergies: (data.allergies?.length ?? 0) > 0 ? data.allergies : undefined,
+          conditions: (data.conditions?.length ?? 0) > 0 ? data.conditions : undefined,
+          lastVisit: data.lastVisit || undefined,
+        };
+
+        await updateMutation.mutateAsync({ id: patientId, data: updateData });
+        setIsEditing(false);
+        onUpdate({} as Patient);
+      } catch (err) {
+        // Error is handled by mutation
+      }
+    };
+
     const handleAddAllergy = () => {
-      const newAllergy = form.getFieldValue('newAllergy')?.trim() || '';
+      const newAllergy = form.watch('newAllergy')?.trim() || '';
       if (newAllergy) {
-        const currentAllergies = form.getFieldValue('allergies') || [];
+        const currentAllergies = form.watch('allergies') || [];
         if (!currentAllergies.includes(newAllergy)) {
-          form.setFieldValue('allergies', [...currentAllergies, newAllergy]);
-          form.setFieldValue('newAllergy', '');
+          form.setValue('allergies', [...currentAllergies, newAllergy]);
+          form.setValue('newAllergy', '');
         }
       }
     };
 
     const handleRemoveAllergy = (allergy: string) => {
-      const currentAllergies = form.getFieldValue('allergies') || [];
-      form.setFieldValue('allergies', currentAllergies.filter((a: string) => a !== allergy));
+      const currentAllergies = form.watch('allergies') || [];
+      form.setValue('allergies', currentAllergies.filter((a: string) => a !== allergy));
     };
 
     const handleAddCondition = () => {
-      const newCondition = form.getFieldValue('newCondition')?.trim() || '';
+      const newCondition = form.watch('newCondition')?.trim() || '';
       if (newCondition) {
-        const currentConditions = form.getFieldValue('conditions') || [];
+        const currentConditions = form.watch('conditions') || [];
         if (!currentConditions.includes(newCondition)) {
-          form.setFieldValue('conditions', [...currentConditions, newCondition]);
-          form.setFieldValue('newCondition', '');
+          form.setValue('conditions', [...currentConditions, newCondition]);
+          form.setValue('newCondition', '');
         }
       }
     };
 
     const handleRemoveCondition = (condition: string) => {
-      const currentConditions = form.getFieldValue('conditions') || [];
-      form.setFieldValue('conditions', currentConditions.filter((c: string) => c !== condition));
+      const currentConditions = form.watch('conditions') || [];
+      form.setValue('conditions', currentConditions.filter((c: string) => c !== condition));
     };
 
     return (
@@ -137,21 +139,13 @@ const EditableMedicalInfoCard = memo(
               >
                 Cancel
               </Button>
-              <form.Subscribe
-                selector={state => [state.canSubmit, state.isSubmitting]}
-                children={([canSubmit, isSubmitting]) => (
-                  <Button
-                    size="sm"
-                    onClick={e => {
-                      e.preventDefault();
-                      form.handleSubmit();
-                    }}
-                    disabled={!canSubmit || updateMutation.isPending || isSubmitting}
-                  >
-                    Save
-                  </Button>
-                )}
-              />
+              <Button
+                size="sm"
+                onClick={form.handleSubmit(onSubmit)}
+                disabled={updateMutation.isPending || form.formState.isSubmitting}
+              >
+                Save
+              </Button>
             </div>
           )}
         </CardHeader>
@@ -202,149 +196,111 @@ const EditableMedicalInfoCard = memo(
               </div>
             </>
           ) : (
-            <div className="space-y-4">
-              <form.Field
-                name="allergies"
-                children={(field: FormField<string[]>) => {
-                  const allergies = field.state.value || [];
-                  return (
-                    <div className="space-y-2">
-                      <Label>Allergies</Label>
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        {allergies.map((allergy: string, idx: number) => (
-                          <Badge key={idx} variant="secondary" className="flex items-center gap-1">
-                            {allergy}
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveAllergy(allergy)}
-                              className="ml-1 hover:text-destructive"
-                            >
-                              <X className="h-3 w-3" />
-                            </button>
-                          </Badge>
-                        ))}
-                      </div>
-                      <form.Field
-                        name="newAllergy"
-                        children={(newAllergyField: FormField<string>) => (
-                          <div className="flex gap-2">
-                            <Input
-                              value={newAllergyField.state.value || ''}
-                              onChange={e => newAllergyField.handleChange(e.target.value)}
-                              onKeyDown={e => {
-                                if (e.key === 'Enter') {
-                                  e.preventDefault();
-                                  handleAddAllergy();
-                                }
-                              }}
-                              placeholder="Add allergy"
-                              className="flex-1"
-                            />
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="icon"
-                              onClick={handleAddAllergy}
-                              disabled={!newAllergyField.state.value?.trim()}
-                            >
-                              <Plus className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        )}
-                      />
-                    </div>
-                  );
-                }}
-              />
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <div className="space-y-2">
+                <Label>Allergies</Label>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {(form.watch('allergies') || []).map((allergy: string, idx: number) => (
+                    <Badge key={idx} variant="secondary" className="flex items-center gap-1">
+                      {allergy}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveAllergy(allergy)}
+                        className="ml-1 hover:text-destructive"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <Input
+                    {...form.register('newAllergy')}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddAllergy();
+                      }
+                    }}
+                    placeholder="Add allergy"
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={handleAddAllergy}
+                    disabled={!form.watch('newAllergy')?.trim()}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
 
-              <form.Field
-                name="conditions"
-                children={(field: FormField<string[]>) => {
-                  const conditions = field.state.value || [];
-                  return (
-                    <div className="space-y-2">
-                      <Label>Conditions</Label>
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        {conditions.map((condition: string, idx: number) => (
-                          <Badge key={idx} variant="outline" className="flex items-center gap-1">
-                            {condition}
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveCondition(condition)}
-                              className="ml-1 hover:text-destructive"
-                            >
-                              <X className="h-3 w-3" />
-                            </button>
-                          </Badge>
-                        ))}
-                      </div>
-                      <form.Field
-                        name="newCondition"
-                        children={(newConditionField: FormField<string>) => (
-                          <div className="flex gap-2">
-                            <Input
-                              value={newConditionField.state.value || ''}
-                              onChange={e => newConditionField.handleChange(e.target.value)}
-                              onKeyDown={e => {
-                                if (e.key === 'Enter') {
-                                  e.preventDefault();
-                                  handleAddCondition();
-                                }
-                              }}
-                              placeholder="Add condition"
-                              className="flex-1"
-                            />
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="icon"
-                              onClick={handleAddCondition}
-                              disabled={!newConditionField.state.value?.trim()}
-                            >
-                              <Plus className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        )}
-                      />
-                    </div>
-                  );
-                }}
-              />
+              <div className="space-y-2">
+                <Label>Conditions</Label>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {(form.watch('conditions') || []).map((condition: string, idx: number) => (
+                    <Badge key={idx} variant="outline" className="flex items-center gap-1">
+                      {condition}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveCondition(condition)}
+                        className="ml-1 hover:text-destructive"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <Input
+                    {...form.register('newCondition')}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddCondition();
+                      }
+                    }}
+                    placeholder="Add condition"
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={handleAddCondition}
+                    disabled={!form.watch('newCondition')?.trim()}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
 
-              <form.Field
-                name="lastVisit"
-                validators={{
-                  onChange: ({ value }: { value: string }) => {
-                    if (value && value.length > 0) {
-                      const date = new Date(value);
-                      if (isNaN(date.getTime())) return 'Invalid date';
-                    }
-                    return undefined;
-                  },
-                }}
-                children={(field: FormField<string | undefined>) => (
-                  <div className="space-y-2">
-                    <Label htmlFor={field.name}>Last Visit</Label>
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      type="date"
-                      value={field.state.value || ''}
-                      onBlur={field.handleBlur}
-                      onChange={e => field.handleChange(e.target.value || '')}
-                      className={field.state.meta.errors.length > 0 ? 'border-destructive' : ''}
-                    />
-                    {field.state.meta.errors.length > 0 && (
-                      <p className="text-xs text-destructive">{field.state.meta.errors[0]}</p>
-                    )}
-                  </div>
+              <div className="space-y-2">
+                <Label htmlFor="lastVisit">Last Visit</Label>
+                <Input
+                  id="lastVisit"
+                  type="date"
+                  {...form.register('lastVisit', {
+                    validate: (value: string | undefined) => {
+                      if (value && value.length > 0) {
+                        const date = new Date(value);
+                        if (isNaN(date.getTime())) return 'Invalid date';
+                      }
+                      return true;
+                    },
+                  })}
+                />
+                {form.formState.errors.lastVisit && (
+                  <p className="text-xs text-destructive">{form.formState.errors.lastVisit.message}</p>
                 )}
-              />
+              </div>
 
               {updateMutation.isPending && (
                 <div className="text-sm text-muted-foreground">Saving...</div>
               )}
-            </div>
+            </form>
           )}
         </CardContent>
       </Card>

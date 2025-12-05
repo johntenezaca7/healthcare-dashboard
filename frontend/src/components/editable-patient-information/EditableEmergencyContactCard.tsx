@@ -1,11 +1,12 @@
 import { useState, useEffect, memo, useMemo } from 'react';
 import { Edit, Mail, Phone } from 'lucide-react';
-import { useForm } from '@tanstack/react-form';
+import { useForm } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle, Button, Input, Label } from '@/components/ui';
 import { useUpdatePatientEmergencyContact, type EmergencyContactUpdate } from '@/hooks';
 import { Patient } from '@/types';
 import { defaultNA } from '../constants';
-import type { FormField } from './types';
+import type { EmergencyContactFormData } from './types';
+import { getFieldError, hasFieldError, getFieldClassName } from './utils';
 
 interface EditableEmergencyContactCardProps {
   patientId: string;
@@ -29,7 +30,7 @@ const EditableEmergencyContactCard = memo(
     const updateMutation = useUpdatePatientEmergencyContact();
 
     const defaultValues = useMemo(
-      () => ({
+      (): EmergencyContactFormData => ({
         name: initialName,
         relationship: initialRelationship,
         phone: initialPhone,
@@ -38,24 +39,9 @@ const EditableEmergencyContactCard = memo(
       [initialName, initialRelationship, initialPhone, initialEmail]
     );
 
-    const form = useForm({
+    const form = useForm<EmergencyContactFormData>({
       defaultValues,
-      onSubmit: async ({ value }) => {
-        try {
-          const updateData: EmergencyContactUpdate = {
-            name: value.name,
-            relationship: value.relationship,
-            phone: value.phone,
-            email: value.email || undefined,
-          };
-
-          await updateMutation.mutateAsync({ id: patientId, data: updateData });
-          setIsEditing(false);
-          onUpdate({} as Patient);
-        } catch (err) {
-          // Error is handled by mutation
-        }
-      },
+      mode: 'onChange',
     });
 
     // Reset form when initial values change and not editing
@@ -68,6 +54,23 @@ const EditableEmergencyContactCard = memo(
     const handleCancel = () => {
       form.reset(defaultValues);
       setIsEditing(false);
+    };
+
+    const onSubmit = async (data: EmergencyContactFormData) => {
+      try {
+        const updateData: EmergencyContactUpdate = {
+          name: data.name,
+          relationship: data.relationship,
+          phone: data.phone,
+          email: data.email || undefined,
+        };
+
+        await updateMutation.mutateAsync({ id: patientId, data: updateData });
+        setIsEditing(false);
+        onUpdate({} as Patient);
+      } catch (err) {
+        // Error is handled by mutation
+      }
     };
 
     return (
@@ -93,21 +96,13 @@ const EditableEmergencyContactCard = memo(
               >
                 Cancel
               </Button>
-              <form.Subscribe
-                selector={state => [state.canSubmit, state.isSubmitting]}
-                children={([canSubmit, isSubmitting]) => (
-                  <Button
-                    size="sm"
-                    onClick={e => {
-                      e.preventDefault();
-                      form.handleSubmit();
-                    }}
-                    disabled={!canSubmit || updateMutation.isPending || isSubmitting}
-                  >
-                    Save
-                  </Button>
-                )}
-              />
+              <Button
+                size="sm"
+                onClick={form.handleSubmit(onSubmit)}
+                disabled={!form.formState.isValid || updateMutation.isPending || form.formState.isSubmitting}
+              >
+                Save
+              </Button>
             </div>
           )}
         </CardHeader>
@@ -126,15 +121,15 @@ const EditableEmergencyContactCard = memo(
                 <>
                   <div>
                     <p className="text-sm text-muted-foreground">Name</p>
-                    <p className="font-medium">{initialName || defaultNA }</p>
+                    <p className="font-medium">{initialName || defaultNA}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Relationship</p>
-                    <p className="font-medium">{initialRelationship || defaultNA }</p>
+                    <p className="font-medium">{initialRelationship || defaultNA}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Phone className="h-4 w-4 text-muted-foreground" />
-                    <span>{initialPhone || defaultNA }</span>
+                    <span>{initialPhone || defaultNA}</span>
                   </div>
                   {initialEmail && (
                     <div className="flex items-center gap-2">
@@ -150,137 +145,72 @@ const EditableEmergencyContactCard = memo(
               )}
             </>
           ) : (
-            <div className="space-y-4">
-              <form.Field
-                name="name"
-                validators={{
-                  onChange: ({ value }: { value: string }) => {
-                    if (!value || value.trim().length < 1) return 'Name is required';
-                    return undefined;
-                  },
-                }}
-                children={(field) => {
-                  const typedField = field as unknown as FormField<string>;
-                  return (
-                  <div className="space-y-2">
-                    <Label htmlFor={typedField.name}>Name</Label>
-                    <Input
-                      id={typedField.name}
-                      name={typedField.name}
-                      value={typedField.state.value}
-                      onBlur={typedField.handleBlur}
-                      onChange={e => typedField.handleChange(e.target.value)}
-                      className={typedField.state.meta.errors.length > 0 ? 'border-destructive' : ''}
-                    />
-                    {typedField.state.meta.errors.length > 0 && (
-                      <p className="text-xs text-destructive">{typedField.state.meta.errors[0]}</p>
-                    )}
-                  </div>
-                  );
-                }}
-              />
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  {...form.register('name', { required: 'Name is required' })}
+                  className={getFieldClassName(form, 'name')}
+                />
+                {hasFieldError(form, 'name') && (
+                  <p className="text-xs text-destructive">{getFieldError(form, 'name')}</p>
+                )}
+              </div>
 
-              <form.Field
-                name="relationship"
-                validators={{
-                  onChange: ({ value }: { value: string }) => {
-                    if (!value || value.trim().length < 1) return 'Relationship is required';
-                    return undefined;
-                  },
-                }}
-                children={(field) => {
-                  const typedField = field as unknown as FormField<string>;
-                  return (
-                    <div className="space-y-2">
-                      <Label htmlFor={typedField.name}>Relationship</Label>
-                      <Input
-                        id={typedField.name}
-                        name={typedField.name}
-                        value={typedField.state.value}
-                        onBlur={typedField.handleBlur}
-                        onChange={e => typedField.handleChange(e.target.value)}
-                        className={typedField.state.meta.errors.length > 0 ? 'border-destructive' : ''}
-                      />
-                      {typedField.state.meta.errors.length > 0 && (
-                        <p className="text-xs text-destructive">{typedField.state.meta.errors[0]}</p>
-                      )}
-                    </div>
-                  );
-                }}
-              />
+              <div className="space-y-2">
+                <Label htmlFor="relationship">Relationship</Label>
+                <Input
+                  id="relationship"
+                  {...form.register('relationship', { required: 'Relationship is required' })}
+                  className={getFieldClassName(form, 'relationship')}
+                />
+                {hasFieldError(form, 'relationship') && (
+                  <p className="text-xs text-destructive">{getFieldError(form, 'relationship')}</p>
+                )}
+              </div>
 
-              <form.Field
-                name="phone"
-                validators={{
-                  onChange: ({ value }: { value: string }) => {
-                    if (!value || value.trim().length < 1) return 'Phone is required';
-                    return undefined;
-                  },
-                }}
-                children={(field) => {
-                  const typedField = field as unknown as FormField<string>;
-                  return (
-                    <div className="space-y-2">
-                      <Label htmlFor={typedField.name}>Phone</Label>
-                      <div className="flex items-center gap-2">
-                        <Phone className="h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id={typedField.name}
-                          name={typedField.name}
-                          type="tel"
-                          value={typedField.state.value}
-                          onBlur={typedField.handleBlur}
-                          onChange={e => typedField.handleChange(e.target.value)}
-                          className={typedField.state.meta.errors.length > 0 ? 'border-destructive' : ''}
-                        />
-                      </div>
-                      {typedField.state.meta.errors.length > 0 && (
-                        <p className="text-xs text-destructive">{typedField.state.meta.errors[0]}</p>
-                      )}
-                    </div>
-                  );
-                }}
-              />
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone</Label>
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="phone"
+                    type="tel"
+                    {...form.register('phone', { required: 'Phone is required' })}
+                    className={getFieldClassName(form, 'phone')}
+                  />
+                </div>
+                {hasFieldError(form, 'phone') && (
+                  <p className="text-xs text-destructive">{getFieldError(form, 'phone')}</p>
+                )}
+              </div>
 
-              <form.Field
-                name="email"
-                validators={{
-                  onChange: ({ value }: { value: string }) => {
-                    if (value && value.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                      return 'Invalid email format';
-                    }
-                    return undefined;
-                  },
-                }}
-                children={(field) => {
-                  const typedField = field as unknown as FormField<string | undefined>;
-                  return (
-                    <div className="space-y-2">
-                      <Label htmlFor={typedField.name}>Email (Optional)</Label>
-                      <div className="flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id={typedField.name}
-                          name={typedField.name}
-                          type="email"
-                          value={typedField.state.value || ''}
-                          onBlur={typedField.handleBlur}
-                          onChange={e => typedField.handleChange(e.target.value || '')}
-                          className={typedField.state.meta.errors.length > 0 ? 'border-destructive' : ''}
-                        />
-                      </div>
-                      {typedField.state.meta.errors.length > 0 && (
-                        <p className="text-xs text-destructive">{typedField.state.meta.errors[0]}</p>
-                      )}
-                    </div>
-                  );
-                }}
-              />
+              <div className="space-y-2">
+                <Label htmlFor="email">Email (Optional)</Label>
+                <div className="flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    {...form.register('email', {
+                      pattern: {
+                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                        message: 'Invalid email format',
+                      },
+                    })}
+                    className={getFieldClassName(form, 'email')}
+                  />
+                </div>
+                {hasFieldError(form, 'email') && (
+                  <p className="text-xs text-destructive">{getFieldError(form, 'email')}</p>
+                )}
+              </div>
 
               {updateMutation.isPending && (
                 <div className="text-sm text-muted-foreground">Saving...</div>
               )}
-            </div>
+            </form>
           )}
         </CardContent>
       </Card>

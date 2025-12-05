@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { screen } from '@testing-library/react';
 import { render } from '@/test/utils';
 import { PatientHeaderCard } from '../PatientHeaderCard';
@@ -16,7 +16,10 @@ describe('PatientHeaderCard', () => {
   };
 
   const mockMedicalInfo = {
-    status: 'active',
+    allergies: [],
+    conditions: [],
+    currentMedications: [],
+    status: 'active' as const,
   };
 
   it('renders patient information correctly', () => {
@@ -81,21 +84,36 @@ describe('PatientHeaderCard', () => {
   });
 
   it('handles different status types', () => {
-    const criticalMedicalInfo = { status: 'critical' };
+    const criticalMedicalInfo = {
+      allergies: [],
+      conditions: [],
+      currentMedications: [],
+      status: 'critical' as const,
+    };
     const { rerender } = render(
       <PatientHeaderCard patient={mockPatient} medicalInfo={criticalMedicalInfo} />
     );
 
     expect(screen.getByText('Critical')).toBeInTheDocument();
 
-    const inactiveMedicalInfo = { status: 'inactive' };
+    const inactiveMedicalInfo = {
+      allergies: [],
+      conditions: [],
+      currentMedications: [],
+      status: 'inactive' as const,
+    };
     rerender(<PatientHeaderCard patient={mockPatient} medicalInfo={inactiveMedicalInfo} />);
 
     expect(screen.getByText('Inactive')).toBeInTheDocument();
   });
 
   it('defaults to active status when status is not provided', () => {
-    const emptyMedicalInfo = {};
+    const emptyMedicalInfo = {
+      allergies: [],
+      conditions: [],
+      currentMedications: [],
+      status: 'active' as const,
+    };
     render(<PatientHeaderCard patient={mockPatient} medicalInfo={emptyMedicalInfo} />);
 
     expect(screen.getByText('Active')).toBeInTheDocument();

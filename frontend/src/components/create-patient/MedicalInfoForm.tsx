@@ -4,37 +4,27 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  Input,
-  Label,
 } from '@/components/ui';
-import type { PatientCreateFormApi, FormField } from './types';
+import { ControlledInput } from '@/components/ui';
+import type { Control } from 'react-hook-form';
+import type { PatientCreateFormData } from '@/schemas/patient';
 
 interface MedicalInfoFormProps {
-  form: PatientCreateFormApi;
+  control: Control<PatientCreateFormData>;
 }
 
-const MedicalInfoForm = memo(({ form }: MedicalInfoFormProps) => {
+const MedicalInfoForm = memo(({ control }: MedicalInfoFormProps) => {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Medical Information</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <form.Field
+        <ControlledInput
           name="lastVisit"
-          children={(field: FormField<string | undefined>) => (
-            <div className="space-y-2">
-              <Label htmlFor={field.name}>Last Visit</Label>
-              <Input
-                id={field.name}
-                name={field.name}
-                type="date"
-                value={field.state.value || ''}
-                onBlur={field.handleBlur}
-                onChange={e => field.handleChange(e.target.value || undefined)}
-              />
-            </div>
-          )}
+          control={control}
+          label="Last Visit"
+          type="date"
         />
       </CardContent>
     </Card>

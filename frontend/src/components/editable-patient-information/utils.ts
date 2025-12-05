@@ -1,18 +1,26 @@
-import type { FormField } from './types';
+import type { FieldError, FieldPath, FieldValues, UseFormReturn } from 'react-hook-form';
 
-export function getFieldError<TValue = unknown>(field: FormField<TValue>): string | undefined {
-  return field.state.meta.errors[0];
+// Helper functions that work with react-hook-form
+export function getFieldError<TFormData extends FieldValues>(
+  form: UseFormReturn<TFormData>,
+  fieldName: FieldPath<TFormData>
+): string | undefined {
+  const error = form.formState.errors[fieldName] as FieldError | undefined;
+  return error?.message;
 }
 
-export function hasFieldError<TValue = unknown>(field: FormField<TValue>): boolean {
-  return field.state.meta.errors.length > 0;
+export function hasFieldError<TFormData extends FieldValues>(
+  form: UseFormReturn<TFormData>,
+  fieldName: FieldPath<TFormData>
+): boolean {
+  return !!form.formState.errors[fieldName];
 }
 
-export function getFieldClassName<TValue = unknown>(
-  field: FormField<TValue>,
+export function getFieldClassName<TFormData extends FieldValues>(
+  form: UseFormReturn<TFormData>,
+  fieldName: FieldPath<TFormData>,
   baseClassName = ''
 ): string {
-  const errorClass = hasFieldError(field) ? 'border-destructive' : '';
+  const errorClass = hasFieldError(form, fieldName) ? 'border-destructive' : '';
   return [baseClassName, errorClass].filter(Boolean).join(' ');
 }
-

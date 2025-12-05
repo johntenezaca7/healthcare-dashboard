@@ -2,8 +2,10 @@ import { describe, it, expect } from 'vitest';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '@/test/utils';
-import { useForm } from '@tanstack/react-form';
+import { useForm, FormProvider } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { MedicalInfoForm } from '../MedicalInfoForm';
+import { patientCreateSchema } from '../schemas';
 import type { PatientCreateFormData } from '../schemas';
 import type { PatientCreateFormApi } from '../types';
 
@@ -14,22 +16,54 @@ const FormWrapper = ({
   defaultValues: Partial<PatientCreateFormData>; 
   children: (form: PatientCreateFormApi) => React.ReactNode;
 }) => {
-  const form = useForm({
+  const form = useForm<PatientCreateFormData>({
+    resolver: yupResolver(patientCreateSchema),
     defaultValues: defaultValues as PatientCreateFormData,
-    onSubmit: async () => {},
+    mode: 'onChange',
   }) as PatientCreateFormApi;
-  return <>{children(form)}</>;
+  return <FormProvider {...form}>{children(form)}</FormProvider>;
 };
 
 describe('MedicalInfoForm', () => {
   const defaultFormValues = {
     lastVisit: undefined as string | undefined,
+    firstName: '',
+    lastName: '',
+    dateOfBirth: '',
+    email: '',
+    phone: '',
+    address: {
+      street: '',
+      city: '',
+      state: '',
+      zipCode: '',
+      country: 'USA',
+    },
+    emergencyContact: {
+      name: '',
+      relationship: '',
+      phone: '',
+      email: undefined,
+    },
+    insurance: {
+      provider: '',
+      policyNumber: '',
+      groupNumber: undefined,
+      effectiveDate: '',
+      expirationDate: undefined,
+      copay: 0,
+      deductible: 0,
+    },
+    allergies: [],
+    conditions: [],
+    medications: [],
+    status: 'active' as const,
   };
 
   it('renders the form', () => {
     render(
       <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => <MedicalInfoForm form={form} />}
+        {(form) => <MedicalInfoForm control={form.control} />}
       </FormWrapper>
     );
 
@@ -41,10 +75,11 @@ describe('MedicalInfoForm', () => {
     render(
       <FormWrapper
         defaultValues={{
+          ...defaultFormValues,
           lastVisit: '2024-01-15',
         }}
       >
-        {(form) => <MedicalInfoForm form={form} />}
+        {(form) => <MedicalInfoForm control={form.control} />}
       </FormWrapper>
     );
 
@@ -55,7 +90,7 @@ describe('MedicalInfoForm', () => {
   it('allows last visit to be optional', () => {
     render(
       <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => <MedicalInfoForm form={form} />}
+        {(form) => <MedicalInfoForm control={form.control} />}
       </FormWrapper>
     );
 
@@ -67,7 +102,7 @@ describe('MedicalInfoForm', () => {
     const user = userEvent.setup();
     render(
       <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => <MedicalInfoForm form={form} />}
+        {(form) => <MedicalInfoForm control={form.control} />}
       </FormWrapper>
     );
 
@@ -81,7 +116,7 @@ describe('MedicalInfoForm', () => {
     const user = userEvent.setup();
     render(
       <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => <MedicalInfoForm form={form} />}
+        {(form) => <MedicalInfoForm control={form.control} />}
       </FormWrapper>
     );
 
@@ -97,10 +132,11 @@ describe('MedicalInfoForm', () => {
     render(
       <FormWrapper
         defaultValues={{
+          ...defaultFormValues,
           lastVisit: '2024-01-15',
         }}
       >
-        {(form) => <MedicalInfoForm form={form} />}
+        {(form) => <MedicalInfoForm control={form.control} />}
       </FormWrapper>
     );
 
@@ -110,4 +146,3 @@ describe('MedicalInfoForm', () => {
     expect(lastVisitInput.value).toBe('');
   });
 });
-
