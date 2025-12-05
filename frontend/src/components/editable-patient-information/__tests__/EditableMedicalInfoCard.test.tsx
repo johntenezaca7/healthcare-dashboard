@@ -1,9 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { render } from '@/test/utils';
-import { EditableMedicalInfoCard } from '../EditableMedicalInfoCard';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import * as hooks from '@/hooks';
+
+import { EditableMedicalInfoCard } from '../EditableMedicalInfoCard';
+
+import { render } from '@/test/utils';
 
 vi.mock('@/hooks', () => ({
   useUpdatePatientMedicalInfo: vi.fn(),
@@ -128,7 +131,7 @@ describe('EditableMedicalInfoCard', () => {
       const badge = btn.closest('[class*="Badge"]');
       return svg && badge;
     });
-    
+
     if (removeButtons.length > 0) {
       const initialAllergyCount = screen.getAllByText('Peanuts').length;
       await user.click(removeButtons[0]);
@@ -158,7 +161,7 @@ describe('EditableMedicalInfoCard', () => {
       const badge = btn.closest('[class*="Badge"]');
       return svg && badge;
     });
-    
+
     // Click a condition remove button (should be after allergy buttons)
     if (removeButtons.length > 2) {
       const initialConditionCount = screen.getAllByText('Hypertension').length;
@@ -288,14 +291,8 @@ describe('EditableMedicalInfoCard', () => {
   });
 
   it('handles null last visit', () => {
-    render(
-      <EditableMedicalInfoCard
-        {...defaultProps}
-        lastVisit={null}
-      />
-    );
+    render(<EditableMedicalInfoCard {...defaultProps} lastVisit={null} />);
 
     expect(screen.getByText(/n\/a/i)).toBeInTheDocument();
   });
 });
-

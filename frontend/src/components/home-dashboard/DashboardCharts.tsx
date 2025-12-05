@@ -1,14 +1,15 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui';
 import {
-  BarChart,
   Bar,
-  XAxis,
-  YAxis,
+  BarChart,
   CartesianGrid,
-  Tooltip,
   Legend,
   ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from 'recharts';
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui';
 
 interface DashboardChartsProps {
   patientStatusData: Array<{ name: string; value: number; color: string }>;

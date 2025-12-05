@@ -2,9 +2,9 @@ export const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 export const statuses = ['active', 'inactive', 'critical'];
 export const statusesDisplay = ['Active', 'Inactive', 'Critical'];
 export const statusValues: Record<string, string> = {
-  'Active': 'active',
-  'Inactive': 'inactive',
-  'Critical': 'critical',
+  Active: 'active',
+  Inactive: 'inactive',
+  Critical: 'critical',
 };
 
 export const insuranceProviders = [

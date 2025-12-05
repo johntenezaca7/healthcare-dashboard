@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui';
-import { ROUTES } from '@/utils/constants';
 import { Home } from 'lucide-react';
+
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui';
+
+import { ROUTES } from '@/utils/constants';
 
 const NotFound = () => {
   return (

@@ -1,6 +1,8 @@
-import { useState, useEffect, memo } from 'react';
-import { Input, Button } from '@/components/ui';
+import { memo, useEffect, useState } from 'react';
 import { Search, X } from 'lucide-react';
+
+import { Button, Input } from '@/components/ui';
+
 import { useDebounce } from '@/hooks/util';
 
 interface PatientSearchProps {

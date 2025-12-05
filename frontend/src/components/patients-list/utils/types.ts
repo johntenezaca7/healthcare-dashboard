@@ -5,4 +5,3 @@ export type OptionalFilterValue = string | string[];
 export type ArrayFilterValue = string[] | undefined;
 
 export type SingleFilterValue = string | undefined;
-

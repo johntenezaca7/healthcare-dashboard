@@ -1,23 +1,23 @@
-export { PatientDetailSkeleton } from './PatientDetailSkeleton';
-export { PatientDetailError } from './PatientDetailError';
-export { PatientHeaderCard } from './PatientHeaderCard';
 export { DocumentsCard } from './DocumentsCard';
+export { PatientDetailError } from './PatientDetailError';
+export { PatientDetailSkeleton } from './PatientDetailSkeleton';
+export { PatientHeaderCard } from './PatientHeaderCard';
 export type {
-  PatientHeaderCardProps,
-  PatientDataUnion,
-  NormalizedPatientData,
+  ApiPatient,
   NormalizedAddress,
   NormalizedEmergencyContact,
   NormalizedInsuranceInfo,
   NormalizedMedicalInfo,
-  ApiPatient,
+  NormalizedPatientData,
+  PatientDataUnion,
+  PatientHeaderCardProps,
 } from './types';
 export {
-  normalizePatientData,
+  getStatusVariant,
   normalizeAddress,
   normalizeEmergencyContact,
   normalizeInsuranceInfo,
   normalizeMedicalInfo,
-  getStatusVariant,
+  normalizePatientData,
   usePatientHeaderData,
 } from './utils';

@@ -1,1 +1,6 @@
-export { useGetAllPatients, useGetPatient, patientKeys, type FetchPatientsParams } from './Patients';
+export {
+  type FetchPatientsParams,
+  patientKeys,
+  useGetAllPatients,
+  useGetPatient,
+} from './Patients';

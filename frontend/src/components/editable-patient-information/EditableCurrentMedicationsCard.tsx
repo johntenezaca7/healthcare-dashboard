@@ -1,10 +1,14 @@
-import { useState, useEffect, memo, useMemo } from 'react';
-import { Edit, Plus, Trash2, Pill } from 'lucide-react';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { Card, CardContent, CardHeader, CardTitle, Button, Input, Label } from '@/components/ui';
-import { useUpdatePatientMedications, type MedicationsUpdate } from '@/hooks';
-import { Patient } from '@/types';
+import { memo, useEffect, useMemo, useState } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { Edit, Pill, Plus, Trash2 } from 'lucide-react';
+
+import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label } from '@/components/ui';
+
+import { type MedicationsUpdate, useUpdatePatientMedications } from '@/hooks';
 import { formatDate } from '@/utils/date';
+
+import { Patient } from '@/types';
+
 import { extractDatePart } from '../patients-list/utils';
 import type { MedicationsFormData } from './types';
 
@@ -47,7 +51,12 @@ const EditableCurrentMedicationsCard = memo(
         prescribedBy: med.prescribedBy || med.prescribed_by || '',
         startDate: extractDatePart(med.startDate || med.start_date),
         endDate: extractDatePart(med.endDate || med.end_date),
-        isActive: med.isActive !== undefined ? med.isActive : med.is_active !== undefined ? med.is_active : true,
+        isActive:
+          med.isActive !== undefined
+            ? med.isActive
+            : med.is_active !== undefined
+              ? med.is_active
+              : true,
       }));
     }, [initialMedications]);
 
@@ -263,7 +272,9 @@ const EditableCurrentMedicationsCard = memo(
                           className={getFieldError('prescribedBy') ? 'border-destructive' : ''}
                         />
                         {getFieldError('prescribedBy') && (
-                          <p className="text-xs text-destructive">{getFieldError('prescribedBy')}</p>
+                          <p className="text-xs text-destructive">
+                            {getFieldError('prescribedBy')}
+                          </p>
                         )}
                       </div>
                     </div>

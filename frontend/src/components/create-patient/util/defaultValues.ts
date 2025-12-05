@@ -40,4 +40,3 @@ export function getDefaultPatientFormValues(): PatientCreateFormData {
     medications: [],
   };
 }
-

@@ -1,11 +1,13 @@
 import { memo, useMemo } from 'react';
 import {
-  useReactTable,
+  type ColumnDef,
   getCoreRowModel,
   getSortedRowModel,
-  type ColumnDef,
+  useReactTable,
 } from '@tanstack/react-table';
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui';
+
 import { PatientListItem } from '@/types';
 
 declare module '@tanstack/react-table' {
@@ -26,7 +28,7 @@ const PatientTable = memo(({ data, columns }: PatientTableProps) => {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     manualSorting: true,
-    manualPagination: true, 
+    manualPagination: true,
   });
 
   const rowModel = useMemo(() => table.getRowModel(), [table]);

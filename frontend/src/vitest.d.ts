@@ -1,4 +1,4 @@
-import { expect, test, describe, it, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 
 declare global {
   const expect: typeof import('vitest').expect;

@@ -1,18 +1,20 @@
-import { useMemo, useState, useCallback } from 'react';
-import { useGetAllPatients } from '@/hooks/queries';
+import { useCallback, useMemo, useState } from 'react';
+
 import {
   createColumns,
-  PatientTableSkeleton,
+  EmptyStateCard,
+  ErrorCard,
+  PaginationDetails,
   PatientFilters,
+  PatientListHeader,
   PatientTable,
   PatientTablePagination,
-  PatientListHeader,
-  ErrorCard,
-  EmptyStateCard,
-  PaginationDetails,
+  PatientTableSkeleton,
 } from '@/components/patients-list';
-import { usePatientFilters } from '@/hooks/patientList';
 import { calculateTotalPages } from '@/components/patients-list/utils/pagination';
+
+import { usePatientFilters } from '@/hooks/patientList';
+import { useGetAllPatients } from '@/hooks/queries';
 
 const DEFAULT_PAGE_SIZE = 25;
 
@@ -32,11 +34,7 @@ const PatientList = () => {
     clearFilters,
   } = usePatientFilters();
 
-  const {
-    data,
-    isLoading,
-    error,
-  } = useGetAllPatients({
+  const { data, isLoading, error } = useGetAllPatients({
     page,
     pageSize,
     ...filters,

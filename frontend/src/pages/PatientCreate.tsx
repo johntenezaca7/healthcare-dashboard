@@ -1,25 +1,28 @@
+import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save } from 'lucide-react';
-import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { ArrowLeft, Save } from 'lucide-react';
 
 import {
-  Breadcrumb,
-  Card,
-  CardContent,
-  Button,
-} from '@/components/ui';
-import { getErrorMessage, ERROR_MESSAGES } from '@/utils/errorMessages';
-import {
-  PersonalInfoForm,
   EmergencyContactForm,
   InsuranceForm,
   MedicalInfoForm,
+  PersonalInfoForm,
 } from '@/components/create-patient';
-import { patientCreateSchema, type PatientCreateFormData } from '@/components/create-patient/schemas';
-import { getDefaultPatientFormValues, transformFormDataToPatientCreate } from '@/components/create-patient/util';
+import {
+  type PatientCreateFormData,
+  patientCreateSchema,
+} from '@/components/create-patient/schemas';
+import {
+  getDefaultPatientFormValues,
+  transformFormDataToPatientCreate,
+} from '@/components/create-patient/util';
+import { Breadcrumb, Button, Card, CardContent } from '@/components/ui';
+
 import { useCreatePatient } from '@/hooks';
-import { ROUTES, getPatientDetailRoute } from '@/utils/constants';
+import { ERROR_MESSAGES, getErrorMessage } from '@/utils/errorMessages';
+
+import { getPatientDetailRoute, ROUTES } from '@/utils/constants';
 
 const PatientCreate = () => {
   const navigate = useNavigate();
@@ -46,10 +49,7 @@ const PatientCreate = () => {
   return (
     <div className="space-y-6">
       <Breadcrumb
-        items={[
-          { label: 'Patient list', to: ROUTES.PATIENTS },
-          { label: 'New Patient' },
-        ]}
+        items={[{ label: 'Patient list', to: ROUTES.PATIENTS }, { label: 'New Patient' }]}
       />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -73,42 +73,48 @@ const PatientCreate = () => {
         <Card className="border-destructive" role="alert" aria-live="polite">
           <CardContent className="pt-6">
             <div className="text-destructive">
-              {getErrorMessage(createPatientMutation.error, ERROR_MESSAGES.FAILED_TO_CREATE_PATIENT)}
+              {getErrorMessage(
+                createPatientMutation.error,
+                ERROR_MESSAGES.FAILED_TO_CREATE_PATIENT
+              )}
             </div>
           </CardContent>
         </Card>
       )}
 
       <FormProvider {...form}>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-6"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <PersonalInfoForm control={control} />
           <EmergencyContactForm control={control} />
           <InsuranceForm control={control} />
           <MedicalInfoForm control={control} />
 
-        <div className="flex flex-col-reverse gap-4 sm:flex-row sm:justify-end">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => navigate(ROUTES.PATIENTS)}
-            disabled={createPatientMutation.isPending}
-            className="w-full sm:w-auto"
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            disabled={!form.formState.isValid || createPatientMutation.isPending || form.formState.isSubmitting}
-            className="w-full sm:w-auto"
-          >
-            <Save className="h-4 w-4 mr-2" />
-            {form.formState.isSubmitting || createPatientMutation.isPending ? 'Creating...' : 'Create Patient'}
-          </Button>
-        </div>
-      </form>
+          <div className="flex flex-col-reverse gap-4 sm:flex-row sm:justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate(ROUTES.PATIENTS)}
+              disabled={createPatientMutation.isPending}
+              className="w-full sm:w-auto"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={
+                !form.formState.isValid ||
+                createPatientMutation.isPending ||
+                form.formState.isSubmitting
+              }
+              className="w-full sm:w-auto"
+            >
+              <Save className="h-4 w-4 mr-2" />
+              {form.formState.isSubmitting || createPatientMutation.isPending
+                ? 'Creating...'
+                : 'Create Patient'}
+            </Button>
+          </div>
+        </form>
       </FormProvider>
     </div>
   );

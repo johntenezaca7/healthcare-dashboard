@@ -1,10 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { render } from '@/test/utils';
-import { Login } from '../Login';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { useAuth } from '@/context/auth';
 import { useLogin } from '@/hooks';
+
+import { Login } from '../Login';
+
+import { render } from '@/test/utils';
 
 vi.mock('@/context/auth');
 vi.mock('@/hooks', () => ({

@@ -1,5 +1,7 @@
 import { memo } from 'react';
+
 import { Pagination } from '@/components/ui';
+
 import { PaginationDetails } from './PaginationDetails';
 
 interface PatientTablePaginationProps {

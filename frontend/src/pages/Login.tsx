@@ -1,18 +1,21 @@
-import { useState, FormEvent } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/context/auth';
-import { useLogin } from '@/hooks';
+import { FormEvent, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+
 import {
   Button,
-  Input,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
+  Input,
 } from '@/components/ui';
+
+import { useAuth } from '@/context/auth';
+import { useLogin } from '@/hooks';
+import { ERROR_MESSAGES, getErrorMessage } from '@/utils/errorMessages';
+
 import { ROUTES } from '@/utils/constants';
-import { getErrorMessage, ERROR_MESSAGES } from '@/utils/errorMessages';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -78,8 +81,8 @@ const Login = () => {
               />
             </div>
             {loginMutation.error && (
-              <div 
-                className="rounded-md bg-destructive/10 p-3 text-sm text-destructive" 
+              <div
+                className="rounded-md bg-destructive/10 p-3 text-sm text-destructive"
                 role="alert"
                 aria-live="polite"
               >

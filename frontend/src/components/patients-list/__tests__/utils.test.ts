@@ -1,16 +1,19 @@
-import { describe, it, expect } from 'vitest';
-import {
-  getPatientData,
-  normalizeFilterValues,
-  hasActiveFilters,
-  convertStatusDisplayToApi,
-  convertStatusApiToDisplay,
-  convertLastVisitDisplayToApi,
-  convertLastVisitApiToDisplay,
-  extractDatePart,
-} from '../utils';
-import type { PatientListItem } from '@/types';
+import { describe, expect, it } from 'vitest';
+
 import type { FetchPatientsParams } from '@/hooks/queries';
+
+import type { PatientListItem } from '@/types';
+
+import {
+  convertLastVisitApiToDisplay,
+  convertLastVisitDisplayToApi,
+  convertStatusApiToDisplay,
+  convertStatusDisplayToApi,
+  extractDatePart,
+  getPatientData,
+  hasActiveFilters,
+  normalizeFilterValues,
+} from '../utils';
 
 describe('utils', () => {
   describe('getPatientData', () => {
@@ -327,4 +330,3 @@ describe('utils', () => {
     });
   });
 });
-

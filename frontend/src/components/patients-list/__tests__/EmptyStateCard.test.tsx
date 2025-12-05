@@ -1,7 +1,9 @@
-import { describe, it, expect } from 'vitest';
 import { screen } from '@testing-library/react';
-import { render } from '@/test/utils';
+import { describe, expect, it } from 'vitest';
+
 import { EmptyStateCard } from '../EmptyStateCard';
+
+import { render } from '@/test/utils';
 
 describe('EmptyStateCard', () => {
   it('renders empty state message', () => {
@@ -14,18 +16,14 @@ describe('EmptyStateCard', () => {
     render(<EmptyStateCard hasActiveFilters={true} />);
 
     expect(screen.getByText('No patients found')).toBeInTheDocument();
-    expect(
-      screen.getByText('Try adjusting your filters to see more results.')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Try adjusting your filters to see more results.')).toBeInTheDocument();
   });
 
   it('displays default message when no filters are active', () => {
     render(<EmptyStateCard hasActiveFilters={false} />);
 
     expect(screen.getByText('No patients found')).toBeInTheDocument();
-    expect(
-      screen.getByText('There are no patients in the system yet.')
-    ).toBeInTheDocument();
+    expect(screen.getByText('There are no patients in the system yet.')).toBeInTheDocument();
   });
 
   it('renders Card component structure', () => {
@@ -36,4 +34,3 @@ describe('EmptyStateCard', () => {
     expect(card).toBeInTheDocument();
   });
 });
-

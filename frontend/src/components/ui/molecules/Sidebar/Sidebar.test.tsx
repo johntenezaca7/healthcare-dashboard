@@ -1,7 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen } from '@testing-library/react';
-import { render } from '@/test/utils';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { Sidebar } from '../Sidebar';
+
+import { render } from '@/test/utils';
 
 const mockUseAuth = vi.hoisted(() => vi.fn());
 

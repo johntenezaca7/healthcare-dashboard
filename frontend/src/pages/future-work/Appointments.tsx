@@ -1,24 +1,26 @@
 import {
-  useReactTable,
+  flexRender,
   getCoreRowModel,
   getSortedRowModel,
-  flexRender,
+  useReactTable,
 } from '@tanstack/react-table';
+
+import { appointmentsColumns } from '@/components/columns-bucket';
 import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Button,
 } from '@/components/ui';
+
 import { mockAppointments } from './mock/index';
-import { appointmentsColumns } from '@/components/columns-bucket';
 
 const Appointments = () => {
   const columns = appointmentsColumns;

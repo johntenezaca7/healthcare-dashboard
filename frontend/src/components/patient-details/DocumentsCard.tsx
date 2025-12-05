@@ -1,8 +1,11 @@
 import { memo } from 'react';
 import { FileText } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, Button } from '@/components/ui';
-import { Document } from '@/types';
+
+import { Button, Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
+
 import { formatDate } from '@/utils/date';
+
+import { Document } from '@/types';
 
 interface DocumentsCardProps {
   documents: Document[];

@@ -1,11 +1,10 @@
 export { Appointments } from './Appointments';
 export { ClinicalNotes } from './ClinicalNotes';
-export { Medications } from './Medications';
-export { LabsResults } from './LabsResults';
+export { Home } from './Home';
 export { InsuranceManagement } from './InsuranceManagement';
+export { LabsResults } from './LabsResults';
+export { Medications } from './Medications';
 export { Reports } from './Reports';
+export { Settings } from './Settings';
 export { Tasks } from './Tasks';
 export { UserManagement } from './UserManagement';
-export { Settings } from './Settings';
-export { Home } from './Home';
-

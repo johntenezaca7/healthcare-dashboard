@@ -1,19 +1,28 @@
 import { useMemo } from 'react';
+
 import type {
-  PatientDataUnion,
-  NormalizedPatientData,
-  NormalizedAddress,
-  NormalizedEmergencyContact,
-  NormalizedInsuranceInfo,
-  NormalizedMedicalInfo,
-  ApiPatient,
+  Address,
+  EmergencyContact,
+  InsuranceInfo,
+  MedicalInfo,
+  Medication,
+  Patient,
+} from '@/types';
+
+import type {
   ApiAddress,
   ApiEmergencyContact,
   ApiInsuranceInfo,
   ApiMedication,
+  ApiPatient,
+  NormalizedAddress,
+  NormalizedEmergencyContact,
+  NormalizedInsuranceInfo,
+  NormalizedMedicalInfo,
+  NormalizedPatientData,
+  PatientDataUnion,
 } from './types';
-import type { Patient, Address, EmergencyContact, InsuranceInfo, MedicalInfo, Medication } from '@/types';
-import type { PatientData, MedicalInfoData } from './types';
+import type { MedicalInfoData, PatientData } from './types';
 
 // Helper to get string value from either camelCase or snake_case
 const getStringField = (obj: unknown, camelKey: string, snakeKey: string): string => {
@@ -29,7 +38,9 @@ export const getPatientField = (
 ): string => {
   const patientData = patient as PatientData & Record<string, unknown>;
   const camelValue = patientData[camelCaseField] as string | undefined;
-  const snakeValue = snakeCaseField ? (patientData[snakeCaseField] as string | undefined) : undefined;
+  const snakeValue = snakeCaseField
+    ? (patientData[snakeCaseField] as string | undefined)
+    : undefined;
   return camelValue || snakeValue || '';
 };
 
@@ -67,7 +78,7 @@ const getNumberField = (obj: unknown, camelKey: string, snakeKey: string): numbe
 export const normalizeAddress = (address: unknown): NormalizedAddress | null => {
   if (!address) return null;
   const addr = address as Address | ApiAddress | Record<string, unknown>;
-  
+
   const street = getStringField(addr, 'street', 'street');
   const city = getStringField(addr, 'city', 'city');
   const state = getStringField(addr, 'state', 'state');
@@ -83,7 +94,7 @@ export const normalizeAddress = (address: unknown): NormalizedAddress | null => 
 export const normalizeEmergencyContact = (contact: unknown): NormalizedEmergencyContact | null => {
   if (!contact) return null;
   const ec = contact as EmergencyContact | ApiEmergencyContact | Record<string, unknown>;
-  
+
   const name = getStringField(ec, 'name', 'name');
   const relationship = getStringField(ec, 'relationship', 'relationship_type');
   const phone = getStringField(ec, 'phone', 'phone');
@@ -98,7 +109,7 @@ export const normalizeEmergencyContact = (contact: unknown): NormalizedEmergency
 export const normalizeInsuranceInfo = (insurance: unknown): NormalizedInsuranceInfo | null => {
   if (!insurance) return null;
   const ins = insurance as InsuranceInfo | ApiInsuranceInfo | Record<string, unknown>;
-  
+
   const provider = getStringField(ins, 'provider', 'provider');
   const policyNumber = getStringField(ins, 'policyNumber', 'policy_number');
   const groupNumber = getOptionalStringField(ins, 'groupNumber', 'group_number');
@@ -124,7 +135,7 @@ export const normalizeInsuranceInfo = (insurance: unknown): NormalizedInsuranceI
 const normalizeMedication = (med: unknown): Medication | null => {
   if (!med) return null;
   const medication = med as Medication | ApiMedication | Record<string, unknown>;
-  
+
   const name = getStringField(medication, 'name', 'name');
   const dosage = getStringField(medication, 'dosage', 'dosage');
   const frequency = getStringField(medication, 'frequency', 'frequency');
@@ -152,33 +163,36 @@ const normalizeMedication = (med: unknown): Medication | null => {
 export const normalizeMedicalInfo = (medicalInfo: unknown): NormalizedMedicalInfo | null => {
   if (!medicalInfo) return null;
   const mi = medicalInfo as MedicalInfo | Record<string, unknown>;
-  
-  const allergies = Array.isArray(mi.allergies) 
-    ? mi.allergies as string[]
+
+  const allergies = Array.isArray(mi.allergies)
+    ? (mi.allergies as string[])
     : Array.isArray((mi as Record<string, unknown>).allergies)
-    ? (mi as Record<string, unknown>).allergies as string[]
-    : [];
-  
+      ? ((mi as Record<string, unknown>).allergies as string[])
+      : [];
+
   const conditions = Array.isArray(mi.conditions)
-    ? mi.conditions as string[]
+    ? (mi.conditions as string[])
     : Array.isArray((mi as Record<string, unknown>).conditions)
-    ? (mi as Record<string, unknown>).conditions as string[]
-    : [];
+      ? ((mi as Record<string, unknown>).conditions as string[])
+      : [];
 
   const miRecord = mi as Record<string, unknown>;
-  const currentMedicationsRaw = 
+  const currentMedicationsRaw =
     (miRecord.currentMedications as Medication[] | undefined) ||
     (miRecord.current_medications as ApiMedication[] | undefined) ||
     (miRecord.medications as ApiMedication[] | undefined) ||
     [];
-  
+
   const currentMedications = currentMedicationsRaw
     .map(normalizeMedication)
     .filter((m): m is Medication => m !== null);
 
   const bloodType = getOptionalStringField(mi, 'bloodType', 'blood_type');
   const lastVisit = getOptionalStringField(mi, 'lastVisit', 'last_visit');
-  const status = (getStringField(mi, 'status', 'status') || 'active') as 'active' | 'inactive' | 'critical';
+  const status = (getStringField(mi, 'status', 'status') || 'active') as
+    | 'active'
+    | 'inactive'
+    | 'critical';
 
   return {
     allergies,
@@ -193,7 +207,7 @@ export const normalizeMedicalInfo = (medicalInfo: unknown): NormalizedMedicalInf
 // Normalize full patient data from either format
 export const normalizePatientData = (patient: PatientDataUnion): NormalizedPatientData => {
   const p = patient as Patient | ApiPatient | Record<string, unknown>;
-  
+
   const id = String(p.id || '');
   const firstName = getStringField(p, 'firstName', 'first_name');
   const lastName = getStringField(p, 'lastName', 'last_name');
@@ -202,15 +216,17 @@ export const normalizePatientData = (patient: PatientDataUnion): NormalizedPatie
   const phone = getStringField(p, 'phone', 'phone');
 
   const pRecord = p as Record<string, unknown>;
-  
+
   // Handle addresses - API returns array, frontend expects single object
   const addressesRaw = (pRecord.addresses as ApiAddress[] | undefined) || [];
   const addressRaw = (pRecord.address as Address | undefined) || addressesRaw[0];
   const address = normalizeAddress(addressRaw);
 
   // Handle emergency contacts - API returns array, frontend expects single object
-  const emergencyContactsRaw = (pRecord.emergency_contacts as ApiEmergencyContact[] | undefined) || [];
-  const emergencyContactRaw = (pRecord.emergencyContact as EmergencyContact | undefined) || emergencyContactsRaw[0];
+  const emergencyContactsRaw =
+    (pRecord.emergency_contacts as ApiEmergencyContact[] | undefined) || [];
+  const emergencyContactRaw =
+    (pRecord.emergencyContact as EmergencyContact | undefined) || emergencyContactsRaw[0];
   const emergencyContact = normalizeEmergencyContact(emergencyContactRaw);
 
   // Handle insurance info - API returns array, frontend expects single object
@@ -219,13 +235,13 @@ export const normalizePatientData = (patient: PatientDataUnion): NormalizedPatie
   const insurance = normalizeInsuranceInfo(insuranceRaw);
 
   // Handle medical info
-  const medicalInfoRaw = 
+  const medicalInfoRaw =
     (pRecord.medicalInfo as MedicalInfo | undefined) ||
     (pRecord.medical_info as Record<string, unknown> | undefined);
   const medicalInfo = normalizeMedicalInfo(medicalInfoRaw);
 
   // Handle documents
-  const documentsRaw = 
+  const documentsRaw =
     (p.documents as Patient['documents']) ||
     ((p as Record<string, unknown>).documents as Patient['documents']) ||
     [];
@@ -264,7 +280,8 @@ export const usePatientHeaderData = (
     const normalized = normalizePatientData(patient);
     const statusValue = medicalInfo?.status || 'active';
     const statusVariant = getStatusVariant(statusValue);
-    const initials = `${normalized.firstName?.[0] || ''}${normalized.lastName?.[0] || ''}`.toUpperCase();
+    const initials =
+      `${normalized.firstName?.[0] || ''}${normalized.lastName?.[0] || ''}`.toUpperCase();
 
     // Extract createdAt and updatedAt from patient (handle both formats)
     const p = patient as Patient | ApiPatient | Record<string, unknown>;
@@ -286,4 +303,3 @@ export const usePatientHeaderData = (
     };
   }, [patient, medicalInfo]);
 };
-

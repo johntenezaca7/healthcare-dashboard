@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
+
 import { PaginatedPatients } from '@/types';
+
 import { API_BASE_URL } from '../../constants';
 import { createAuthHeaders, handleApiError } from '../../utils';
-import type { FetchPatientsParams } from './types';
 import { patientKeys } from './QueryKey';
+import type { FetchPatientsParams } from './types';
 
 const fetchPatients = async (params: FetchPatientsParams = {}): Promise<PaginatedPatients> => {
   const {
@@ -31,7 +33,7 @@ const fetchPatients = async (params: FetchPatientsParams = {}): Promise<Paginate
   });
 
   if (search) queryParams.append('search', search);
-  
+
   if (status) {
     if (Array.isArray(status)) {
       status.forEach(s => queryParams.append('status', s));
@@ -39,7 +41,7 @@ const fetchPatients = async (params: FetchPatientsParams = {}): Promise<Paginate
       queryParams.append('status', status);
     }
   }
-  
+
   if (bloodType) {
     if (Array.isArray(bloodType)) {
       bloodType.forEach(type => queryParams.append('blood_type', type));
@@ -47,7 +49,7 @@ const fetchPatients = async (params: FetchPatientsParams = {}): Promise<Paginate
       queryParams.append('blood_type', bloodType);
     }
   }
-  
+
   if (city) queryParams.append('city', city);
   if (state) queryParams.append('state', state);
 

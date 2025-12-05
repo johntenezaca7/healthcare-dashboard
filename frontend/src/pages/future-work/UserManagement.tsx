@@ -1,24 +1,26 @@
 import {
-  useReactTable,
+  flexRender,
   getCoreRowModel,
   getSortedRowModel,
-  flexRender,
+  useReactTable,
 } from '@tanstack/react-table';
+
+import { usersColumns } from '@/components/columns-bucket';
 import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Button,
 } from '@/components/ui';
+
 import { mockUsers } from './mock';
-import { usersColumns } from '@/components/columns-bucket';
 
 const UserManagement = () => {
   const columns = usersColumns;

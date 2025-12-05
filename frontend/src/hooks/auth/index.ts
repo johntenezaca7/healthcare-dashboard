@@ -1,5 +1,5 @@
-export { useLogin, useGetCurrentUser, useLogout, authKeys } from './Auth';
-export { getAuthToken, setAuthToken, removeAuthToken } from '../utils';
+export { getAuthToken, removeAuthToken, setAuthToken } from '../utils';
+export { authKeys, useGetCurrentUser, useLogin, useLogout } from './Auth';
 
 // Backward compatibility alias
 export { useGetCurrentUser as useCurrentUser } from './Auth';

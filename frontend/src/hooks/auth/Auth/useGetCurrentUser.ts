@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import type { User } from './types';
-import { API_BASE_URL } from '../../constants';
-import { getAuthToken, createAuthHeaders, handleApiError, removeAuthToken } from '../../utils';
+
 import { checkResponseForAuthError } from '@/utils/apiErrorHandler';
+
+import { API_BASE_URL } from '../../constants';
+import { createAuthHeaders, getAuthToken, handleApiError, removeAuthToken } from '../../utils';
 import { authKeys } from './QueryKey';
+import type { User } from './types';
 
 const getCurrentUser = async (removeTokenOnError: boolean = false): Promise<User> => {
   const token = localStorage.getItem('auth_token');
@@ -40,4 +42,3 @@ export const useGetCurrentUser = (removeTokenOnError: boolean = false) => {
     enabled: !!getAuthToken(),
   });
 };
-

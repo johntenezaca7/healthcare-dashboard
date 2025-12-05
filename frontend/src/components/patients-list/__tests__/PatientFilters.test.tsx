@@ -1,8 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { render } from '@/test/utils';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { PatientFilters } from '../PatientFilters';
+
+import { render } from '@/test/utils';
 
 describe('PatientFilters', () => {
   const mockOnSearch = vi.fn();
@@ -74,9 +76,7 @@ describe('PatientFilters', () => {
   });
 
   it('displays selected insurance provider values', () => {
-    render(
-      <PatientFilters {...defaultProps} insuranceProvider={['Blue Cross', 'Aetna']} />
-    );
+    render(<PatientFilters {...defaultProps} insuranceProvider={['Blue Cross', 'Aetna']} />);
 
     // MultiSelect should display selected values as badges
     expect(screen.getByText('Blue Cross')).toBeInTheDocument();
@@ -91,9 +91,7 @@ describe('PatientFilters', () => {
   });
 
   it('displays selected medications values', () => {
-    render(
-      <PatientFilters {...defaultProps} currentMedications={['Aspirin', 'Metformin']} />
-    );
+    render(<PatientFilters {...defaultProps} currentMedications={['Aspirin', 'Metformin']} />);
 
     expect(screen.getByText('Aspirin')).toBeInTheDocument();
     expect(screen.getByText('Metformin')).toBeInTheDocument();
@@ -165,4 +163,3 @@ describe('PatientFilters', () => {
     expect(screen.getByText('Filters')).toBeInTheDocument();
   });
 });
-

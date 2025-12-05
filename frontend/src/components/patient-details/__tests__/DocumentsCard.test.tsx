@@ -1,8 +1,11 @@
-import { describe, it, expect } from 'vitest';
 import { screen } from '@testing-library/react';
-import { render } from '@/test/utils';
-import { DocumentsCard } from '../DocumentsCard';
+import { describe, expect, it } from 'vitest';
+
 import type { Document } from '@/types';
+
+import { DocumentsCard } from '../DocumentsCard';
+
+import { render } from '@/test/utils';
 
 describe('DocumentsCard', () => {
   const mockDocuments: Document[] = [
@@ -170,4 +173,3 @@ describe('DocumentsCard', () => {
     expect(screen.getByText('Other Document')).toBeInTheDocument();
   });
 });
-

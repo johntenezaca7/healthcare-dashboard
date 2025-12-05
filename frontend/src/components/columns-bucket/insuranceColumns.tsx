@@ -1,6 +1,9 @@
 import { type ColumnDef } from '@tanstack/react-table';
+
 import { Badge } from '@/components/ui';
-import { createSortableHeader, formatDate, formatCurrency } from './utils';
+
+import { createSortableHeader, formatCurrency, formatDate } from './utils';
+
 import type { InsuranceRecord } from '@/pages/future-work/mock';
 
 const getStatusVariant = (status: InsuranceRecord['status']) => {

@@ -1,7 +1,9 @@
-import { describe, it, expect } from 'vitest';
 import { screen } from '@testing-library/react';
-import { render } from '@/test/utils';
+import { describe, expect, it } from 'vitest';
+
 import { PatientListHeader } from '../PatientListHeader';
+
+import { render } from '@/test/utils';
 
 describe('PatientListHeader', () => {
   it('renders header with title', () => {
@@ -56,4 +58,3 @@ describe('PatientListHeader', () => {
     expect(icon).toBeInTheDocument();
   });
 });
-

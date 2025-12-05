@@ -1,9 +1,11 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { omitEmpty } from '@/utils/object';
-import { normalizeFilterValues, hasActiveFilters } from '@/components/patients-list/utils';
-import type { FetchPatientsParams } from '@/hooks/queries';
+
+import { hasActiveFilters, normalizeFilterValues } from '@/components/patients-list/utils';
 import type { FilterValue } from '@/components/patients-list/utils/types';
+
+import type { FetchPatientsParams } from '@/hooks/queries';
+import { omitEmpty } from '@/utils/object';
 
 const DEFAULT_SORT_BY: FetchPatientsParams['sortBy'] = 'createdAt';
 const DEFAULT_SORT_ORDER: FetchPatientsParams['sortOrder'] = 'desc';
@@ -76,4 +78,3 @@ export function usePatientFilters() {
     clearFilters,
   };
 }
-

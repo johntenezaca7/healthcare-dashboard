@@ -27,4 +27,3 @@ export const PaginationDetails = memo(
 );
 
 PaginationDetails.displayName = 'PaginationDetails';
-

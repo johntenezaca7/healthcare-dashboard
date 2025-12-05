@@ -1,9 +1,11 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+
+import { AuthProvider } from '@/context/auth';
 import { queryClient } from '@/lib/queryClient';
 import { ThemeProvider } from '@/theme';
-import { AuthProvider } from '@/context/auth';
-import { ErrorBoundary } from '@/components/ErrorBoundary';
+
 import { AppRouter } from './AppRouter';
 
 import './styles/globals.css';

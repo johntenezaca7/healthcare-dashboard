@@ -1,12 +1,11 @@
 export {
   Breadcrumb,
-  BreadcrumbPrimitive,
-  BreadcrumbList,
-  BreadcrumbItemPrimitive,
-  BreadcrumbLink,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
   BreadcrumbEllipsis,
   type BreadcrumbItem,
+  BreadcrumbItemPrimitive,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbPrimitive,
+  BreadcrumbSeparator,
 } from './breadcrumb';
-

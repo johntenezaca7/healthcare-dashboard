@@ -1,10 +1,13 @@
-import { describe, it, expect } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { render } from '@/test/utils';
-import { createFormWithSubmit } from '@/test/form-test-utils';
-import { EmergencyContactForm } from '../EmergencyContactForm';
+import { describe, expect, it } from 'vitest';
+
 import { patientCreateSchema } from '@/schemas/patient';
+
+import { EmergencyContactForm } from '../EmergencyContactForm';
+
+import { createFormWithSubmit } from '@/test/form-test-utils';
+import { render } from '@/test/utils';
 
 const FormWithSubmit = createFormWithSubmit(patientCreateSchema);
 
@@ -46,7 +49,7 @@ describe('EmergencyContactForm', () => {
   it('renders all form fields', () => {
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <EmergencyContactForm control={form.control} />}
+        {form => <EmergencyContactForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -70,7 +73,7 @@ describe('EmergencyContactForm', () => {
           },
         }}
       >
-        {(form) => <EmergencyContactForm control={form.control} />}
+        {form => <EmergencyContactForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -89,7 +92,7 @@ describe('EmergencyContactForm', () => {
     const user = userEvent.setup();
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <EmergencyContactForm control={form.control} />}
+        {form => <EmergencyContactForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -112,7 +115,7 @@ describe('EmergencyContactForm', () => {
     const user = userEvent.setup();
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <EmergencyContactForm control={form.control} />}
+        {form => <EmergencyContactForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -135,7 +138,7 @@ describe('EmergencyContactForm', () => {
     const user = userEvent.setup();
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <EmergencyContactForm control={form.control} />}
+        {form => <EmergencyContactForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -158,7 +161,7 @@ describe('EmergencyContactForm', () => {
     const user = userEvent.setup();
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <EmergencyContactForm control={form.control} />}
+        {form => <EmergencyContactForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -166,16 +169,19 @@ describe('EmergencyContactForm', () => {
     await user.type(emailInput, 'invalid-email');
     await user.tab();
 
-    await waitFor(() => {
-      expect(screen.getByText(/invalid email format/i)).toBeInTheDocument();
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(screen.getByText(/invalid email format/i)).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 
   it('allows email to be optional', async () => {
     const user = userEvent.setup();
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <EmergencyContactForm control={form.control} />}
+        {form => <EmergencyContactForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -188,7 +194,7 @@ describe('EmergencyContactForm', () => {
 
     await waitFor(() => {
       const errorMessages = screen.queryAllByText(/required/i);
-      const emailErrors = errorMessages.filter(msg => 
+      const emailErrors = errorMessages.filter(msg =>
         msg.textContent?.toLowerCase().includes('email')
       );
       expect(emailErrors.length).toBe(0);
@@ -199,7 +205,7 @@ describe('EmergencyContactForm', () => {
     const user = userEvent.setup();
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <EmergencyContactForm control={form.control} />}
+        {form => <EmergencyContactForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -213,7 +219,7 @@ describe('EmergencyContactForm', () => {
     const user = userEvent.setup();
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <EmergencyContactForm control={form.control} />}
+        {form => <EmergencyContactForm control={form.control} />}
       </FormWithSubmit>
     );
 

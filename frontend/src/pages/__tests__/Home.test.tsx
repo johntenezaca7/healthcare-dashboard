@@ -1,8 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen } from '@testing-library/react';
-import { render } from '@/test/utils';
-import { Home } from '../future-work/Home';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { useAuth } from '@/context/auth';
+
+import { Home } from '../future-work/Home';
+
+import { render } from '@/test/utils';
 
 vi.mock('@/context/auth');
 

@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { LoginRequest, LoginResponse } from './types';
+
 import { API_BASE_URL } from '../../constants';
 import { setAuthToken } from '../../utils';
 import { authKeys } from './QueryKey';
+import type { LoginRequest, LoginResponse } from './types';
 
 const login = async (credentials: LoginRequest): Promise<LoginResponse> => {
   const response = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -32,4 +33,3 @@ export const useLogin = () => {
     },
   });
 };
-

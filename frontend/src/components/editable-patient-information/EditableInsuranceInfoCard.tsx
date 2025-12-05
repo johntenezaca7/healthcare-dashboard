@@ -1,12 +1,13 @@
-import { useState, useEffect, memo, useMemo } from 'react';
-import { Edit } from 'lucide-react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { Edit } from 'lucide-react';
+
 import {
+  Button,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  Button,
   Input,
   Label,
   Select,
@@ -16,13 +17,19 @@ import {
   SelectValue,
 } from '@/components/ui';
 
-import { useUpdatePatientInsuranceInfo, type InsuranceInfoUpdate } from '@/hooks';
-import { Patient } from '@/types';
+import { type InsuranceInfoUpdate, useUpdatePatientInsuranceInfo } from '@/hooks';
 import { formatDate } from '@/utils/date';
-import { insuranceProviders, defaultNA } from '../constants';
+import {
+  getFieldClassNameFromForm as getFieldClassName,
+  getFieldErrorFromForm as getFieldError,
+  hasFieldErrorFromForm as hasFieldError,
+} from '@/utils/form';
+
+import { Patient } from '@/types';
+
+import { defaultNA, insuranceProviders } from '../constants';
 import { extractDatePart } from '../patients-list/utils';
 import type { InsuranceInfoFormData } from './types';
-import { getFieldErrorFromForm as getFieldError, hasFieldErrorFromForm as hasFieldError, getFieldClassNameFromForm as getFieldClassName } from '@/utils/form';
 
 interface EditableInsuranceInfoCardProps {
   patientId: string;
@@ -135,7 +142,9 @@ const EditableInsuranceInfoCard = memo(
               <Button
                 size="sm"
                 onClick={form.handleSubmit(onSubmit)}
-                disabled={!form.formState.isValid || updateMutation.isPending || form.formState.isSubmitting}
+                disabled={
+                  !form.formState.isValid || updateMutation.isPending || form.formState.isSubmitting
+                }
               >
                 Save
               </Button>
@@ -210,10 +219,7 @@ const EditableInsuranceInfoCard = memo(
                   value={form.watch('provider') || ''}
                   onValueChange={value => form.setValue('provider', value)}
                 >
-                  <SelectTrigger
-                    id="provider"
-                    className={getFieldClassName(form, 'provider')}
-                  >
+                  <SelectTrigger id="provider" className={getFieldClassName(form, 'provider')}>
                     <SelectValue placeholder="Select insurance provider" />
                   </SelectTrigger>
                   <SelectContent>
@@ -238,15 +244,14 @@ const EditableInsuranceInfoCard = memo(
                     className={getFieldClassName(form, 'policyNumber')}
                   />
                   {hasFieldError(form, 'policyNumber') && (
-                    <p className="text-xs text-destructive">{getFieldError(form, 'policyNumber')}</p>
+                    <p className="text-xs text-destructive">
+                      {getFieldError(form, 'policyNumber')}
+                    </p>
                   )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="groupNumber">Group Number (Optional)</Label>
-                  <Input
-                    id="groupNumber"
-                    {...form.register('groupNumber')}
-                  />
+                  <Input id="groupNumber" {...form.register('groupNumber')} />
                 </div>
               </div>
 
@@ -260,16 +265,14 @@ const EditableInsuranceInfoCard = memo(
                     className={getFieldClassName(form, 'effectiveDate')}
                   />
                   {hasFieldError(form, 'effectiveDate') && (
-                    <p className="text-xs text-destructive">{getFieldError(form, 'effectiveDate')}</p>
+                    <p className="text-xs text-destructive">
+                      {getFieldError(form, 'effectiveDate')}
+                    </p>
                   )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="expirationDate">Expiration Date (Optional)</Label>
-                  <Input
-                    id="expirationDate"
-                    type="date"
-                    {...form.register('expirationDate')}
-                  />
+                  <Input id="expirationDate" type="date" {...form.register('expirationDate')} />
                 </div>
               </div>
 

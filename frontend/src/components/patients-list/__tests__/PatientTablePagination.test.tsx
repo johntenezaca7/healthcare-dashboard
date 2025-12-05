@@ -1,8 +1,10 @@
-import { describe, it, expect, vi } from 'vitest';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { render } from '@/test/utils';
+import { describe, expect, it, vi } from 'vitest';
+
 import { PatientTablePagination } from '../PatientTablePagination';
+
+import { render } from '@/test/utils';
 
 describe('PatientTablePagination', () => {
   const mockOnPageChange = vi.fn();
@@ -90,4 +92,3 @@ describe('PatientTablePagination', () => {
     expect(screen.getByText(/showing 1 to 20 of 100 patients/i)).toBeInTheDocument();
   });
 });
-

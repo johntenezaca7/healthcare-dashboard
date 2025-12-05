@@ -93,4 +93,3 @@ export interface PatientCreate {
     endDate?: string;
   }>;
 }
-

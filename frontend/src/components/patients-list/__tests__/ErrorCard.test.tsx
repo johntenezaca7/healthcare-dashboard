@@ -1,7 +1,9 @@
-import { describe, it, expect } from 'vitest';
 import { screen } from '@testing-library/react';
-import { render } from '@/test/utils';
+import { describe, expect, it } from 'vitest';
+
 import { ErrorCard } from '../ErrorCard';
+
+import { render } from '@/test/utils';
 
 describe('ErrorCard', () => {
   it('renders error message when error is provided', () => {
@@ -47,4 +49,3 @@ describe('ErrorCard', () => {
     expect(screen.getByText('Server error')).toBeInTheDocument();
   });
 });
-

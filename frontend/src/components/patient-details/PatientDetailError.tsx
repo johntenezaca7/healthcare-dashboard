@@ -1,9 +1,12 @@
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import { Card, CardDescription, CardHeader, CardTitle, Button } from '@/components/ui';
+
+import { Button, Card, CardDescription, CardHeader, CardTitle } from '@/components/ui';
+
+import { ERROR_MESSAGES, getErrorMessage } from '@/utils/errorMessages';
+
 import { ROUTES } from '@/utils/constants';
-import { getErrorMessage, ERROR_MESSAGES } from '@/utils/errorMessages';
 
 interface PatientDetailErrorProps {
   error?: Error | null;

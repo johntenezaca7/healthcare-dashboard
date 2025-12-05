@@ -1,7 +1,10 @@
 import { type ColumnDef } from '@tanstack/react-table';
-import { Badge, Button } from '@/components/ui';
 import { CheckCircle2 } from 'lucide-react';
+
+import { Badge, Button } from '@/components/ui';
+
 import { createSortableHeader, formatDate } from './utils';
+
 import type { Task } from '@/pages/future-work/mock';
 
 const getPriorityVariant = (priority: Task['priority']) => {

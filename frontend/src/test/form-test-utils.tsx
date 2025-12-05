@@ -1,5 +1,5 @@
 import React from 'react';
-import { useForm, UseFormReturn, FormProvider } from 'react-hook-form';
+import { FormProvider, useForm, UseFormReturn } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
@@ -24,7 +24,9 @@ export function createFormWrapper<T extends yup.AnyObjectSchema>(
       resolver: yupResolver(schema),
       defaultValues: defaultValues as yup.InferType<T>,
       mode: defaultOptions?.mode || 'onBlur',
-      reValidateMode: (defaultOptions?.reValidateMode === 'all' ? 'onChange' : defaultOptions?.reValidateMode) || 'onChange',
+      reValidateMode:
+        (defaultOptions?.reValidateMode === 'all' ? 'onChange' : defaultOptions?.reValidateMode) ||
+        'onChange',
       criteriaMode: 'all',
     });
 
@@ -55,12 +57,14 @@ export function createFormWithSubmit<T extends yup.AnyObjectSchema>(
       resolver: yupResolver(schema),
       defaultValues: defaultValues as yup.InferType<T>,
       mode: defaultOptions?.mode || 'onBlur',
-      reValidateMode: (defaultOptions?.reValidateMode === 'all' ? 'onChange' : defaultOptions?.reValidateMode) || 'onChange',
+      reValidateMode:
+        (defaultOptions?.reValidateMode === 'all' ? 'onChange' : defaultOptions?.reValidateMode) ||
+        'onChange',
       criteriaMode: 'all',
     });
 
     const handleSubmit = form.handleSubmit(
-      (data) => {
+      data => {
         onSubmit?.(data);
       },
       () => {
@@ -72,7 +76,7 @@ export function createFormWithSubmit<T extends yup.AnyObjectSchema>(
     return (
       <FormProvider {...form}>
         <form
-          onSubmit={(e) => {
+          onSubmit={e => {
             e.preventDefault();
             e.stopPropagation();
             handleSubmit(e);
@@ -86,4 +90,3 @@ export function createFormWithSubmit<T extends yup.AnyObjectSchema>(
     );
   };
 }
-

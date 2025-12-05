@@ -20,7 +20,7 @@ const emergencyContactSchema = yup.object({
   email: yup
     .string()
     .email('Invalid email format')
-    .transform((value) => (value === '' ? undefined : value))
+    .transform(value => (value === '' ? undefined : value))
     .optional(),
 });
 
@@ -32,7 +32,7 @@ const medicationSchema = yup.object({
   startDate: yup.string().required('Start date is required'),
   endDate: yup
     .string()
-    .transform((value) => (value === '' ? undefined : value))
+    .transform(value => (value === '' ? undefined : value))
     .optional(),
 });
 
@@ -41,21 +41,21 @@ const insuranceSchema = yup.object({
   policyNumber: yup.string().required('Policy number is required'),
   groupNumber: yup
     .string()
-    .transform((value) => (value === '' ? undefined : value))
+    .transform(value => (value === '' ? undefined : value))
     .optional(),
   effectiveDate: yup.string().required('Effective date is required'),
   expirationDate: yup
     .string()
-    .transform((value) => (value === '' ? undefined : value))
+    .transform(value => (value === '' ? undefined : value))
     .optional(),
   copay: yup
     .number()
-    .transform((value) => (value === '' || value == null ? undefined : value))
+    .transform(value => (value === '' || value == null ? undefined : value))
     .min(0, 'Copay must be >= 0')
     .required('Copay is required'),
   deductible: yup
     .number()
-    .transform((value) => (value === '' || value == null ? undefined : value))
+    .transform(value => (value === '' || value == null ? undefined : value))
     .min(0, 'Deductible must be >= 0')
     .required('Deductible is required'),
 });
@@ -80,7 +80,7 @@ export const patientCreateSchema = yup.object({
   conditions: yup.array().of(yup.string()).default([]),
   lastVisit: yup
     .string()
-    .transform((value) => (value === '' ? undefined : value))
+    .transform(value => (value === '' ? undefined : value))
     .optional(),
   status: yup.string().oneOf(['active', 'inactive', 'critical']).default('active'),
   medications: yup.array().of(medicationSchema).default([]),

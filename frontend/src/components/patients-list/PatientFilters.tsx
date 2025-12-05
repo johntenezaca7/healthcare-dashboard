@@ -1,33 +1,27 @@
 import { memo } from 'react';
-
-import {
-  MultiSelect,
-  Card,
-  CardContent,
-  Button,
-} from '@/components/ui';
 import { X } from 'lucide-react';
 
-import { PatientSearch } from './PatientSearch';
+import { Button, Card, CardContent, MultiSelect } from '@/components/ui';
 
 import {
-  insuranceProviders,
+  bloodTypes,
   commonAllergies,
   commonConditions,
   commonMedications,
-  bloodTypes,
-  statusesDisplay,
-  lastVisitOptions,
   filter,
+  insuranceProviders,
+  lastVisitOptions,
   placeholder,
+  statusesDisplay,
 } from '../constants';
-import {
-  convertStatusDisplayToApi,
-  convertStatusApiToDisplay,
-  convertLastVisitDisplayToApi,
-  convertLastVisitApiToDisplay,
-} from './utils';
 import type { FilterValue } from './utils/types';
+import { PatientSearch } from './PatientSearch';
+import {
+  convertLastVisitApiToDisplay,
+  convertLastVisitDisplayToApi,
+  convertStatusApiToDisplay,
+  convertStatusDisplayToApi,
+} from './utils';
 
 interface PatientFiltersProps {
   searchValue: string;
@@ -78,12 +72,7 @@ const PatientFilters = memo(
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-foreground">Filters</h3>
             {hasActiveFilters && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleClearAll}
-                className="h-8 text-xs"
-              >
+              <Button variant="outline" size="sm" onClick={handleClearAll} className="h-8 text-xs">
                 <X className="h-3 w-3 mr-1.5" />
                 Clear All
               </Button>
@@ -110,7 +99,10 @@ const PatientFilters = memo(
               options={commonMedications}
               selected={currentMedications || []}
               onChange={selected =>
-                onFilterChange(filter.CurrentMedications, selected.length > 0 ? selected : undefined)
+                onFilterChange(
+                  filter.CurrentMedications,
+                  selected.length > 0 ? selected : undefined
+                )
               }
               placeholder={placeholder.Medications}
             />

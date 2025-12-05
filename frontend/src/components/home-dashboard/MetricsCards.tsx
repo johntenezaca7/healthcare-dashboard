@@ -1,4 +1,5 @@
-import { Clock, User, FileText, CheckSquare, TrendingUp, TrendingDown } from 'lucide-react';
+import { CheckSquare, Clock, FileText, TrendingDown, TrendingUp, User } from 'lucide-react';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
 
 interface Metric {

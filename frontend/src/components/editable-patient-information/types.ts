@@ -1,4 +1,5 @@
-import type { UseFormReturn, FieldValues } from 'react-hook-form';
+import type { FieldValues, UseFormReturn } from 'react-hook-form';
+
 import type {
   EmergencyContactUpdate,
   InsuranceInfoUpdate,
@@ -43,7 +44,8 @@ export type MedicationsFormData = {
 };
 
 // Generic type for editable patient form API - matches what useForm returns from react-hook-form
-export type EditablePatientFormApi<TFormData extends FieldValues = FieldValues> = UseFormReturn<TFormData>;
+export type EditablePatientFormApi<TFormData extends FieldValues = FieldValues> =
+  UseFormReturn<TFormData>;
 
 export interface FormComponentProps<TFormData extends FieldValues = FieldValues> {
   form: EditablePatientFormApi<TFormData>;

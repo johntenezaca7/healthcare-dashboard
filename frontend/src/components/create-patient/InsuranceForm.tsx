@@ -1,4 +1,7 @@
 import { memo } from 'react';
+import type { Control } from 'react-hook-form';
+import { useController } from 'react-hook-form';
+
 import {
   Card,
   CardContent,
@@ -13,10 +16,10 @@ import {
   SelectValue,
 } from '@/components/ui';
 import { ControlledInput } from '@/components/ui';
-import { insuranceProviders } from '@/components/constants';
-import { useController } from 'react-hook-form';
-import type { Control } from 'react-hook-form';
+
 import type { PatientCreateFormData } from '@/schemas/patient';
+
+import { insuranceProviders } from '@/components/constants';
 
 interface InsuranceFormProps {
   control: Control<PatientCreateFormData>;
@@ -82,9 +85,7 @@ const InsuranceForm = memo(({ control }: InsuranceFormProps) => {
               ))}
             </SelectContent>
           </Select>
-          {providerError && (
-            <p className="text-xs text-destructive">{providerError.message}</p>
-          )}
+          {providerError && <p className="text-xs text-destructive">{providerError.message}</p>}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -94,11 +95,7 @@ const InsuranceForm = memo(({ control }: InsuranceFormProps) => {
             label="Policy Number"
             required
           />
-          <ControlledInput
-            name="insurance.groupNumber"
-            control={control}
-            label="Group Number"
-          />
+          <ControlledInput name="insurance.groupNumber" control={control} label="Group Number" />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -133,9 +130,7 @@ const InsuranceForm = memo(({ control }: InsuranceFormProps) => {
               }}
               className={copayError ? 'border-destructive' : ''}
             />
-            {copayError && (
-              <p className="text-xs text-destructive">{copayError.message}</p>
-            )}
+            {copayError && <p className="text-xs text-destructive">{copayError.message}</p>}
           </div>
           <div className="space-y-2">
             <Label htmlFor="insurance.deductible">Deductible *</Label>

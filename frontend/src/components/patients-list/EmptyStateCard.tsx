@@ -1,5 +1,6 @@
 import { memo } from 'react';
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui';
+
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui';
 
 interface EmptyStateCardProps {
   hasActiveFilters: boolean;

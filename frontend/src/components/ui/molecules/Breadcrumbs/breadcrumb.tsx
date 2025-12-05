@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ChevronRight } from 'lucide-react';
 import { Link, type To } from 'react-router-dom';
+import { ChevronRight } from 'lucide-react';
 
 import { cn } from '@/styles/utils';
 
@@ -26,11 +26,12 @@ const BreadcrumbList = React.forwardRef<HTMLOListElement, React.ComponentPropsWi
 );
 BreadcrumbList.displayName = 'BreadcrumbList';
 
-const BreadcrumbItemPrimitive = React.forwardRef<HTMLLIElement, React.ComponentPropsWithoutRef<'li'>>(
-  ({ className, ...props }, ref) => (
-    <li ref={ref} className={cn('inline-flex items-center gap-1.5', className)} {...props} />
-  )
-);
+const BreadcrumbItemPrimitive = React.forwardRef<
+  HTMLLIElement,
+  React.ComponentPropsWithoutRef<'li'>
+>(({ className, ...props }, ref) => (
+  <li ref={ref} className={cn('inline-flex items-center gap-1.5', className)} {...props} />
+));
 BreadcrumbItemPrimitive.displayName = 'BreadcrumbItem';
 
 const BreadcrumbLink = React.forwardRef<
@@ -41,7 +42,9 @@ const BreadcrumbLink = React.forwardRef<
   }
 >(({ className, to, ...props }, ref) => {
   if (to) {
-    const { to: _, ...linkProps } = props as React.ComponentPropsWithoutRef<typeof Link> & { to?: string };
+    const { to: _, ...linkProps } = props as React.ComponentPropsWithoutRef<typeof Link> & {
+      to?: string;
+    };
     return (
       <Link
         ref={ref as React.ForwardedRef<HTMLAnchorElement>}
@@ -152,12 +155,11 @@ export const Breadcrumb = ({ items }: BreadcrumbProps) => {
 
 // Export primitives for advanced usage
 export {
-  BreadcrumbPrimitive,
-  BreadcrumbList,
+  BreadcrumbEllipsis,
   BreadcrumbItemPrimitive,
   BreadcrumbLink,
+  BreadcrumbList,
   BreadcrumbPage,
+  BreadcrumbPrimitive,
   BreadcrumbSeparator,
-  BreadcrumbEllipsis,
 };
-

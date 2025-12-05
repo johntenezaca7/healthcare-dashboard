@@ -1,13 +1,14 @@
-import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+
+import type { MedicalInfoData, PatientData, PatientDataUnion } from '../types';
 import {
-  getPatientField,
   getMedicalInfoField,
+  getPatientField,
   getPatientId,
   getStatusVariant,
   usePatientHeaderData,
 } from '../utils';
-import type { PatientData, MedicalInfoData, PatientDataUnion } from '../types';
 
 describe('utils', () => {
   describe('getPatientField', () => {
@@ -233,7 +234,12 @@ describe('utils', () => {
       } as PatientDataUnion;
 
       const { result: result1 } = renderHook(() =>
-        usePatientHeaderData(patient1, { allergies: [], conditions: [], currentMedications: [], status: 'active' as const })
+        usePatientHeaderData(patient1, {
+          allergies: [],
+          conditions: [],
+          currentMedications: [],
+          status: 'active' as const,
+        })
       );
 
       expect(result1.current.initials).toBe('JD');
@@ -245,7 +251,12 @@ describe('utils', () => {
       } as PatientDataUnion;
 
       const { result: result2 } = renderHook(() =>
-        usePatientHeaderData(patient2, { allergies: [], conditions: [], currentMedications: [], status: 'active' as const })
+        usePatientHeaderData(patient2, {
+          allergies: [],
+          conditions: [],
+          currentMedications: [],
+          status: 'active' as const,
+        })
       );
 
       expect(result2.current.initials).toBe('MJ');
@@ -309,4 +320,3 @@ describe('utils', () => {
     });
   });
 });
-

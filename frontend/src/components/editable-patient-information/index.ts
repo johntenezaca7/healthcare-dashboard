@@ -1,16 +1,15 @@
-export { EditablePersonalInfoCard } from './EditablePersonalInfoCard';
+export { EditableCurrentMedicationsCard } from './EditableCurrentMedicationsCard';
 export { EditableEmergencyContactCard } from './EditableEmergencyContactCard';
 export { EditableInsuranceInfoCard } from './EditableInsuranceInfoCard';
 export { EditableMedicalInfoCard } from './EditableMedicalInfoCard';
-export { EditableCurrentMedicationsCard } from './EditableCurrentMedicationsCard';
+export { EditablePersonalInfoCard } from './EditablePersonalInfoCard';
 export type {
-  PersonalInfoFormData,
+  EditablePatientFormApi,
   EmergencyContactFormData,
+  FormComponentProps,
   InsuranceInfoFormData,
   MedicalInfoFormData,
   MedicationFormData,
   MedicationsFormData,
-  EditablePatientFormApi,
-  FormComponentProps,
+  PersonalInfoFormData,
 } from './types';
-

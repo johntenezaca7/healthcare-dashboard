@@ -8,6 +8,7 @@ export function calculateTotalPages(
   if (!data) return 0;
 
   const apiData = data as PaginatedPatients & { total_pages?: number };
-  return apiData?.totalPages ?? apiData?.total_pages ?? (total > 0 ? Math.ceil(total / pageSize) : 0);
+  return (
+    apiData?.totalPages ?? apiData?.total_pages ?? (total > 0 ? Math.ceil(total / pageSize) : 0)
+  );
 }
-

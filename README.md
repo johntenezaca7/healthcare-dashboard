@@ -172,6 +172,7 @@ This will generate types from `http://localhost:8000/openapi.json` into `src/typ
 │   │   │   ├── errorMessages.ts # Centralized error messages
 │   │   │   ├── date.ts        # Date utilities
 │   │   │   ├── format.ts      # Formatting utilities
+│   │   │   ├── form.ts        # Form utility functions
 │   │   │   └── object.ts       # Object utilities
 │   │   │
 │   │   ├── types/              # TypeScript type definitions
@@ -187,7 +188,7 @@ This will generate types from `http://localhost:8000/openapi.json` into `src/typ
 │   │   │   ├── ThemeProvider.tsx
 │   │   │   └── ModeToggle.tsx
 │   │   │
-│   │   ├── schemas/            # Zod validation schemas
+│   │   ├── schemas/            # Yup validation schemas
 │   │   │   └── patient.ts
 │   │   │
 │   │   ├── test/               # Test utilities
@@ -303,14 +304,17 @@ Once the backend is running, visit:
 - ✅ **Core Dependencies**:
   - UI Framework: Radix UI components
   - State Management: React Query (TanStack Query)
+  - Form Management: React Hook Form + Yup
   - Routing: React Router v6
   - Styling: Tailwind CSS
   - Testing: Vitest + React Testing Library
 - ✅ **Development Tooling**:
-  - ESLint configuration
+  - ESLint configuration with import sorting
   - Prettier formatting
   - TypeScript strict mode
   - Build optimization (Vite)
+  - Code splitting and lazy loading
+  - Vendor chunk optimization
 - ✅ **Scalable Folder Structure**:
   - Atomic Design pattern (atoms/molecules)
   - Feature-based organization
@@ -351,8 +355,10 @@ Once the backend is running, visit:
   - Emergency contacts
 - ✅ **Form Features**:
   - Backend endpoints (CRUD operations)
-  - Field-level validation (Zod schemas)
+  - Field-level validation (Yup schemas)
   - Error handling and display
+  - Reusable ControlledInput component
+  - Consistent validation error display logic
 - ✅ **State Management**:
   - React Query for server state
   - React Context for authentication
@@ -380,7 +386,6 @@ Once the backend is running, visit:
 - ❌ **Global Notifications**: Toast/notification system for app-wide alerts
 - ❌ **Data Visualization**: Charts component exists but uses mock data (needs backend integration)
 - ❌ **Virtualization**: List virtualization for very large datasets (1000+ works but could be optimized)
-- ❌ **Code Splitting**: Lazy loading for routes/components
 - ❌ **Real-time Features**: WebSocket integration for live updates
 - ❌ **Auto-save Drafts**: Form draft persistence
 - ❌ **Drag-and-Drop**: No drag-and-drop functionality

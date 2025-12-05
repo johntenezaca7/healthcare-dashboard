@@ -7,17 +7,17 @@ export const ERROR_MESSAGES = {
   FAILED_TO_FETCH_PATIENTS: 'Failed to fetch patients',
   FAILED_TO_CREATE_PATIENT: 'Failed to create patient',
   FAILED_TO_UPDATE_PATIENT: 'Failed to update patient',
-  
+
   // Auth errors
   LOGIN_FAILED: 'Login failed',
   INVALID_CREDENTIALS: 'Invalid credentials',
   SESSION_EXPIRED: 'Your session has expired. Please log in again.',
-  
+
   // Generic errors
   SOMETHING_WENT_WRONG: 'Something went wrong. Please try again.',
   NETWORK_ERROR: 'Network error. Please check your connection.',
   UNAUTHORIZED: 'You are not authorized to perform this action.',
-  
+
   // Form errors
   VALIDATION_ERROR: 'Please check the form for errors.',
 } as const;
@@ -34,4 +34,3 @@ export const getErrorMessage = (error: unknown, fallback?: string): string => {
   }
   return fallback || ERROR_MESSAGES.SOMETHING_WENT_WRONG;
 };
-

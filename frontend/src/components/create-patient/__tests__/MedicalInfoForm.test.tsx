@@ -1,10 +1,13 @@
-import { describe, it, expect } from 'vitest';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { render } from '@/test/utils';
-import { createFormWithSubmit } from '@/test/form-test-utils';
-import { MedicalInfoForm } from '../MedicalInfoForm';
+import { describe, expect, it } from 'vitest';
+
 import { patientCreateSchema } from '@/schemas/patient';
+
+import { MedicalInfoForm } from '../MedicalInfoForm';
+
+import { createFormWithSubmit } from '@/test/form-test-utils';
+import { render } from '@/test/utils';
 
 const FormWithSubmit = createFormWithSubmit(patientCreateSchema);
 
@@ -47,7 +50,7 @@ describe('MedicalInfoForm', () => {
   it('renders the form', () => {
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <MedicalInfoForm control={form.control} />}
+        {form => <MedicalInfoForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -63,7 +66,7 @@ describe('MedicalInfoForm', () => {
           lastVisit: '2024-01-15',
         }}
       >
-        {(form) => <MedicalInfoForm control={form.control} />}
+        {form => <MedicalInfoForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -74,7 +77,7 @@ describe('MedicalInfoForm', () => {
   it('allows last visit to be optional', () => {
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <MedicalInfoForm control={form.control} />}
+        {form => <MedicalInfoForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -86,7 +89,7 @@ describe('MedicalInfoForm', () => {
     const user = userEvent.setup();
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <MedicalInfoForm control={form.control} />}
+        {form => <MedicalInfoForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -100,7 +103,7 @@ describe('MedicalInfoForm', () => {
     const user = userEvent.setup();
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <MedicalInfoForm control={form.control} />}
+        {form => <MedicalInfoForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -120,7 +123,7 @@ describe('MedicalInfoForm', () => {
           lastVisit: '2024-01-15',
         }}
       >
-        {(form) => <MedicalInfoForm control={form.control} />}
+        {form => <MedicalInfoForm control={form.control} />}
       </FormWithSubmit>
     );
 

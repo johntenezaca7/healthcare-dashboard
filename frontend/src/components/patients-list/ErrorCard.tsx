@@ -1,6 +1,8 @@
 import { memo } from 'react';
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui';
-import { getErrorMessage, ERROR_MESSAGES } from '@/utils/errorMessages';
+
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui';
+
+import { ERROR_MESSAGES, getErrorMessage } from '@/utils/errorMessages';
 
 interface ErrorCardProps {
   error: Error | null;

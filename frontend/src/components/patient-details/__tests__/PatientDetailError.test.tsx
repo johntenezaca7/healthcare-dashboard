@@ -1,7 +1,9 @@
-import { describe, it, expect } from 'vitest';
 import { screen } from '@testing-library/react';
-import { render } from '@/test/utils';
+import { describe, expect, it } from 'vitest';
+
 import { PatientDetailError } from '../PatientDetailError';
+
+import { render } from '@/test/utils';
 
 describe('PatientDetailError', () => {
   it('renders error message when error is provided', () => {
@@ -48,4 +50,3 @@ describe('PatientDetailError', () => {
     expect(backButton).toBeInTheDocument();
   });
 });
-

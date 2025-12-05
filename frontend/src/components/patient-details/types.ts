@@ -1,5 +1,5 @@
+import type { Medication, Patient } from '@/types';
 import type { components } from '@/types/api';
-import type { Patient, Medication } from '@/types';
 
 // API types (snake_case from backend)
 export type ApiPatient = components['schemas']['Patient'];
@@ -9,7 +9,7 @@ export type ApiInsuranceInfo = components['schemas']['InsuranceInfo'];
 export type ApiMedication = components['schemas']['Medication'];
 
 // Union type that accepts both API format (snake_case) and frontend format (camelCase)
-export type PatientDataUnion = 
+export type PatientDataUnion =
   | Patient // Frontend format (camelCase)
   | ApiPatient // API format (snake_case)
   | (Patient & Partial<ApiPatient>) // Mixed format
@@ -72,7 +72,12 @@ export interface NormalizedMedicalInfo {
 export type PatientData = Partial<
   Pick<ApiPatient, 'first_name' | 'last_name' | 'date_of_birth' | 'email' | 'phone'>
 > &
-  Partial<Pick<Patient, 'firstName' | 'lastName' | 'dateOfBirth' | 'email' | 'phone' | 'createdAt' | 'updatedAt'>> & {
+  Partial<
+    Pick<
+      Patient,
+      'firstName' | 'lastName' | 'dateOfBirth' | 'email' | 'phone' | 'createdAt' | 'updatedAt'
+    >
+  > & {
     id?: string | number;
     created_at?: string;
     updated_at?: string;
@@ -85,4 +90,3 @@ export interface PatientHeaderCardProps {
   medicalInfo: NormalizedMedicalInfo | null;
   onRefetch?: () => void;
 }
-

@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
+
 import {
   Dialog,
   DialogContent,
@@ -9,7 +10,9 @@ import {
   DialogTitle,
 } from '@/components/ui';
 import { Button } from '@/components/ui';
+
 import { useAuth } from '@/context/auth';
+
 import { ROUTES } from '@/utils/constants';
 
 interface SessionExpiredModalProps {

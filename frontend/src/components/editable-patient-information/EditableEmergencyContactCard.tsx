@@ -1,12 +1,20 @@
-import { useState, useEffect, memo, useMemo } from 'react';
-import { Edit, Mail, Phone } from 'lucide-react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Card, CardContent, CardHeader, CardTitle, Button, Input, Label } from '@/components/ui';
-import { useUpdatePatientEmergencyContact, type EmergencyContactUpdate } from '@/hooks';
+import { Edit, Mail, Phone } from 'lucide-react';
+
+import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label } from '@/components/ui';
+
+import { type EmergencyContactUpdate, useUpdatePatientEmergencyContact } from '@/hooks';
+import {
+  getFieldClassNameFromForm as getFieldClassName,
+  getFieldErrorFromForm as getFieldError,
+  hasFieldErrorFromForm as hasFieldError,
+} from '@/utils/form';
+
 import { Patient } from '@/types';
+
 import { defaultNA } from '../constants';
 import type { EmergencyContactFormData } from './types';
-import { getFieldErrorFromForm as getFieldError, hasFieldErrorFromForm as hasFieldError, getFieldClassNameFromForm as getFieldClassName } from '@/utils/form';
 
 interface EditableEmergencyContactCardProps {
   patientId: string;
@@ -99,7 +107,9 @@ const EditableEmergencyContactCard = memo(
               <Button
                 size="sm"
                 onClick={form.handleSubmit(onSubmit)}
-                disabled={!form.formState.isValid || updateMutation.isPending || form.formState.isSubmitting}
+                disabled={
+                  !form.formState.isValid || updateMutation.isPending || form.formState.isSubmitting
+                }
               >
                 Save
               </Button>

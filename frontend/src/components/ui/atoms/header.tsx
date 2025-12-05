@@ -1,7 +1,8 @@
 import { Menu } from 'lucide-react';
 
-import { Button } from './button';
 import { ModeToggle } from '@/theme';
+
+import { Button } from './button';
 
 interface HeaderProps {
   onMenuClick?: () => void;

@@ -1,12 +1,9 @@
 import { memo } from 'react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui';
-import { ControlledInput } from '@/components/ui';
 import type { Control } from 'react-hook-form';
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
+import { ControlledInput } from '@/components/ui';
+
 import type { PatientCreateFormData } from '@/schemas/patient';
 
 interface EmergencyContactFormProps {
@@ -21,12 +18,7 @@ const EmergencyContactForm = memo(({ control }: EmergencyContactFormProps) => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <ControlledInput
-            name="emergencyContact.name"
-            control={control}
-            label="Name"
-            required
-          />
+          <ControlledInput name="emergencyContact.name" control={control} label="Name" required />
           <ControlledInput
             name="emergencyContact.relationship"
             control={control}

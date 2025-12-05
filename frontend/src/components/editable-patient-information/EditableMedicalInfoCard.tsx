@@ -1,19 +1,23 @@
-import { useState, useEffect, memo, useMemo } from 'react';
-import { Edit, Plus, Heart, X } from 'lucide-react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { Edit, Heart, Plus, X } from 'lucide-react';
+
 import {
+  Badge,
+  Button,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  Button,
   Input,
   Label,
-  Badge,
 } from '@/components/ui';
-import { useUpdatePatientMedicalInfo, type MedicalInfoUpdate } from '@/hooks';
-import { Patient } from '@/types';
+
+import { type MedicalInfoUpdate, useUpdatePatientMedicalInfo } from '@/hooks';
 import { formatDate } from '@/utils/date';
+
+import { Patient } from '@/types';
+
 import { defaultNA } from '../constants';
 import { extractDatePart } from '../patients-list/utils';
 import type { MedicalInfoFormData } from './types';
@@ -94,7 +98,10 @@ const EditableMedicalInfoCard = memo(
 
     const handleRemoveAllergy = (allergy: string) => {
       const currentAllergies = form.watch('allergies') || [];
-      form.setValue('allergies', currentAllergies.filter((a: string) => a !== allergy));
+      form.setValue(
+        'allergies',
+        currentAllergies.filter((a: string) => a !== allergy)
+      );
     };
 
     const handleAddCondition = () => {
@@ -110,7 +117,10 @@ const EditableMedicalInfoCard = memo(
 
     const handleRemoveCondition = (condition: string) => {
       const currentConditions = form.watch('conditions') || [];
-      form.setValue('conditions', currentConditions.filter((c: string) => c !== condition));
+      form.setValue(
+        'conditions',
+        currentConditions.filter((c: string) => c !== condition)
+      );
     };
 
     return (
@@ -293,7 +303,9 @@ const EditableMedicalInfoCard = memo(
                   })}
                 />
                 {form.formState.errors.lastVisit && (
-                  <p className="text-xs text-destructive">{form.formState.errors.lastVisit.message}</p>
+                  <p className="text-xs text-destructive">
+                    {form.formState.errors.lastVisit.message}
+                  </p>
                 )}
               </div>
 

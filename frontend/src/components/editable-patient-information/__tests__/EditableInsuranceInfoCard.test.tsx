@@ -1,9 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { render } from '@/test/utils';
-import { EditableInsuranceInfoCard } from '../EditableInsuranceInfoCard';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import * as hooks from '@/hooks';
+
+import { EditableInsuranceInfoCard } from '../EditableInsuranceInfoCard';
+
+import { render } from '@/test/utils';
 
 vi.mock('@/hooks', () => ({
   useUpdatePatientInsuranceInfo: vi.fn(),
@@ -246,4 +249,3 @@ describe('EditableInsuranceInfoCard', () => {
     expect(screen.getByText(/no insurance information available/i)).toBeInTheDocument();
   });
 });
-

@@ -1,14 +1,15 @@
-import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+
 import {
   Table,
-  TableHeader,
   TableBody,
+  TableCaption,
+  TableCell,
   TableFooter,
   TableHead,
+  TableHeader,
   TableRow,
-  TableCell,
-  TableCaption,
 } from './table';
 
 describe('Table', () => {
@@ -198,4 +199,3 @@ describe('Table composition', () => {
     expect(screen.getByText('1')).toBeInTheDocument();
   });
 });
-

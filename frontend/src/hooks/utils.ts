@@ -1,5 +1,6 @@
-import { AUTH_TOKEN_KEY } from './constants';
 import { checkResponseForAuthError } from '@/utils/apiErrorHandler';
+
+import { AUTH_TOKEN_KEY } from './constants';
 
 export const getAuthToken = (): string | null => {
   return localStorage.getItem(AUTH_TOKEN_KEY);

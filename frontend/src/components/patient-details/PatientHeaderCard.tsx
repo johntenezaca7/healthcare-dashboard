@@ -1,8 +1,11 @@
 import { memo } from 'react';
-import { User, Calendar, Clipboard } from 'lucide-react';
-import { Card, CardContent, Badge, Button } from '@/components/ui';
-import { formatDate, calculateAge } from '@/utils/date';
+import { Calendar, Clipboard, User } from 'lucide-react';
+
+import { Badge, Button, Card, CardContent } from '@/components/ui';
+
+import { calculateAge, formatDate } from '@/utils/date';
 import { formatStatus } from '@/utils/format';
+
 import type { PatientHeaderCardProps } from './types';
 import { usePatientHeaderData } from './utils';
 

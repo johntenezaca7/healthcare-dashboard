@@ -1,23 +1,25 @@
 import {
-  useReactTable,
+  flexRender,
   getCoreRowModel,
   getSortedRowModel,
-  flexRender,
+  useReactTable,
 } from '@tanstack/react-table';
+
+import { labsResultsColumns } from '@/components/columns-bucket';
 import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
 } from '@/components/ui';
+
 import { mockLabResults } from './mock';
-import { labsResultsColumns } from '@/components/columns-bucket';
 
 const LabsResults = () => {
   const columns = labsResultsColumns;

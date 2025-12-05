@@ -1,9 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { render } from '@/test/utils';
-import { EditablePersonalInfoCard } from '../EditablePersonalInfoCard';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import * as hooks from '@/hooks';
+
+import { EditablePersonalInfoCard } from '../EditablePersonalInfoCard';
+
+import { render } from '@/test/utils';
 
 vi.mock('@/hooks', () => ({
   useUpdatePatientPersonalInfo: vi.fn(),
@@ -230,13 +233,7 @@ describe('EditablePersonalInfoCard', () => {
   });
 
   it('handles missing optional fields', () => {
-    render(
-      <EditablePersonalInfoCard
-        {...defaultProps}
-        bloodType={null}
-        address={undefined}
-      />
-    );
+    render(<EditablePersonalInfoCard {...defaultProps} bloodType={null} address={undefined} />);
 
     expect(screen.getByText(/n\/a/i)).toBeInTheDocument();
   });
@@ -258,4 +255,3 @@ describe('EditablePersonalInfoCard', () => {
     expect(addressSection?.textContent).toContain('62701');
   });
 });
-

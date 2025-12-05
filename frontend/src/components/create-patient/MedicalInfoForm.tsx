@@ -1,12 +1,9 @@
 import { memo } from 'react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui';
-import { ControlledInput } from '@/components/ui';
 import type { Control } from 'react-hook-form';
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
+import { ControlledInput } from '@/components/ui';
+
 import type { PatientCreateFormData } from '@/schemas/patient';
 
 interface MedicalInfoFormProps {
@@ -20,12 +17,7 @@ const MedicalInfoForm = memo(({ control }: MedicalInfoFormProps) => {
         <CardTitle>Medical Information</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <ControlledInput
-          name="lastVisit"
-          control={control}
-          label="Last Visit"
-          type="date"
-        />
+        <ControlledInput name="lastVisit" control={control} label="Last Visit" type="date" />
       </CardContent>
     </Card>
   );

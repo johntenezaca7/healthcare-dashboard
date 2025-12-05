@@ -1,7 +1,9 @@
-import { describe, it, expect } from 'vitest';
 import { screen } from '@testing-library/react';
-import { render } from '@/test/utils';
+import { describe, expect, it } from 'vitest';
+
 import { PatientTableSkeleton } from '../PatientTableSkeleton';
+
+import { render } from '@/test/utils';
 
 describe('PatientTableSkeleton', () => {
   it('renders skeleton loading state', () => {
@@ -48,4 +50,3 @@ describe('PatientTableSkeleton', () => {
     expect(tableContainer).toBeInTheDocument();
   });
 });
-

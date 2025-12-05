@@ -1,9 +1,13 @@
-import { describe, it, expect } from 'vitest';
 import { screen } from '@testing-library/react';
-import { render } from '@/test/utils';
-import { PatientTable } from '../PatientTable';
+import { describe, expect, it } from 'vitest';
+
 import { createPatientsColumns } from '@/components/columns-bucket';
+
 import type { PatientListItem } from '@/types';
+
+import { PatientTable } from '../PatientTable';
+
+import { render } from '@/test/utils';
 
 describe('PatientTable', () => {
   const mockPatients: PatientListItem[] = [
@@ -94,4 +98,3 @@ describe('PatientTable', () => {
     expect(table).toBeInTheDocument();
   });
 });
-

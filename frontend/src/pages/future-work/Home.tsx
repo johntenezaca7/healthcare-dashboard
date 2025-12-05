@@ -1,9 +1,10 @@
 import {
-  WelcomeBanner,
-  MetricsCards,
   DashboardCharts,
+  MetricsCards,
   QuickActions,
+  WelcomeBanner,
 } from '@/components/home-dashboard';
+
 import { useAuth } from '@/context/auth';
 
 const metrics = {

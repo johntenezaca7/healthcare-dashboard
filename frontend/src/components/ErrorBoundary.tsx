@@ -1,9 +1,12 @@
 import { Component, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button } from '@/components/ui';
-import { ROUTES } from '@/utils/constants';
+
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui';
+
 import { ERROR_MESSAGES } from '@/utils/errorMessages';
+
+import { ROUTES } from '@/utils/constants';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -73,4 +76,3 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     return this.props.children;
   }
 }
-

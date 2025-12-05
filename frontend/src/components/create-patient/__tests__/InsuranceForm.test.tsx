@@ -1,10 +1,13 @@
-import { describe, it, expect } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { render } from '@/test/utils';
-import { createFormWithSubmit } from '@/test/form-test-utils';
-import { InsuranceForm } from '../InsuranceForm';
+import { describe, expect, it } from 'vitest';
+
 import { patientCreateSchema } from '@/schemas/patient';
+
+import { InsuranceForm } from '../InsuranceForm';
+
+import { createFormWithSubmit } from '@/test/form-test-utils';
+import { render } from '@/test/utils';
 
 const FormWithSubmit = createFormWithSubmit(patientCreateSchema);
 
@@ -46,7 +49,7 @@ describe('InsuranceForm', () => {
   it('renders all form fields', () => {
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <InsuranceForm control={form.control} />}
+        {form => <InsuranceForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -76,7 +79,7 @@ describe('InsuranceForm', () => {
           },
         }}
       >
-        {(form) => <InsuranceForm control={form.control} />}
+        {form => <InsuranceForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -88,37 +91,44 @@ describe('InsuranceForm', () => {
     const user = userEvent.setup();
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <InsuranceForm control={form.control} />}
+        {form => <InsuranceForm control={form.control} />}
       </FormWithSubmit>
     );
 
     // Find the select trigger button
     const selectButtons = screen.getAllByRole('button');
-    const providerSelect = selectButtons.find(btn => 
-      btn.textContent?.toLowerCase().includes('select') || 
-      btn.closest('[class*="SelectTrigger"]')
-    ) || selectButtons[0];
-    
+    const providerSelect =
+      selectButtons.find(
+        btn =>
+          btn.textContent?.toLowerCase().includes('select') ||
+          btn.closest('[class*="SelectTrigger"]')
+      ) || selectButtons[0];
+
     if (providerSelect) {
       await user.click(providerSelect);
       await user.tab();
     }
 
-    const submitButton = screen.getAllByRole('button').find(btn => (btn as HTMLButtonElement).type === 'submit');
+    const submitButton = screen
+      .getAllByRole('button')
+      .find(btn => (btn as HTMLButtonElement).type === 'submit');
     if (submitButton) {
       await user.click(submitButton);
     }
 
-    await waitFor(() => {
-      expect(screen.getByText(/insurance provider is required/i)).toBeInTheDocument();
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(screen.getByText(/insurance provider is required/i)).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 
   it('validates policy number is required', async () => {
     const user = userEvent.setup();
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <InsuranceForm control={form.control} />}
+        {form => <InsuranceForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -131,7 +141,9 @@ describe('InsuranceForm', () => {
     await user.clear(policyNumberInput);
     await user.tab();
 
-    const submitButton = screen.getAllByRole('button').find(btn => (btn as HTMLButtonElement).type === 'submit');
+    const submitButton = screen
+      .getAllByRole('button')
+      .find(btn => (btn as HTMLButtonElement).type === 'submit');
     if (submitButton) {
       await user.click(submitButton);
     }
@@ -146,7 +158,7 @@ describe('InsuranceForm', () => {
     const user = userEvent.setup();
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <InsuranceForm control={form.control} />}
+        {form => <InsuranceForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -159,7 +171,9 @@ describe('InsuranceForm', () => {
     await user.clear(effectiveDateInput);
     await user.tab();
 
-    const submitButton = screen.getAllByRole('button').find(btn => (btn as HTMLButtonElement).type === 'submit');
+    const submitButton = screen
+      .getAllByRole('button')
+      .find(btn => (btn as HTMLButtonElement).type === 'submit');
     if (submitButton) {
       await user.click(submitButton);
     }
@@ -187,7 +201,7 @@ describe('InsuranceForm', () => {
           },
         }}
       >
-        {(form) => (
+        {form => (
           <form onSubmit={form.handleSubmit(() => {})}>
             <InsuranceForm control={form.control} />
             <button type="submit">Submit</button>
@@ -200,14 +214,19 @@ describe('InsuranceForm', () => {
     await user.click(copayInput);
     await user.tab();
 
-    const submitButton = screen.getAllByRole('button').find(btn => (btn as HTMLButtonElement).type === 'submit');
+    const submitButton = screen
+      .getAllByRole('button')
+      .find(btn => (btn as HTMLButtonElement).type === 'submit');
     if (submitButton) {
       await user.click(submitButton);
     }
 
-    await waitFor(() => {
-      expect(screen.getByText(/copay.*>=.*0/i)).toBeInTheDocument();
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(screen.getByText(/copay.*>=.*0/i)).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 
   it('validates deductible is non-negative', async () => {
@@ -227,7 +246,7 @@ describe('InsuranceForm', () => {
           },
         }}
       >
-        {(form) => (
+        {form => (
           <form onSubmit={form.handleSubmit(() => {})}>
             <InsuranceForm control={form.control} />
             <button type="submit">Submit</button>
@@ -240,21 +259,26 @@ describe('InsuranceForm', () => {
     await user.click(deductibleInput);
     await user.tab();
 
-    const submitButton = screen.getAllByRole('button').find(btn => (btn as HTMLButtonElement).type === 'submit');
+    const submitButton = screen
+      .getAllByRole('button')
+      .find(btn => (btn as HTMLButtonElement).type === 'submit');
     if (submitButton) {
       await user.click(submitButton);
     }
 
-    await waitFor(() => {
-      expect(screen.getByText(/deductible.*>=.*0/i)).toBeInTheDocument();
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(screen.getByText(/deductible.*>=.*0/i)).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 
   it('allows group number to be optional', async () => {
     const user = userEvent.setup();
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <InsuranceForm control={form.control} />}
+        {form => <InsuranceForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -267,7 +291,7 @@ describe('InsuranceForm', () => {
 
     await waitFor(() => {
       const errorMessages = screen.queryAllByText(/required/i);
-      const groupErrors = errorMessages.filter(msg => 
+      const groupErrors = errorMessages.filter(msg =>
         msg.textContent?.toLowerCase().includes('group')
       );
       expect(groupErrors.length).toBe(0);
@@ -278,7 +302,7 @@ describe('InsuranceForm', () => {
     const user = userEvent.setup();
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <InsuranceForm control={form.control} />}
+        {form => <InsuranceForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -291,7 +315,7 @@ describe('InsuranceForm', () => {
 
     await waitFor(() => {
       const errorMessages = screen.queryAllByText(/required/i);
-      const expirationErrors = errorMessages.filter(msg => 
+      const expirationErrors = errorMessages.filter(msg =>
         msg.textContent?.toLowerCase().includes('expiration')
       );
       expect(expirationErrors.length).toBe(0);
@@ -301,15 +325,16 @@ describe('InsuranceForm', () => {
   it('allows selecting insurance provider', () => {
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <InsuranceForm control={form.control} />}
+        {form => <InsuranceForm control={form.control} />}
       </FormWithSubmit>
     );
 
     // Find the select trigger by looking near the provider label
     const providerLabels = screen.getAllByText(/provider/i);
-    const providerLabel = providerLabels.find(label => label.tagName === 'LABEL') || providerLabels[0];
+    const providerLabel =
+      providerLabels.find(label => label.tagName === 'LABEL') || providerLabels[0];
     const selectTrigger = providerLabel.closest('div')?.querySelector('button');
-    
+
     // Verify select component exists and is rendered
     // Note: We don't click the select trigger because Radix UI Select uses
     // pointer capture APIs that aren't fully supported in jsdom test environment.
@@ -322,7 +347,7 @@ describe('InsuranceForm', () => {
     const user = userEvent.setup();
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <InsuranceForm control={form.control} />}
+        {form => <InsuranceForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -336,7 +361,7 @@ describe('InsuranceForm', () => {
     const user = userEvent.setup();
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <InsuranceForm control={form.control} />}
+        {form => <InsuranceForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -352,7 +377,7 @@ describe('InsuranceForm', () => {
     const user = userEvent.setup();
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <InsuranceForm control={form.control} />}
+        {form => <InsuranceForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -368,7 +393,7 @@ describe('InsuranceForm', () => {
     const user = userEvent.setup();
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <InsuranceForm control={form.control} />}
+        {form => <InsuranceForm control={form.control} />}
       </FormWithSubmit>
     );
 

@@ -1,24 +1,26 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Tabs, TabsContent, TabsList, TabsTrigger, Breadcrumb } from '@/components/ui';
+
 import {
-  EditablePersonalInfoCard,
+  EditableCurrentMedicationsCard,
   EditableEmergencyContactCard,
   EditableInsuranceInfoCard,
   EditableMedicalInfoCard,
-  EditableCurrentMedicationsCard,
+  EditablePersonalInfoCard,
 } from '@/components/editable-patient-information';
 import {
-  PatientDetailSkeleton,
-  PatientDetailError,
-  PatientHeaderCard,
   DocumentsCard,
+  PatientDetailError,
+  PatientDetailSkeleton,
+  PatientHeaderCard,
 } from '@/components/patient-details';
-import { normalizePatientData } from '@/components/patient-details/utils';
-import { useGetPatient } from '@/hooks/queries';
-import { ROUTES } from '@/utils/constants';
-
 import type { PatientDataUnion } from '@/components/patient-details/types';
+import { normalizePatientData } from '@/components/patient-details/utils';
+import { Breadcrumb, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
+
+import { useGetPatient } from '@/hooks/queries';
+
+import { ROUTES } from '@/utils/constants';
 
 const PatientDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -49,10 +51,7 @@ const PatientDetail = () => {
   return (
     <div className="space-y-6">
       <Breadcrumb
-        items={[
-          { label: 'Patient list', to: ROUTES.PATIENTS },
-          { label: 'Patient detail' },
-        ]}
+        items={[{ label: 'Patient list', to: ROUTES.PATIENTS }, { label: 'Patient detail' }]}
       />
 
       <PatientHeaderCard

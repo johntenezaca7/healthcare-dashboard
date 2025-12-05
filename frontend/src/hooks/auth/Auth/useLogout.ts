@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { removeAuthToken } from '../../utils';
 import { authKeys } from './QueryKey';
 
@@ -15,4 +16,3 @@ export const useLogout = () => {
     },
   });
 };
-

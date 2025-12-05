@@ -1,9 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { render } from '@/test/utils';
-import { EditableEmergencyContactCard } from '../EditableEmergencyContactCard';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import * as hooks from '@/hooks';
+
+import { EditableEmergencyContactCard } from '../EditableEmergencyContactCard';
+
+import { render } from '@/test/utils';
 
 vi.mock('@/hooks', () => ({
   useUpdatePatientEmergencyContact: vi.fn(),
@@ -245,4 +248,3 @@ describe('EditableEmergencyContactCard', () => {
     expect(screen.getByText(/no emergency contact information available/i)).toBeInTheDocument();
   });
 });
-

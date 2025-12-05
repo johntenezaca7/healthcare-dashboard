@@ -1,5 +1,6 @@
-import { useController, useFormContext } from 'react-hook-form';
 import type { Control, FieldPath, FieldValues } from 'react-hook-form';
+import { useController, useFormContext } from 'react-hook-form';
+
 import { Input } from '@/components/ui';
 
 interface ControlledInputProps<TFormData extends FieldValues = FieldValues> {
@@ -37,7 +38,7 @@ export function ControlledInput<TFormData extends FieldValues = FieldValues>({
 
   const isEmpty = field.value === '' || field.value == null || field.value === undefined;
 
-  const showError = invalid && (isSubmitted || (isDirty || isTouched || isEmpty));
+  const showError = invalid && (isSubmitted || isDirty || isTouched || isEmpty);
 
   const inputId = id || name;
 
@@ -65,4 +66,3 @@ export function ControlledInput<TFormData extends FieldValues = FieldValues>({
     </div>
   );
 }
-

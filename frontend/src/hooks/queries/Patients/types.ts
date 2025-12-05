@@ -16,4 +16,3 @@ export interface FetchPatientsParams {
   sortBy?: 'firstName' | 'lastName' | 'dateOfBirth' | 'createdAt' | 'status' | 'insuranceProvider';
   sortOrder?: 'asc' | 'desc';
 }
-

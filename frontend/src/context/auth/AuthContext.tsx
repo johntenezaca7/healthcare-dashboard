@@ -1,6 +1,8 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useGetCurrentUser, useLogout, getAuthToken, removeAuthToken } from '@/hooks';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+
+import { getAuthToken, removeAuthToken, useGetCurrentUser, useLogout } from '@/hooks';
 import { setSessionExpiredCallback } from '@/utils/apiErrorHandler';
+
 import { User } from '@/types/auth';
 
 interface AuthContextType {

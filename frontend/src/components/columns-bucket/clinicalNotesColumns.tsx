@@ -1,6 +1,9 @@
 import { type ColumnDef } from '@tanstack/react-table';
+
 import { Badge } from '@/components/ui';
+
 import { createSortableHeader, formatDate } from './utils';
+
 import type { ClinicalNote } from '@/pages/future-work/mock';
 
 const getStatusVariant = (status: ClinicalNote['status']) => {

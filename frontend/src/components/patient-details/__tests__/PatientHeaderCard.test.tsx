@@ -1,8 +1,10 @@
-import { describe, it, expect } from 'vitest';
 import { screen } from '@testing-library/react';
-import { render } from '@/test/utils';
+import { describe, expect, it } from 'vitest';
+
 import { PatientHeaderCard } from '../PatientHeaderCard';
 import type { PatientDataUnion } from '../types';
+
+import { render } from '@/test/utils';
 
 describe('PatientHeaderCard', () => {
   const mockPatient = {
@@ -143,7 +145,7 @@ describe('PatientHeaderCard', () => {
 
     // Clipboard button contains an icon, find it by looking for the button with Clipboard icon
     const buttons = screen.getAllByRole('button');
-    const clipboardButton = buttons.find((btn) => btn.querySelector('svg'));
+    const clipboardButton = buttons.find(btn => btn.querySelector('svg'));
     expect(clipboardButton).toBeInTheDocument();
   });
 
@@ -178,4 +180,3 @@ describe('PatientHeaderCard', () => {
     expect(screen.getByText(/mixed@example\.com/i)).toBeInTheDocument();
   });
 });
-

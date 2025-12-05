@@ -1,6 +1,6 @@
 /**
  * Query Key Factory for Auth Queries
- * 
+ *
  * Best Practices:
  * 1. Hierarchical structure: ['auth'] -> ['auth', 'currentUser']
  * 2. Enables granular invalidation:
@@ -12,8 +12,7 @@
 export const authKeys = {
   // Base key for all auth queries
   all: ['auth'] as const,
-  
+
   // Current user query
   currentUser: () => [...authKeys.all, 'currentUser'] as const,
 } as const;
-

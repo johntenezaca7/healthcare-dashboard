@@ -1,13 +1,12 @@
-import type { PatientCreateFormData } from '../schemas';
 import type { PatientCreate } from '@/hooks/mutations/Patients';
+
+import type { PatientCreateFormData } from '../schemas';
 
 /**
  * Transforms PatientCreateFormData to PatientCreate API payload
  * Handles empty strings, undefined values, and array transformations
  */
-export function transformFormDataToPatientCreate(
-  formData: PatientCreateFormData
-): PatientCreate {
+export function transformFormDataToPatientCreate(formData: PatientCreateFormData): PatientCreate {
   return {
     firstName: formData.firstName,
     lastName: formData.lastName,
@@ -37,8 +36,14 @@ export function transformFormDataToPatientCreate(
       copay: formData.insurance.copay,
       deductible: formData.insurance.deductible,
     },
-    allergies: formData.allergies && formData.allergies.length > 0 ? formData.allergies.filter((a): a is string => typeof a === 'string') : undefined,
-    conditions: formData.conditions && formData.conditions.length > 0 ? formData.conditions.filter((c): c is string => typeof c === 'string') : undefined,
+    allergies:
+      formData.allergies && formData.allergies.length > 0
+        ? formData.allergies.filter((a): a is string => typeof a === 'string')
+        : undefined,
+    conditions:
+      formData.conditions && formData.conditions.length > 0
+        ? formData.conditions.filter((c): c is string => typeof c === 'string')
+        : undefined,
     lastVisit: formData.lastVisit || undefined,
     status: formData.status,
     medications:
@@ -54,4 +59,3 @@ export function transformFormDataToPatientCreate(
         : undefined,
   };
 }
-

@@ -1,23 +1,25 @@
 import {
-  useReactTable,
+  flexRender,
   getCoreRowModel,
   getSortedRowModel,
-  flexRender,
+  useReactTable,
 } from '@tanstack/react-table';
+
+import { clinicalNotesColumns } from '@/components/columns-bucket';
 import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
 } from '@/components/ui';
+
 import { mockClinicalNotes } from './mock';
-import { clinicalNotesColumns } from '@/components/columns-bucket';
 
 const ClinicalNotes = () => {
   const columns = clinicalNotesColumns;

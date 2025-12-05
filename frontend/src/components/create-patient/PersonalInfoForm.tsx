@@ -1,21 +1,23 @@
 import { memo } from 'react';
+import type { Control } from 'react-hook-form';
+import { useController } from 'react-hook-form';
+
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
+  ControlledInput,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-  ControlledInput
 } from '@/components/ui';
-import { bloodTypes } from '@/components/constants';
-import { useController } from 'react-hook-form';
-import type { Control } from 'react-hook-form';
+
 import type { PatientCreateFormData } from '@/schemas/patient';
 
+import { bloodTypes } from '@/components/constants';
 
 interface PersonalInfoFormProps {
   control: Control<PatientCreateFormData>;
@@ -29,7 +31,7 @@ const PersonalInfoForm = memo(({ control }: PersonalInfoFormProps) => {
     name: 'bloodType',
     control,
   });
-  
+
   return (
     <Card>
       <CardHeader>
@@ -37,18 +39,8 @@ const PersonalInfoForm = memo(({ control }: PersonalInfoFormProps) => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <ControlledInput
-            name="firstName"
-            control={control}
-            label="First Name"
-            required
-          />
-          <ControlledInput
-            name="lastName"
-            control={control}
-            label="Last Name"
-            required
-          />
+          <ControlledInput name="firstName" control={control} label="First Name" required />
+          <ControlledInput name="lastName" control={control} label="Last Name" required />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -87,55 +79,21 @@ const PersonalInfoForm = memo(({ control }: PersonalInfoFormProps) => {
                 ))}
               </SelectContent>
             </Select>
-            {bloodTypeError && (
-              <p className="text-xs text-destructive">{bloodTypeError.message}</p>
-            )}
+            {bloodTypeError && <p className="text-xs text-destructive">{bloodTypeError.message}</p>}
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <ControlledInput
-            name="email"
-            control={control}
-            label="Email"
-            type="email"
-            required
-          />
-          <ControlledInput
-            name="phone"
-            control={control}
-            label="Phone"
-            type="tel"
-            required
-          />
+          <ControlledInput name="email" control={control} label="Email" type="email" required />
+          <ControlledInput name="phone" control={control} label="Phone" type="tel" required />
         </div>
 
-        <ControlledInput
-          name="address.street"
-          control={control}
-          label="Street Address"
-          required
-        />
+        <ControlledInput name="address.street" control={control} label="Street Address" required />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <ControlledInput
-            name="address.city"
-            control={control}
-            label="City"
-            required
-          />
-          <ControlledInput
-            name="address.state"
-            control={control}
-            label="State"
-            required
-          />
-          <ControlledInput
-            name="address.zipCode"
-            control={control}
-            label="Zip Code"
-            required
-          />
+          <ControlledInput name="address.city" control={control} label="City" required />
+          <ControlledInput name="address.state" control={control} label="State" required />
+          <ControlledInput name="address.zipCode" control={control} label="Zip Code" required />
         </div>
       </CardContent>
     </Card>

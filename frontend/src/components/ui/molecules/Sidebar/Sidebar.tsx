@@ -1,27 +1,29 @@
+import { useCallback, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-  Users,
-  Home,
-  LogOut,
   Calendar,
-  StickyNote,
-  Pill,
-  TestTube,
-  FileText,
-  Settings,
-  UserCog,
   ChevronDown,
   ChevronRight,
-  FileBarChart,
   ClipboardList,
+  FileBarChart,
+  FileText,
+  Home,
+  LogOut,
+  Pill,
+  Settings,
+  StickyNote,
+  TestTube,
+  UserCog,
+  Users,
 } from 'lucide-react';
-import { useState, useMemo, useCallback } from 'react';
 
 import { Button } from '@/components/ui';
-import { cn } from '@/styles/utils';
+
 import { useAuth } from '@/context/auth';
 
 import { ROUTES } from '@/utils/constants';
+
+import { cn } from '@/styles/utils';
 
 interface SidebarProps {
   open?: boolean;
@@ -53,91 +55,91 @@ const isSystemAdmin = (role: string): boolean => {
 };
 
 const allNavSections: NavSection[] = [
-    {
-      items: [
-        {
-          title: 'Dashboard',
-          href: ROUTES.HOME,
-          icon: Home,
-          roles: ['CLINICAL_STAFF', 'ADMIN', 'SYSTEM_ADMIN'],
-        },
-        {
-          title: 'Patients',
-          href: ROUTES.PATIENTS,
-          icon: Users,
-          roles: ['CLINICAL_STAFF', 'ADMIN', 'SYSTEM_ADMIN'],
-        },
-        {
-          title: 'Appointments',
-          href: ROUTES.APPOINTMENTS,
-          icon: Calendar,
-          roles: ['CLINICAL_STAFF', 'ADMIN', 'SYSTEM_ADMIN'],
-        },
-        {
-          title: 'Tasks',
-          href: ROUTES.TASKS,
-          icon: ClipboardList,
-          roles: ['CLINICAL_STAFF', 'ADMIN', 'SYSTEM_ADMIN'],
-        },
-      ],
-    },
-    {
-      title: 'Clinical',
-      items: [
-        {
-          title: 'Clinical Notes',
-          href: ROUTES.CLINICAL_NOTES,
-          icon: StickyNote,
-          roles: ['CLINICAL_STAFF', 'SYSTEM_ADMIN'],
-        },
-        {
-          title: 'Medications',
-          href: ROUTES.MEDICATIONS,
-          icon: Pill,
-          roles: ['CLINICAL_STAFF', 'SYSTEM_ADMIN'],
-        },
-        {
-          title: 'Labs & Results',
-          href: ROUTES.LABS_RESULTS,
-          icon: TestTube,
-          roles: ['CLINICAL_STAFF', 'SYSTEM_ADMIN'],
-        },
-      ],
-    },
-    {
-      title: 'Administrative',
-      items: [
-        {
-          title: 'Insurance Management',
-          href: ROUTES.INSURANCE_MANAGEMENT,
-          icon: FileText,
-          roles: ['ADMIN', 'SYSTEM_ADMIN'],
-        },
-        {
-          title: 'Reports',
-          href: ROUTES.REPORTS,
-          icon: FileBarChart,
-          roles: ['ADMIN', 'SYSTEM_ADMIN'],
-        },
-      ],
-    },
-    {
-      title: 'System',
-      items: [
-        {
-          title: 'User Management',
-          href: ROUTES.USER_MANAGEMENT,
-          icon: UserCog,
-          roles: ['ADMIN', 'SYSTEM_ADMIN'],
-        },
-        {
-          title: 'Settings',
-          href: ROUTES.SETTINGS,
-          icon: Settings,
-          roles: ['ADMIN', 'SYSTEM_ADMIN'],
-        },
-      ],
-    },
+  {
+    items: [
+      {
+        title: 'Dashboard',
+        href: ROUTES.HOME,
+        icon: Home,
+        roles: ['CLINICAL_STAFF', 'ADMIN', 'SYSTEM_ADMIN'],
+      },
+      {
+        title: 'Patients',
+        href: ROUTES.PATIENTS,
+        icon: Users,
+        roles: ['CLINICAL_STAFF', 'ADMIN', 'SYSTEM_ADMIN'],
+      },
+      {
+        title: 'Appointments',
+        href: ROUTES.APPOINTMENTS,
+        icon: Calendar,
+        roles: ['CLINICAL_STAFF', 'ADMIN', 'SYSTEM_ADMIN'],
+      },
+      {
+        title: 'Tasks',
+        href: ROUTES.TASKS,
+        icon: ClipboardList,
+        roles: ['CLINICAL_STAFF', 'ADMIN', 'SYSTEM_ADMIN'],
+      },
+    ],
+  },
+  {
+    title: 'Clinical',
+    items: [
+      {
+        title: 'Clinical Notes',
+        href: ROUTES.CLINICAL_NOTES,
+        icon: StickyNote,
+        roles: ['CLINICAL_STAFF', 'SYSTEM_ADMIN'],
+      },
+      {
+        title: 'Medications',
+        href: ROUTES.MEDICATIONS,
+        icon: Pill,
+        roles: ['CLINICAL_STAFF', 'SYSTEM_ADMIN'],
+      },
+      {
+        title: 'Labs & Results',
+        href: ROUTES.LABS_RESULTS,
+        icon: TestTube,
+        roles: ['CLINICAL_STAFF', 'SYSTEM_ADMIN'],
+      },
+    ],
+  },
+  {
+    title: 'Administrative',
+    items: [
+      {
+        title: 'Insurance Management',
+        href: ROUTES.INSURANCE_MANAGEMENT,
+        icon: FileText,
+        roles: ['ADMIN', 'SYSTEM_ADMIN'],
+      },
+      {
+        title: 'Reports',
+        href: ROUTES.REPORTS,
+        icon: FileBarChart,
+        roles: ['ADMIN', 'SYSTEM_ADMIN'],
+      },
+    ],
+  },
+  {
+    title: 'System',
+    items: [
+      {
+        title: 'User Management',
+        href: ROUTES.USER_MANAGEMENT,
+        icon: UserCog,
+        roles: ['ADMIN', 'SYSTEM_ADMIN'],
+      },
+      {
+        title: 'Settings',
+        href: ROUTES.SETTINGS,
+        icon: Settings,
+        roles: ['ADMIN', 'SYSTEM_ADMIN'],
+      },
+    ],
+  },
 ];
 
 const Sidebar = ({ open = false, onClose }: SidebarProps) => {
@@ -148,20 +150,23 @@ const Sidebar = ({ open = false, onClose }: SidebarProps) => {
 
   const userRole = user?.role?.toLowerCase() || '';
 
-  const hasAccess = useCallback((itemRoles?: string[]): boolean => {
-    if (!itemRoles || itemRoles.length === 0) return true;
+  const hasAccess = useCallback(
+    (itemRoles?: string[]): boolean => {
+      if (!itemRoles || itemRoles.length === 0) return true;
 
-    if (isSystemAdmin(userRole)) return true;
+      if (isSystemAdmin(userRole)) return true;
 
-    return itemRoles.some(roleGroup => {
-      const roleVariations = ROLES[roleGroup as keyof typeof ROLES] || [];
+      return itemRoles.some(roleGroup => {
+        const roleVariations = ROLES[roleGroup as keyof typeof ROLES] || [];
 
-      return roleVariations.some(role => {
-        const normalizedRole = role.toLowerCase();
-        return userRole === normalizedRole;
+        return roleVariations.some(role => {
+          const normalizedRole = role.toLowerCase();
+          return userRole === normalizedRole;
+        });
       });
-    });
-  }, [userRole]);
+    },
+    [userRole]
+  );
 
   // Filter navigation sections based on user role
   const navSections = useMemo(() => {

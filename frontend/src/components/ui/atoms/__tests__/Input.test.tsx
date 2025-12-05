@@ -1,6 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
+
 import { Input } from '../input';
 
 describe('Input', () => {
@@ -57,4 +58,3 @@ describe('Input', () => {
     expect(ref).toHaveBeenCalled();
   });
 });
-

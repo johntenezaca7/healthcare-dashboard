@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
-import { Users, FileText, CheckSquare, ArrowRight } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button } from '@/components/ui';
+import { ArrowRight, CheckSquare, FileText, Users } from 'lucide-react';
+
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui';
+
 import { ROUTES } from '@/utils/constants';
 
 interface QuickActionsProps {

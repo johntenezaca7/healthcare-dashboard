@@ -1,7 +1,10 @@
 import { type ColumnDef } from '@tanstack/react-table';
-import { Badge, Button } from '@/components/ui';
 import { Download } from 'lucide-react';
+
+import { Badge, Button } from '@/components/ui';
+
 import { createSortableHeader, formatDateTime } from './utils';
+
 import type { Report } from '@/pages/future-work/mock';
 
 const getStatusVariant = (status: Report['status']) => {

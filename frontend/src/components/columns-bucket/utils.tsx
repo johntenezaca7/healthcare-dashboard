@@ -1,6 +1,7 @@
 import { Column } from '@tanstack/react-table';
+import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
+
 import { Button } from '@/components/ui';
-import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 export function createSortableHeader<TData = unknown>(label: string) {
   return ({ column }: { column: Column<TData, unknown> }) => {

@@ -19,9 +19,9 @@ export function getFieldError<TFormData extends FieldValues>(
  * Shows error if:
  * - Form has been submitted (show all errors), OR
  * - Field is dirty OR touched OR empty (any of these conditions)
- * 
+ *
  * This matches the logic used in ControlledInput component for consistency.
- * 
+ *
  * @param formState - The form state from react-hook-form
  * @param fieldName - The name of the field
  * @param getValues - Function to get the current value of a field
@@ -45,12 +45,14 @@ export function hasFieldError<TFormData extends FieldValues>(
   const isDirty = !!(formState.dirtyFields as Record<string, boolean>)[fieldName];
 
   // Check if field has been touched (user focused/blurred it)
-  const isTouched = !!(formState.touchedFields as Partial<Record<FieldPath<TFormData>, boolean>>)[fieldName];
+  const isTouched = !!(formState.touchedFields as Partial<Record<FieldPath<TFormData>, boolean>>)[
+    fieldName
+  ];
 
   // Show error if:
   // 1. Form has been submitted (show all errors), OR
   // 2. Field is dirty OR touched OR empty (any of these conditions)
-  return isSubmitted || (isDirty || isTouched || isEmpty);
+  return isSubmitted || isDirty || isTouched || isEmpty;
 }
 
 /**
@@ -96,4 +98,3 @@ export function getFieldClassNameFromForm<TFormData extends FieldValues>(
 ): string {
   return getFieldClassName(form.formState, fieldName, form.getValues, baseClassName);
 }
-

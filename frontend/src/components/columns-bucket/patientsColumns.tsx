@@ -1,12 +1,16 @@
-import { type ColumnDef } from '@tanstack/react-table';
 import { Link } from 'react-router-dom';
-import { Button, Badge } from '@/components/ui';
-import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
-import { PatientListItem } from '@/types';
+import { type ColumnDef } from '@tanstack/react-table';
+import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
+
 import { getPatientData } from '@/components/patients-list/utils';
-import { defaultNA } from '@/components/constants';
+import { Badge, Button } from '@/components/ui';
+
 import { calculateAge, formatDate } from '@/utils/date';
 import { formatStatus } from '@/utils/format';
+
+import { PatientListItem } from '@/types';
+
+import { defaultNA } from '@/components/constants';
 import { getPatientDetailRoute } from '@/utils/constants';
 
 interface CreateColumnsParams {
@@ -153,7 +157,9 @@ export function createColumns({
         const data = getPatientData(row.original);
         const lastVisit = data.lastVisit;
         return (
-          <div className="text-muted-foreground">{lastVisit ? formatDate(lastVisit) : defaultNA}</div>
+          <div className="text-muted-foreground">
+            {lastVisit ? formatDate(lastVisit) : defaultNA}
+          </div>
         );
       },
     },
@@ -208,4 +214,3 @@ export function createColumns({
     },
   ];
 }
-

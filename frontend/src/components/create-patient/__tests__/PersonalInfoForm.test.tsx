@@ -1,11 +1,14 @@
-import { describe, it, expect } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { render } from '@/test/utils';
-import { createFormWithSubmit } from '@/test/form-test-utils';
-import { PersonalInfoForm } from '../PersonalInfoForm';
-import { patientCreateSchema } from '@/schemas/patient';
+import { describe, expect, it } from 'vitest';
+
 import type { PatientCreateFormData } from '@/schemas/patient';
+import { patientCreateSchema } from '@/schemas/patient';
+
+import { PersonalInfoForm } from '../PersonalInfoForm';
+
+import { createFormWithSubmit } from '@/test/form-test-utils';
+import { render } from '@/test/utils';
 
 const FormWithSubmit = createFormWithSubmit(patientCreateSchema);
 
@@ -48,7 +51,7 @@ describe('PersonalInfoForm', () => {
   it('renders first name label and input', () => {
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <PersonalInfoForm control={form.control} />}
+        {form => <PersonalInfoForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -58,10 +61,10 @@ describe('PersonalInfoForm', () => {
 
   it('validates first name is required after clearing input', async () => {
     const user = userEvent.setup();
-    
+
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <PersonalInfoForm control={form.control} />}
+        {form => <PersonalInfoForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -83,18 +86,16 @@ describe('PersonalInfoForm', () => {
 
     await user.tab();
 
-    await waitFor(
-      () => {
-        expect(screen.getByText(/first name is required/i)).toBeInTheDocument();
-        expect(firstNameInput).toHaveClass('border-destructive');
-      }
-    );
+    await waitFor(() => {
+      expect(screen.getByText(/first name is required/i)).toBeInTheDocument();
+      expect(firstNameInput).toHaveClass('border-destructive');
+    });
   });
 
   it('renders all form fields', () => {
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <PersonalInfoForm control={form.control} />}
+        {form => <PersonalInfoForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -113,10 +114,10 @@ describe('PersonalInfoForm', () => {
 
   it('validates last name is required after clearing input', async () => {
     const user = userEvent.setup();
-    
+
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <PersonalInfoForm control={form.control} />}
+        {form => <PersonalInfoForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -130,20 +131,18 @@ describe('PersonalInfoForm', () => {
     await user.clear(lastNameInput);
     await user.tab();
 
-    await waitFor(
-      () => {
-        expect(screen.getByText(/last name is required/i)).toBeInTheDocument();
-        expect(lastNameInput).toHaveClass('border-destructive');
-      }
-    );
+    await waitFor(() => {
+      expect(screen.getByText(/last name is required/i)).toBeInTheDocument();
+      expect(lastNameInput).toHaveClass('border-destructive');
+    });
   });
 
   it('validates email format', async () => {
     const user = userEvent.setup();
-    
+
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <PersonalInfoForm control={form.control} />}
+        {form => <PersonalInfoForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -152,20 +151,18 @@ describe('PersonalInfoForm', () => {
     await user.type(emailInput, 'invalid-email');
     await user.tab();
 
-    await waitFor(
-      () => {
-        expect(screen.getByText(/invalid email format/i)).toBeInTheDocument();
-        expect(emailInput).toHaveClass('border-destructive');
-      }
-    );
+    await waitFor(() => {
+      expect(screen.getByText(/invalid email format/i)).toBeInTheDocument();
+      expect(emailInput).toHaveClass('border-destructive');
+    });
   });
 
   it('validates date of birth is required', async () => {
     const user = userEvent.setup();
-    
+
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <PersonalInfoForm control={form.control} />}
+        {form => <PersonalInfoForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -179,20 +176,18 @@ describe('PersonalInfoForm', () => {
     await user.clear(dobInput);
     await user.tab();
 
-    await waitFor(
-      () => {
-        expect(screen.getByText(/date of birth is required/i)).toBeInTheDocument();
-        expect(dobInput).toHaveClass('border-destructive');
-      }
-    );
+    await waitFor(() => {
+      expect(screen.getByText(/date of birth is required/i)).toBeInTheDocument();
+      expect(dobInput).toHaveClass('border-destructive');
+    });
   });
 
   it('validates phone is required', async () => {
     const user = userEvent.setup();
-    
+
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <PersonalInfoForm control={form.control} />}
+        {form => <PersonalInfoForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -206,20 +201,18 @@ describe('PersonalInfoForm', () => {
     await user.clear(phoneInput);
     await user.tab();
 
-    await waitFor(
-      () => {
-        expect(screen.getByText(/phone is required/i)).toBeInTheDocument();
-        expect(phoneInput).toHaveClass('border-destructive');
-      }
-    );
+    await waitFor(() => {
+      expect(screen.getByText(/phone is required/i)).toBeInTheDocument();
+      expect(phoneInput).toHaveClass('border-destructive');
+    });
   });
 
   it('validates address fields are required', async () => {
     const user = userEvent.setup();
-    
+
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <PersonalInfoForm control={form.control} />}
+        {form => <PersonalInfoForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -233,52 +226,44 @@ describe('PersonalInfoForm', () => {
     await user.clear(streetInput);
     await user.tab();
 
-    await waitFor(
-      () => {
-        expect(screen.getByText(/street address is required/i)).toBeInTheDocument();
-      }
-    );
+    await waitFor(() => {
+      expect(screen.getByText(/street address is required/i)).toBeInTheDocument();
+    });
 
     // Test city
     await user.type(cityInput, 'New York');
     await user.clear(cityInput);
     await user.tab();
 
-    await waitFor(
-      () => {
-        expect(screen.getByText(/city is required/i)).toBeInTheDocument();
-      }
-    );
+    await waitFor(() => {
+      expect(screen.getByText(/city is required/i)).toBeInTheDocument();
+    });
 
     // Test state
     await user.type(stateInput, 'NY');
     await user.clear(stateInput);
     await user.tab();
 
-    await waitFor(
-      () => {
-        expect(screen.getByText(/state is required/i)).toBeInTheDocument();
-      }
-    );
+    await waitFor(() => {
+      expect(screen.getByText(/state is required/i)).toBeInTheDocument();
+    });
 
     // Test zip code
     await user.type(zipInput, '10001');
     await user.clear(zipInput);
     await user.tab();
 
-    await waitFor(
-      () => {
-        expect(screen.getByText(/zip code is required/i)).toBeInTheDocument();
-      }
-    );
+    await waitFor(() => {
+      expect(screen.getByText(/zip code is required/i)).toBeInTheDocument();
+    });
   });
 
   it('updates form values when user types', async () => {
     const user = userEvent.setup();
-    
+
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <PersonalInfoForm control={form.control} />}
+        {form => <PersonalInfoForm control={form.control} />}
       </FormWithSubmit>
     );
 
@@ -297,7 +282,7 @@ describe('PersonalInfoForm', () => {
   it('allows blood type to be optional', () => {
     render(
       <FormWithSubmit defaultValues={defaultFormValues}>
-        {(form) => <PersonalInfoForm control={form.control} />}
+        {form => <PersonalInfoForm control={form.control} />}
       </FormWithSubmit>
     );
 

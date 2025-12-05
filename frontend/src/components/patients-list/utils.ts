@@ -1,36 +1,34 @@
-import { PatientListItem } from '@/types';
-import { bloodTypes, statuses, statusValues, lastVisitValues } from '../constants';
-
 import type { FetchPatientsParams } from '@/hooks/queries';
-import type { Statuses, BloodTypes } from './types';
-import type { FilterValue, ArrayFilterValue } from './utils/types';
 
+import { PatientListItem } from '@/types';
+
+import { bloodTypes, lastVisitValues, statuses, statusValues } from '../constants';
+import type { ArrayFilterValue, FilterValue } from './utils/types';
+import type { BloodTypes, Statuses } from './types';
 
 export function getPatientData(
   patient: PatientListItem | Record<string, unknown>
 ): PatientListItem {
   const patientAny = patient as PatientListItem & Record<string, unknown>;
-  
+
   const getString = (value: unknown, fallback: string = ''): string => {
     return typeof value === 'string' ? value : fallback;
   };
-  
+
   const getStatus = (value: unknown): Statuses => {
     if (typeof value === 'string' && statuses.includes(value as Statuses)) {
       return value as Statuses;
     }
     return 'active';
   };
-  
-  const getBloodType = (
-    value: unknown
-  ): BloodTypes | null => {
+
+  const getBloodType = (value: unknown): BloodTypes | null => {
     if (typeof value === 'string' && (bloodTypes as readonly string[]).includes(value)) {
       return value as BloodTypes;
     }
     return null;
   };
-  
+
   return {
     id: getString(patientAny.id),
     firstName: getString(patientAny.firstName || patientAny.first_name),

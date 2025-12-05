@@ -1,7 +1,9 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { screen, fireEvent } from '@testing-library/react';
-import { render } from '@/test/utils';
+import { fireEvent, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { PatientSearch } from '../PatientSearch';
+
+import { render } from '@/test/utils';
 
 describe('PatientSearch', () => {
   const mockOnSearch = vi.fn();

@@ -1,11 +1,15 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { screen } from '@testing-library/react';
-import { render } from '@/test/utils';
-import { PatientList } from '../PatientList';
-import { useGetAllPatients } from '@/hooks/queries';
-import { useAuth } from '@/context/auth';
 import type { Row } from '@tanstack/react-table';
+import { screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { useAuth } from '@/context/auth';
+import { useGetAllPatients } from '@/hooks/queries';
+
 import type { PatientListItem } from '@/types';
+
+import { PatientList } from '../PatientList';
+
+import { render } from '@/test/utils';
 
 vi.mock('@/hooks/queries', () => ({
   useGetAllPatients: vi.fn(),

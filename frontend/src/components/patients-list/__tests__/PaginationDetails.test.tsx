@@ -1,7 +1,9 @@
-import { describe, it, expect } from 'vitest';
 import { screen } from '@testing-library/react';
-import { render } from '@/test/utils';
+import { describe, expect, it } from 'vitest';
+
 import { PaginationDetails } from '../PaginationDetails';
+
+import { render } from '@/test/utils';
 
 describe('PaginationDetails', () => {
   it('renders pagination details with default item label', () => {
@@ -13,13 +15,7 @@ describe('PaginationDetails', () => {
 
   it('renders pagination details with custom item label', () => {
     render(
-      <PaginationDetails
-        page={1}
-        pageSize={10}
-        total={100}
-        totalPages={10}
-        itemLabel="patients"
-      />
+      <PaginationDetails page={1} pageSize={10} total={100} totalPages={10} itemLabel="patients" />
     );
 
     expect(screen.getByText(/showing 1 to 10 of 100 patients/i)).toBeInTheDocument();
@@ -77,4 +73,3 @@ describe('PaginationDetails', () => {
     expect(detailsContainer).toBeInTheDocument();
   });
 });
-

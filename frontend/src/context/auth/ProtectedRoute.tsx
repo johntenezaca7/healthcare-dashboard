@@ -1,7 +1,10 @@
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from './AuthContext';
-import { ROUTES } from '@/utils/constants';
+
 import { getAuthToken } from '@/hooks';
+
+import { ROUTES } from '@/utils/constants';
+
+import { useAuth } from './AuthContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

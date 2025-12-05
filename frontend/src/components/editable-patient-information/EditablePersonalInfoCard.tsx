@@ -1,12 +1,13 @@
-import { useState, useEffect, memo, useMemo } from 'react';
-import { Edit, Mail, Phone, MapPin } from 'lucide-react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { Edit, Mail, MapPin, Phone } from 'lucide-react';
+
 import {
+  Button,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  Button,
   Input,
   Label,
   Select,
@@ -15,13 +16,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui';
-import { useUpdatePatientPersonalInfo, type PersonalInfoUpdate } from '@/hooks';
+
+import type { PersonalInfoUpdate } from '@/hooks';
+import { useUpdatePatientPersonalInfo } from '@/hooks';
+import { calculateAge, formatDate } from '@/utils/date';
+import {
+  getFieldClassNameFromForm as getFieldClassName,
+  getFieldErrorFromForm as getFieldError,
+  hasFieldErrorFromForm as hasFieldError,
+} from '@/utils/form';
+
 import { Patient } from '@/types';
-import { formatDate, calculateAge } from '@/utils/date';
+
 import { bloodTypes, defaultNA } from '../constants';
 import { extractDatePart } from '../patients-list/utils';
 import type { PersonalInfoFormData } from './types';
-import { getFieldErrorFromForm as getFieldError, hasFieldErrorFromForm as hasFieldError, getFieldClassNameFromForm as getFieldClassName } from '@/utils/form';
 
 interface EditablePersonalInfoCardProps {
   patientId: string;
@@ -153,7 +162,9 @@ const EditablePersonalInfoCard = memo(
               <Button
                 size="sm"
                 onClick={form.handleSubmit(onSubmit)}
-                disabled={!form.formState.isValid || updateMutation.isPending || form.formState.isSubmitting}
+                disabled={
+                  !form.formState.isValid || updateMutation.isPending || form.formState.isSubmitting
+                }
               >
                 Save
               </Button>
@@ -252,7 +263,9 @@ const EditablePersonalInfoCard = memo(
                   <Label htmlFor="bloodType">Blood Type</Label>
                   <Select
                     value={form.watch('bloodType') || 'none'}
-                    onValueChange={value => form.setValue('bloodType', value === 'none' ? undefined : value)}
+                    onValueChange={value =>
+                      form.setValue('bloodType', value === 'none' ? undefined : value)
+                    }
                   >
                     <SelectTrigger id="bloodType">
                       <SelectValue placeholder="Select blood type" />
@@ -321,7 +334,9 @@ const EditablePersonalInfoCard = memo(
                     className={getFieldClassName(form, 'address.street')}
                   />
                   {hasFieldError(form, 'address.street') && (
-                    <p className="text-xs text-destructive">{getFieldError(form, 'address.street')}</p>
+                    <p className="text-xs text-destructive">
+                      {getFieldError(form, 'address.street')}
+                    </p>
                   )}
                 </div>
 
@@ -334,7 +349,9 @@ const EditablePersonalInfoCard = memo(
                       className={getFieldClassName(form, 'address.city')}
                     />
                     {hasFieldError(form, 'address.city') && (
-                      <p className="text-xs text-destructive">{getFieldError(form, 'address.city')}</p>
+                      <p className="text-xs text-destructive">
+                        {getFieldError(form, 'address.city')}
+                      </p>
                     )}
                   </div>
                   <div className="space-y-2">
@@ -345,7 +362,9 @@ const EditablePersonalInfoCard = memo(
                       className={getFieldClassName(form, 'address.state')}
                     />
                     {hasFieldError(form, 'address.state') && (
-                      <p className="text-xs text-destructive">{getFieldError(form, 'address.state')}</p>
+                      <p className="text-xs text-destructive">
+                        {getFieldError(form, 'address.state')}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -359,15 +378,14 @@ const EditablePersonalInfoCard = memo(
                       className={getFieldClassName(form, 'address.zipCode')}
                     />
                     {hasFieldError(form, 'address.zipCode') && (
-                      <p className="text-xs text-destructive">{getFieldError(form, 'address.zipCode')}</p>
+                      <p className="text-xs text-destructive">
+                        {getFieldError(form, 'address.zipCode')}
+                      </p>
                     )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="address.country">Country</Label>
-                    <Input
-                      id="address.country"
-                      {...form.register('address.country')}
-                    />
+                    <Input id="address.country" {...form.register('address.country')} />
                   </div>
                 </div>
               </div>

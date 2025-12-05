@@ -1,9 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { render } from '@/test/utils';
-import { EditableCurrentMedicationsCard } from '../EditableCurrentMedicationsCard';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import * as hooks from '@/hooks';
+
+import { EditableCurrentMedicationsCard } from '../EditableCurrentMedicationsCard';
+
+import { render } from '@/test/utils';
 
 vi.mock('@/hooks', () => ({
   useUpdatePatientMedications: vi.fn(),
@@ -114,11 +117,14 @@ describe('EditableCurrentMedicationsCard', () => {
     const saveButton = screen.getByRole('button', { name: /save/i });
     await user.click(saveButton);
 
-    await waitFor(() => {
-      // Form validation should show error - check for required message
-      const errorMessages = screen.queryAllByText(/required/i);
-      expect(errorMessages.length).toBeGreaterThan(0);
-    }, { timeout: 2000 });
+    await waitFor(
+      () => {
+        // Form validation should show error - check for required message
+        const errorMessages = screen.queryAllByText(/required/i);
+        expect(errorMessages.length).toBeGreaterThan(0);
+      },
+      { timeout: 2000 }
+    );
   });
 
   it('allows adding new medication', async () => {
@@ -152,7 +158,7 @@ describe('EditableCurrentMedicationsCard', () => {
       const isInCard = btn.closest('[class*="border"]');
       return svg && isInCard;
     });
-    
+
     if (removeButtons.length > 0) {
       const initialMedCount = screen.getAllByText(/medication \d+/i).length;
       await user.click(removeButtons[0]);
@@ -319,4 +325,3 @@ describe('EditableCurrentMedicationsCard', () => {
     expect(screen.getByText(/dr\. smith/i)).toBeInTheDocument();
   });
 });
-
