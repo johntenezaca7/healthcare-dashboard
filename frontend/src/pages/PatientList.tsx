@@ -17,9 +17,10 @@ import { usePatientFilters } from '@/hooks/patientList';
 import { useGetAllPatients } from '@/hooks/queries';
 
 const DEFAULT_PAGE_SIZE = 25;
+const DEFAULT_PAGE = 1;
 
 const PatientList = () => {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(DEFAULT_PAGE);
   const [pageSize] = useState(DEFAULT_PAGE_SIZE);
 
   const {
@@ -57,7 +58,7 @@ const PatientList = () => {
   const handleSearchWithPageReset = useCallback(
     (value: string) => {
       handleSearch(value);
-      setPage(1);
+      setPage(DEFAULT_PAGE);
     },
     [handleSearch]
   );
@@ -65,14 +66,14 @@ const PatientList = () => {
   const handleFilterChangeWithPageReset = useCallback(
     (filter: string, value: Parameters<typeof handleFilterChange>[1]) => {
       handleFilterChange(filter, value);
-      setPage(1);
+      setPage(DEFAULT_PAGE);
     },
     [handleFilterChange]
   );
 
   const clearFiltersWithPageReset = useCallback(() => {
     clearFilters();
-    setPage(1);
+    setPage(DEFAULT_PAGE);
   }, [clearFilters]);
 
   return (
