@@ -12,6 +12,7 @@ export interface PersonalInfoUpdate {
     zipCode?: string;
     country?: string;
   };
+  ifUnmodifiedSince?: string; // ISO timestamp for conflict detection
 }
 
 export interface EmergencyContactUpdate {

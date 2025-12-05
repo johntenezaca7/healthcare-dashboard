@@ -34,6 +34,7 @@ interface EditablePersonalInfoCardProps {
     zip_code?: string;
     country?: string;
   };
+  updatedAt?: string; // ISO timestamp for conflict detection
   onUpdate: () => void;
 }
 
@@ -47,6 +48,7 @@ const EditablePersonalInfoCard = memo(
     phone: initialPhone,
     bloodType: initialBloodType,
     address: initialAddress,
+    updatedAt: initialUpdatedAt,
     onUpdate,
   }: EditablePersonalInfoCardProps) => {
     const updateMutation = useUpdatePatientPersonalInfo();
@@ -105,6 +107,8 @@ const EditablePersonalInfoCard = memo(
             zipCode: data.address.zipCode,
             country: data.address.country,
           },
+          // Include timestamp for conflict detection
+          ifUnmodifiedSince: initialUpdatedAt || undefined,
         };
 
         await updateMutation.mutateAsync({ id: patientId, data: updateData });

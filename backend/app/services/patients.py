@@ -320,6 +320,35 @@ def update_patient_personal_info(
     # Update fields if provided
     update_dict = update_data.model_dump(exclude_unset=True, by_alias=True)
     
+    # Conflict detection: Check if patient was modified since last fetch
+    if "ifUnmodifiedSince" in update_dict and update_dict["ifUnmodifiedSince"]:
+        try:
+            client_timestamp = datetime.fromisoformat(update_dict["ifUnmodifiedSince"].replace("Z", "+00:00"))
+            # Compare timestamps (accounting for timezone)
+            if patient.updated_at and patient.updated_at.replace(tzinfo=None) > client_timestamp.replace(tzinfo=None):
+                raise HTTPException(
+                    status_code=409,
+                    detail="Patient was modified by another user. Please refresh and try again."
+                )
+        except (ValueError, TypeError):
+            # Invalid timestamp format - ignore and proceed (backward compatibility)
+            pass
+    
+    # Check for email conflicts before updating
+    if "email" in update_dict:
+        new_email = update_dict["email"]
+        # Check if email already exists for a different patient
+        existing_patient = db.query(models.Patient).filter(
+            models.Patient.email == new_email,
+            models.Patient.id != patient_id
+        ).first()
+        
+        if existing_patient:
+            raise HTTPException(
+                status_code=409,
+                detail=f"Patient with email '{new_email}' already exists"
+            )
+    
     if "first_name" in update_dict:
         patient.first_name = update_dict["first_name"]
     if "last_name" in update_dict:
@@ -362,9 +391,24 @@ def update_patient_personal_info(
     # Update updated_at timestamp
     patient.updated_at = datetime.utcnow()
     
-    # Commit changes
-    db.commit()
-    db.refresh(patient)
+    # Commit changes with error handling for race conditions
+    try:
+        db.commit()
+        db.refresh(patient)
+    except IntegrityError as e:
+        db.rollback()
+        # Handle unique constraint violation (race condition scenario)
+        if "unique_patient_email" in str(e.orig) or "UNIQUE constraint failed" in str(e.orig):
+            if "email" in update_dict:
+                raise HTTPException(
+                    status_code=409,
+                    detail=f"Patient with email '{update_dict['email']}' already exists"
+                )
+        # Re-raise other integrity errors
+        raise HTTPException(
+            status_code=400,
+            detail="Failed to update patient due to database constraint violation"
+        )
     
     return convert_patient_to_schema(patient)
 

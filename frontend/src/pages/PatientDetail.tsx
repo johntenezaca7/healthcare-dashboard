@@ -47,6 +47,12 @@ const PatientDetail = () => {
   const emergencyContact = normalized.emergencyContact;
   const insurance = normalized.insurance;
   const medicalInfo = normalized.medicalInfo;
+  
+  // Extract updatedAt for conflict detection (handle both formats)
+  const patientRecord = patient as unknown as Record<string, unknown>;
+  const updatedAt = (patientRecord.updatedAt as string | undefined) || 
+                    (patientRecord.updated_at as string | undefined) || 
+                    '';
 
   return (
     <div className="space-y-6">
@@ -102,6 +108,7 @@ const PatientDetail = () => {
               phone={normalized.phone}
               bloodType={medicalInfo?.bloodType || null}
               address={address || undefined}
+              updatedAt={updatedAt}
               onUpdate={() => {
                 refetch();
               }}

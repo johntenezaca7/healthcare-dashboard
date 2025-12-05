@@ -109,6 +109,8 @@ class PersonalInfoUpdate(BaseModel):
     phone: Optional[str] = None
     bloodType: Optional[Literal["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]] = Field(None, alias="blood_type")
     address: Optional[Address] = None
+    # Optional: timestamp for optimistic locking (conflict detection)
+    ifUnmodifiedSince: Optional[str] = Field(None, description="ISO timestamp - update only if patient hasn't been modified since this time")
     
     class Config:
         populate_by_name = True

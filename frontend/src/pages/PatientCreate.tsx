@@ -1,4 +1,5 @@
 import { FormProvider, useForm } from 'react-hook-form';
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ArrowLeft, Save } from 'lucide-react';
@@ -27,6 +28,7 @@ import { getPatientDetailRoute, ROUTES } from '@/utils/constants';
 const PatientCreate = () => {
   const navigate = useNavigate();
   const createPatientMutation = useCreatePatient();
+  const errorCardRef = useRef<HTMLDivElement>(null);
 
   const form = useForm<PatientCreateFormData>({
     resolver: yupResolver(patientCreateSchema),
@@ -36,6 +38,15 @@ const PatientCreate = () => {
 
   const { control, handleSubmit } = form;
 
+  // Scroll to top when error occurs
+  useEffect(() => {
+    if (createPatientMutation.error && errorCardRef.current) {
+      errorCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Also scroll window to top as fallback
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [createPatientMutation.error]);
+
   const onSubmit = async (data: PatientCreateFormData) => {
     try {
       const patientData = transformFormDataToPatientCreate(data);
@@ -43,6 +54,7 @@ const PatientCreate = () => {
       navigate(getPatientDetailRoute(createdPatient.id));
     } catch (err) {
       // Error is handled by createPatientMutation.error and displayed in the UI
+      // Scroll will happen automatically via useEffect
     }
   };
 
@@ -70,7 +82,7 @@ const PatientCreate = () => {
       </div>
 
       {createPatientMutation.error && (
-        <Card className="border-destructive" role="alert" aria-live="polite">
+        <Card ref={errorCardRef} className="border-destructive" role="alert" aria-live="polite">
           <CardContent className="pt-6">
             <div className="text-destructive">
               {getErrorMessage(
