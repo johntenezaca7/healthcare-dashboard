@@ -1,6 +1,6 @@
 """
 Script to generate 1500 sample patients for testing
-Run with Docker: docker-compose run backend python -m app.generate_data
+Run with Docker: docker compose run --rm api python -m app.generate_data
 Or: docker run --rm -v $(pwd)/healthcare.db:/app/healthcare.db <image> python -m app.generate_data
 """
 import random

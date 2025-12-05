@@ -3,6 +3,7 @@ Patient service - Business logic for patient operations
 """
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, and_, func as sql_func, String
+from sqlalchemy.exc import IntegrityError
 from typing import Optional, List
 from datetime import date, timedelta, datetime
 import math
@@ -525,6 +526,17 @@ def create_patient(
 ) -> schemas.Patient:
     """Create a new patient with all related data"""
     
+    # Check for existing patient with same email to provide better error message
+    existing_patient = db.query(models.Patient).filter(
+        models.Patient.email == patient_data.email
+    ).first()
+    
+    if existing_patient:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Patient with email '{patient_data.email}' already exists"
+        )
+    
     # Convert patient data to dict using by_alias=False to get camelCase field names
     # (by_alias=True would give us snake_case alias names)
     patient_dict = patient_data.model_dump(exclude_unset=True, by_alias=False)
@@ -532,60 +544,75 @@ def create_patient(
     # Parse date of birth
     dob = datetime.strptime(patient_dict["dateOfBirth"], "%Y-%m-%d").date()
     
-    # Create patient record
-    new_patient = models.Patient(
-        first_name=patient_dict["firstName"],
-        last_name=patient_dict["lastName"],
-        date_of_birth=dob,
-        email=patient_dict["email"],
-        phone=patient_dict["phone"],
-        blood_type=patient_dict.get("bloodType"),
-        # Address
-        address_street=patient_dict["address"]["street"],
-        address_city=patient_dict["address"]["city"],
-        address_state=patient_dict["address"]["state"],
-        address_zip_code=patient_dict["address"].get("zipCode", ""),
-        address_country=patient_dict["address"].get("country", "USA"),
-        # Emergency Contact
-        emergency_contact_name=patient_dict["emergencyContact"]["name"],
-        emergency_contact_relationship=patient_dict["emergencyContact"]["relationship"],
-        emergency_contact_phone=patient_dict["emergencyContact"]["phone"],
-        emergency_contact_email=patient_dict["emergencyContact"].get("email"),
-        # Medical Info
-        allergies=patient_dict.get("allergies", []),
-        conditions=patient_dict.get("conditions", []),
-        last_visit=datetime.strptime(patient_dict["lastVisit"], "%Y-%m-%d").date() if patient_dict.get("lastVisit") and patient_dict["lastVisit"] else None,
-        status=patient_dict.get("status", "active"),
-        # Insurance Info
-        insurance_provider=patient_dict["insurance"]["provider"],
-        insurance_policy_number=patient_dict["insurance"].get("policyNumber", ""),
-        insurance_group_number=patient_dict["insurance"].get("groupNumber"),
-        insurance_effective_date=datetime.strptime(patient_dict["insurance"].get("effectiveDate", ""), "%Y-%m-%d").date(),
-        insurance_expiration_date=datetime.strptime(patient_dict["insurance"]["expirationDate"], "%Y-%m-%d").date() if patient_dict["insurance"].get("expirationDate") else None,
-        insurance_copay=patient_dict["insurance"]["copay"],
-        insurance_deductible=patient_dict["insurance"]["deductible"],
-    )
+    try:
+        # Create patient record
+        new_patient = models.Patient(
+            first_name=patient_dict["firstName"],
+            last_name=patient_dict["lastName"],
+            date_of_birth=dob,
+            email=patient_dict["email"],
+            phone=patient_dict["phone"],
+            blood_type=patient_dict.get("bloodType"),
+            # Address
+            address_street=patient_dict["address"]["street"],
+            address_city=patient_dict["address"]["city"],
+            address_state=patient_dict["address"]["state"],
+            address_zip_code=patient_dict["address"].get("zipCode", ""),
+            address_country=patient_dict["address"].get("country", "USA"),
+            # Emergency Contact
+            emergency_contact_name=patient_dict["emergencyContact"]["name"],
+            emergency_contact_relationship=patient_dict["emergencyContact"]["relationship"],
+            emergency_contact_phone=patient_dict["emergencyContact"]["phone"],
+            emergency_contact_email=patient_dict["emergencyContact"].get("email"),
+            # Medical Info
+            allergies=patient_dict.get("allergies", []),
+            conditions=patient_dict.get("conditions", []),
+            last_visit=datetime.strptime(patient_dict["lastVisit"], "%Y-%m-%d").date() if patient_dict.get("lastVisit") and patient_dict["lastVisit"] else None,
+            status=patient_dict.get("status", "active"),
+            # Insurance Info
+            insurance_provider=patient_dict["insurance"]["provider"],
+            insurance_policy_number=patient_dict["insurance"].get("policyNumber", ""),
+            insurance_group_number=patient_dict["insurance"].get("groupNumber"),
+            insurance_effective_date=datetime.strptime(patient_dict["insurance"].get("effectiveDate", ""), "%Y-%m-%d").date(),
+            insurance_expiration_date=datetime.strptime(patient_dict["insurance"]["expirationDate"], "%Y-%m-%d").date() if patient_dict["insurance"].get("expirationDate") else None,
+            insurance_copay=patient_dict["insurance"]["copay"],
+            insurance_deductible=patient_dict["insurance"]["deductible"],
+        )
+        
+        db.add(new_patient)
+        db.flush()  # Get patient ID
+        
+        # Add medications if provided
+        if patient_dict.get("medications"):
+            for med_data in patient_dict["medications"]:
+                medication = models.Medication(
+                    patient_id=new_patient.id,
+                    name=med_data["name"],
+                    dosage=med_data["dosage"],
+                    frequency=med_data["frequency"],
+                    prescribed_by=med_data.get("prescribedBy", ""),
+                    start_date=datetime.strptime(med_data.get("startDate", ""), "%Y-%m-%d").date(),
+                    end_date=datetime.strptime(med_data["endDate"], "%Y-%m-%d").date() if med_data.get("endDate") else None,
+                    is_active=True,
+                )
+                db.add(medication)
+        
+        # Commit all changes
+        db.commit()
+        db.refresh(new_patient)
+        
+        return convert_patient_to_schema(new_patient)
     
-    db.add(new_patient)
-    db.flush()  # Get patient ID
-    
-    # Add medications if provided
-    if patient_dict.get("medications"):
-        for med_data in patient_dict["medications"]:
-            medication = models.Medication(
-                patient_id=new_patient.id,
-                name=med_data["name"],
-                dosage=med_data["dosage"],
-                frequency=med_data["frequency"],
-                prescribed_by=med_data.get("prescribedBy", ""),
-                start_date=datetime.strptime(med_data.get("startDate", ""), "%Y-%m-%d").date(),
-                end_date=datetime.strptime(med_data["endDate"], "%Y-%m-%d").date() if med_data.get("endDate") else None,
-                is_active=True,
+    except IntegrityError as e:
+        db.rollback()
+        # Handle unique constraint violation (race condition scenario)
+        if "unique_patient_email" in str(e.orig) or "UNIQUE constraint failed" in str(e.orig):
+            raise HTTPException(
+                status_code=409,
+                detail=f"Patient with email '{patient_data.email}' already exists"
             )
-            db.add(medication)
-    
-    # Commit all changes
-    db.commit()
-    db.refresh(new_patient)
-    
-    return convert_patient_to_schema(new_patient)
+        # Re-raise other integrity errors
+        raise HTTPException(
+            status_code=400,
+            detail="Failed to create patient due to database constraint violation"
+        )

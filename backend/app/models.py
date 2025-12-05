@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, Float, ForeignKey, Text, Boolean, DateTime, JSON, Enum as SQLEnum
+from sqlalchemy import Column, Integer, String, Date, Float, ForeignKey, Text, Boolean, DateTime, JSON, Enum as SQLEnum, UniqueConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from datetime import datetime
@@ -31,12 +31,15 @@ class DocumentType(str, Enum):
 
 class Patient(Base):
     __tablename__ = "patients"
+    __table_args__ = (
+        UniqueConstraint('email', name='unique_patient_email'),
+    )
     
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()), index=True)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     date_of_birth = Column(Date, nullable=False)
-    email = Column(String, nullable=False)
+    email = Column(String, nullable=False, unique=True)
     phone = Column(String, nullable=False)
     
     # Address as JSON (or could be separate table)

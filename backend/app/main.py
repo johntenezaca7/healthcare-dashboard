@@ -61,6 +61,6 @@ async def startup_event():
         patient_count = db.query(models.Patient).count()
         logger.info(f"Database contains {patient_count} patients.")
         if patient_count == 0:
-            logger.info("Database is empty. To generate patients, run: docker-compose run --rm backend python -m app.generate_data")
+            logger.info("Database is empty. To generate patients, run: docker compose run --rm api python -m app.generate_data")
     finally:
         db.close()
