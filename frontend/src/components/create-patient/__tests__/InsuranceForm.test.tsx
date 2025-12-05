@@ -2,28 +2,11 @@ import { describe, it, expect } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '@/test/utils';
-import { useForm, FormProvider } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { createFormWithSubmit } from '@/test/form-test-utils';
 import { InsuranceForm } from '../InsuranceForm';
-import { patientCreateSchema } from '../schemas';
-import type { PatientCreateFormData } from '../schemas';
-import type { PatientCreateFormApi } from '../types';
+import { patientCreateSchema } from '@/schemas/patient';
 
-const FormWrapper = ({ 
-  defaultValues, 
-  children 
-}: { 
-  defaultValues: Partial<PatientCreateFormData>; 
-  children: (form: PatientCreateFormApi) => React.ReactNode;
-}) => {
-  const form = useForm<PatientCreateFormData>({
-    resolver: yupResolver(patientCreateSchema),
-    defaultValues: defaultValues as PatientCreateFormData,
-    mode: 'onChange',
-    criteriaMode: 'all',
-  }) as PatientCreateFormApi;
-  return <FormProvider {...form}>{children(form)}</FormProvider>;
-};
+const FormWithSubmit = createFormWithSubmit(patientCreateSchema);
 
 describe('InsuranceForm', () => {
   const defaultFormValues = {
@@ -33,8 +16,8 @@ describe('InsuranceForm', () => {
       groupNumber: undefined as string | undefined,
       effectiveDate: '',
       expirationDate: undefined as string | undefined,
-      copay: 0,
-      deductible: 0,
+      copay: undefined as any,
+      deductible: undefined as any,
     },
     firstName: '',
     lastName: '',
@@ -62,9 +45,9 @@ describe('InsuranceForm', () => {
 
   it('renders all form fields', () => {
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
+      <FormWithSubmit defaultValues={defaultFormValues}>
         {(form) => <InsuranceForm control={form.control} />}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     expect(screen.getByText('Insurance Information')).toBeInTheDocument();
@@ -79,7 +62,7 @@ describe('InsuranceForm', () => {
 
   it('displays form fields with initial values', () => {
     render(
-      <FormWrapper
+      <FormWithSubmit
         defaultValues={{
           ...defaultFormValues,
           insurance: {
@@ -94,7 +77,7 @@ describe('InsuranceForm', () => {
         }}
       >
         {(form) => <InsuranceForm control={form.control} />}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     const policyNumberInput = screen.getByLabelText(/policy number/i) as HTMLInputElement;
@@ -104,14 +87,9 @@ describe('InsuranceForm', () => {
   it('validates provider is required', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => (
-          <form onSubmit={form.handleSubmit(() => {})}>
-            <InsuranceForm control={form.control} />
-            <button type="submit">Submit</button>
-          </form>
-        )}
-      </FormWrapper>
+      <FormWithSubmit defaultValues={defaultFormValues}>
+        {(form) => <InsuranceForm control={form.control} />}
+      </FormWithSubmit>
     );
 
     // Find the select trigger button
@@ -126,8 +104,10 @@ describe('InsuranceForm', () => {
       await user.tab();
     }
 
-    const submitButton = screen.getByRole('button', { name: /submit/i });
-    await user.click(submitButton);
+    const submitButton = screen.getAllByRole('button').find(btn => (btn as HTMLButtonElement).type === 'submit');
+    if (submitButton) {
+      await user.click(submitButton);
+    }
 
     await waitFor(() => {
       expect(screen.getByText(/insurance provider is required/i)).toBeInTheDocument();
@@ -137,57 +117,63 @@ describe('InsuranceForm', () => {
   it('validates policy number is required', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => (
-          <form onSubmit={form.handleSubmit(() => {})}>
-            <InsuranceForm control={form.control} />
-            <button type="submit">Submit</button>
-          </form>
-        )}
-      </FormWrapper>
+      <FormWithSubmit defaultValues={defaultFormValues}>
+        {(form) => <InsuranceForm control={form.control} />}
+      </FormWithSubmit>
     );
 
-    const policyNumberInput = screen.getByLabelText(/policy number/i);
-    await user.click(policyNumberInput);
+    const policyNumberInput = screen.getByLabelText(/policy number/i) as HTMLInputElement;
+    await user.type(policyNumberInput, 'POL123');
+    await waitFor(() => {
+      expect(policyNumberInput.value).toBe('POL123');
+    });
+
+    await user.clear(policyNumberInput);
     await user.tab();
 
-    const submitButton = screen.getByRole('button', { name: /submit/i });
-    await user.click(submitButton);
+    const submitButton = screen.getAllByRole('button').find(btn => (btn as HTMLButtonElement).type === 'submit');
+    if (submitButton) {
+      await user.click(submitButton);
+    }
 
     await waitFor(() => {
       expect(screen.getByText(/policy number is required/i)).toBeInTheDocument();
-    }, { timeout: 3000 });
+      expect(policyNumberInput).toHaveClass('border-destructive');
+    });
   });
 
   it('validates effective date is required', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => (
-          <form onSubmit={form.handleSubmit(() => {})}>
-            <InsuranceForm control={form.control} />
-            <button type="submit">Submit</button>
-          </form>
-        )}
-      </FormWrapper>
+      <FormWithSubmit defaultValues={defaultFormValues}>
+        {(form) => <InsuranceForm control={form.control} />}
+      </FormWithSubmit>
     );
 
-    const effectiveDateInput = screen.getByLabelText(/effective date/i);
-    await user.click(effectiveDateInput);
+    const effectiveDateInput = screen.getByLabelText(/effective date/i) as HTMLInputElement;
+    await user.type(effectiveDateInput, '2024-01-01');
+    await waitFor(() => {
+      expect(effectiveDateInput.value).toBe('2024-01-01');
+    });
+
+    await user.clear(effectiveDateInput);
     await user.tab();
 
-    const submitButton = screen.getByRole('button', { name: /submit/i });
-    await user.click(submitButton);
+    const submitButton = screen.getAllByRole('button').find(btn => (btn as HTMLButtonElement).type === 'submit');
+    if (submitButton) {
+      await user.click(submitButton);
+    }
 
     await waitFor(() => {
       expect(screen.getByText(/effective date is required/i)).toBeInTheDocument();
-    }, { timeout: 3000 });
+      expect(effectiveDateInput).toHaveClass('border-destructive');
+    });
   });
 
   it('validates copay is non-negative', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper
+      <FormWithSubmit
         defaultValues={{
           ...defaultFormValues,
           insurance: {
@@ -197,7 +183,7 @@ describe('InsuranceForm', () => {
             effectiveDate: '2024-01-01',
             expirationDate: undefined,
             copay: -10,
-            deductible: 0,
+            deductible: undefined as any,
           },
         }}
       >
@@ -207,15 +193,17 @@ describe('InsuranceForm', () => {
             <button type="submit">Submit</button>
           </form>
         )}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     const copayInput = screen.getByLabelText(/copay/i);
     await user.click(copayInput);
     await user.tab();
 
-    const submitButton = screen.getByRole('button', { name: /submit/i });
-    await user.click(submitButton);
+    const submitButton = screen.getAllByRole('button').find(btn => (btn as HTMLButtonElement).type === 'submit');
+    if (submitButton) {
+      await user.click(submitButton);
+    }
 
     await waitFor(() => {
       expect(screen.getByText(/copay.*>=.*0/i)).toBeInTheDocument();
@@ -225,7 +213,7 @@ describe('InsuranceForm', () => {
   it('validates deductible is non-negative', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper
+      <FormWithSubmit
         defaultValues={{
           ...defaultFormValues,
           insurance: {
@@ -234,7 +222,7 @@ describe('InsuranceForm', () => {
             groupNumber: undefined,
             effectiveDate: '2024-01-01',
             expirationDate: undefined,
-            copay: 0,
+            copay: undefined as any,
             deductible: -100,
           },
         }}
@@ -245,15 +233,17 @@ describe('InsuranceForm', () => {
             <button type="submit">Submit</button>
           </form>
         )}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     const deductibleInput = screen.getByLabelText(/deductible/i);
     await user.click(deductibleInput);
     await user.tab();
 
-    const submitButton = screen.getByRole('button', { name: /submit/i });
-    await user.click(submitButton);
+    const submitButton = screen.getAllByRole('button').find(btn => (btn as HTMLButtonElement).type === 'submit');
+    if (submitButton) {
+      await user.click(submitButton);
+    }
 
     await waitFor(() => {
       expect(screen.getByText(/deductible.*>=.*0/i)).toBeInTheDocument();
@@ -263,9 +253,9 @@ describe('InsuranceForm', () => {
   it('allows group number to be optional', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
+      <FormWithSubmit defaultValues={defaultFormValues}>
         {(form) => <InsuranceForm control={form.control} />}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     const groupNumberInput = screen.getByLabelText(/group number/i) as HTMLInputElement;
@@ -287,9 +277,9 @@ describe('InsuranceForm', () => {
   it('allows expiration date to be optional', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
+      <FormWithSubmit defaultValues={defaultFormValues}>
         {(form) => <InsuranceForm control={form.control} />}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     const expirationDateInput = screen.getByLabelText(/expiration date/i) as HTMLInputElement;
@@ -310,9 +300,9 @@ describe('InsuranceForm', () => {
 
   it('allows selecting insurance provider', () => {
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
+      <FormWithSubmit defaultValues={defaultFormValues}>
         {(form) => <InsuranceForm control={form.control} />}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     // Find the select trigger by looking near the provider label
@@ -331,9 +321,9 @@ describe('InsuranceForm', () => {
   it('updates form values when user types', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
+      <FormWithSubmit defaultValues={defaultFormValues}>
         {(form) => <InsuranceForm control={form.control} />}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     const policyNumberInput = screen.getByLabelText(/policy number/i);
@@ -345,9 +335,9 @@ describe('InsuranceForm', () => {
   it('handles numeric input for copay', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
+      <FormWithSubmit defaultValues={defaultFormValues}>
         {(form) => <InsuranceForm control={form.control} />}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     const copayInput = screen.getByLabelText(/copay/i) as HTMLInputElement;
@@ -361,9 +351,9 @@ describe('InsuranceForm', () => {
   it('handles numeric input for deductible', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
+      <FormWithSubmit defaultValues={defaultFormValues}>
         {(form) => <InsuranceForm control={form.control} />}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     const deductibleInput = screen.getByLabelText(/deductible/i) as HTMLInputElement;
@@ -377,25 +367,18 @@ describe('InsuranceForm', () => {
   it('applies error styling to invalid fields', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => (
-          <form onSubmit={form.handleSubmit(() => {})}>
-            <InsuranceForm control={form.control} />
-            <button type="submit">Submit</button>
-          </form>
-        )}
-      </FormWrapper>
+      <FormWithSubmit defaultValues={defaultFormValues}>
+        {(form) => <InsuranceForm control={form.control} />}
+      </FormWithSubmit>
     );
 
-    const policyNumberInput = screen.getByLabelText(/policy number/i);
-    await user.click(policyNumberInput);
+    const policyNumberInput = screen.getByLabelText(/policy number/i) as HTMLInputElement;
+    await user.type(policyNumberInput, 'POL123');
+    await user.clear(policyNumberInput);
     await user.tab();
-
-    const submitButton = screen.getByRole('button', { name: /submit/i });
-    await user.click(submitButton);
 
     await waitFor(() => {
       expect(policyNumberInput).toHaveClass('border-destructive');
-    }, { timeout: 3000 });
+    });
   });
 });

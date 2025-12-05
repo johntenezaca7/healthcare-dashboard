@@ -2,28 +2,11 @@ import { describe, it, expect } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '@/test/utils';
-import { useForm, FormProvider } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { createFormWithSubmit } from '@/test/form-test-utils';
 import { EmergencyContactForm } from '../EmergencyContactForm';
-import { patientCreateSchema } from '../schemas';
-import type { PatientCreateFormData } from '../schemas';
-import type { PatientCreateFormApi } from '../types';
+import { patientCreateSchema } from '@/schemas/patient';
 
-const FormWrapper = ({ 
-  defaultValues, 
-  children 
-}: { 
-  defaultValues: Partial<PatientCreateFormData>; 
-  children: (form: PatientCreateFormApi) => React.ReactNode;
-}) => {
-  const form = useForm<PatientCreateFormData>({
-    resolver: yupResolver(patientCreateSchema),
-    defaultValues: defaultValues as PatientCreateFormData,
-    mode: 'onChange',
-    criteriaMode: 'all',
-  }) as PatientCreateFormApi;
-  return <FormProvider {...form}>{children(form)}</FormProvider>;
-};
+const FormWithSubmit = createFormWithSubmit(patientCreateSchema);
 
 describe('EmergencyContactForm', () => {
   const defaultFormValues = {
@@ -51,8 +34,8 @@ describe('EmergencyContactForm', () => {
       groupNumber: undefined,
       effectiveDate: '',
       expirationDate: undefined,
-      copay: 0,
-      deductible: 0,
+      copay: undefined as any,
+      deductible: undefined as any,
     },
     allergies: [],
     conditions: [],
@@ -62,9 +45,9 @@ describe('EmergencyContactForm', () => {
 
   it('renders all form fields', () => {
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
+      <FormWithSubmit defaultValues={defaultFormValues}>
         {(form) => <EmergencyContactForm control={form.control} />}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     expect(screen.getByText('Emergency Contact')).toBeInTheDocument();
@@ -76,7 +59,7 @@ describe('EmergencyContactForm', () => {
 
   it('displays form fields with initial values', () => {
     render(
-      <FormWrapper
+      <FormWithSubmit
         defaultValues={{
           ...defaultFormValues,
           emergencyContact: {
@@ -88,7 +71,7 @@ describe('EmergencyContactForm', () => {
         }}
       >
         {(form) => <EmergencyContactForm control={form.control} />}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     const nameInput = screen.getByLabelText(/name/i) as HTMLInputElement;
@@ -105,85 +88,78 @@ describe('EmergencyContactForm', () => {
   it('validates emergency contact name is required', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => (
-          <form onSubmit={form.handleSubmit(() => {})}>
-            <EmergencyContactForm control={form.control} />
-            <button type="submit">Submit</button>
-          </form>
-        )}
-      </FormWrapper>
+      <FormWithSubmit defaultValues={defaultFormValues}>
+        {(form) => <EmergencyContactForm control={form.control} />}
+      </FormWithSubmit>
     );
 
-    const nameInput = screen.getByLabelText(/name/i);
-    await user.click(nameInput);
-    await user.tab();
+    const nameInput = screen.getByLabelText(/name/i) as HTMLInputElement;
+    await user.type(nameInput, 'John');
+    await waitFor(() => {
+      expect(nameInput.value).toBe('John');
+    });
 
-    // Trigger validation by attempting to submit
-    const submitButton = screen.getByRole('button', { name: /submit/i });
-    await user.click(submitButton);
+    await user.clear(nameInput);
+    await user.tab();
 
     await waitFor(() => {
       expect(screen.getByText(/emergency contact name is required/i)).toBeInTheDocument();
-    }, { timeout: 3000 });
+      expect(nameInput).toHaveClass('border-destructive');
+    });
   });
 
   it('validates relationship is required', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => (
-          <form onSubmit={form.handleSubmit(() => {})}>
-            <EmergencyContactForm control={form.control} />
-            <button type="submit">Submit</button>
-          </form>
-        )}
-      </FormWrapper>
+      <FormWithSubmit defaultValues={defaultFormValues}>
+        {(form) => <EmergencyContactForm control={form.control} />}
+      </FormWithSubmit>
     );
 
-    const relationshipInput = screen.getByLabelText(/relationship/i);
-    await user.click(relationshipInput);
-    await user.tab();
+    const relationshipInput = screen.getByLabelText(/relationship/i) as HTMLInputElement;
+    await user.type(relationshipInput, 'Spouse');
+    await waitFor(() => {
+      expect(relationshipInput.value).toBe('Spouse');
+    });
 
-    const submitButton = screen.getByRole('button', { name: /submit/i });
-    await user.click(submitButton);
+    await user.clear(relationshipInput);
+    await user.tab();
 
     await waitFor(() => {
       expect(screen.getByText(/relationship is required/i)).toBeInTheDocument();
-    }, { timeout: 3000 });
+      expect(relationshipInput).toHaveClass('border-destructive');
+    });
   });
 
   it('validates phone is required', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => (
-          <form onSubmit={form.handleSubmit(() => {})}>
-            <EmergencyContactForm control={form.control} />
-            <button type="submit">Submit</button>
-          </form>
-        )}
-      </FormWrapper>
+      <FormWithSubmit defaultValues={defaultFormValues}>
+        {(form) => <EmergencyContactForm control={form.control} />}
+      </FormWithSubmit>
     );
 
-    const phoneInput = screen.getByLabelText(/phone/i);
-    await user.click(phoneInput);
-    await user.tab();
+    const phoneInput = screen.getByLabelText(/phone/i) as HTMLInputElement;
+    await user.type(phoneInput, '555-1234');
+    await waitFor(() => {
+      expect(phoneInput.value).toBe('555-1234');
+    });
 
-    const submitButton = screen.getByRole('button', { name: /submit/i });
-    await user.click(submitButton);
+    await user.clear(phoneInput);
+    await user.tab();
 
     await waitFor(() => {
       expect(screen.getByText(/emergency contact phone is required/i)).toBeInTheDocument();
-    }, { timeout: 3000 });
+      expect(phoneInput).toHaveClass('border-destructive');
+    });
   });
 
   it('validates email format when provided', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
+      <FormWithSubmit defaultValues={defaultFormValues}>
         {(form) => <EmergencyContactForm control={form.control} />}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     const emailInput = screen.getByLabelText(/email/i);
@@ -198,9 +174,9 @@ describe('EmergencyContactForm', () => {
   it('allows email to be optional', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
+      <FormWithSubmit defaultValues={defaultFormValues}>
         {(form) => <EmergencyContactForm control={form.control} />}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     const emailInput = screen.getByLabelText(/email/i) as HTMLInputElement;
@@ -222,9 +198,9 @@ describe('EmergencyContactForm', () => {
   it('updates form values when user types', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
+      <FormWithSubmit defaultValues={defaultFormValues}>
         {(form) => <EmergencyContactForm control={form.control} />}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     const nameInput = screen.getByLabelText(/name/i);
@@ -236,25 +212,18 @@ describe('EmergencyContactForm', () => {
   it('applies error styling to invalid fields', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
-        {(form) => (
-          <form onSubmit={form.handleSubmit(() => {})}>
-            <EmergencyContactForm control={form.control} />
-            <button type="submit">Submit</button>
-          </form>
-        )}
-      </FormWrapper>
+      <FormWithSubmit defaultValues={defaultFormValues}>
+        {(form) => <EmergencyContactForm control={form.control} />}
+      </FormWithSubmit>
     );
 
-    const nameInput = screen.getByLabelText(/name/i);
-    await user.click(nameInput);
+    const nameInput = screen.getByLabelText(/name/i) as HTMLInputElement;
+    await user.type(nameInput, 'John');
+    await user.clear(nameInput);
     await user.tab();
-
-    const submitButton = screen.getByRole('button', { name: /submit/i });
-    await user.click(submitButton);
 
     await waitFor(() => {
       expect(nameInput).toHaveClass('border-destructive');
-    }, { timeout: 3000 });
+    });
   });
 });

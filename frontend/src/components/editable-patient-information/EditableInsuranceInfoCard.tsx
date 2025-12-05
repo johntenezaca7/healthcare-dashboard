@@ -22,7 +22,7 @@ import { formatDate } from '@/utils/date';
 import { insuranceProviders, defaultNA } from '../constants';
 import { extractDatePart } from '../patients-list/utils';
 import type { InsuranceInfoFormData } from './types';
-import { getFieldError, hasFieldError, getFieldClassName } from './utils';
+import { getFieldErrorFromForm as getFieldError, hasFieldErrorFromForm as hasFieldError, getFieldClassNameFromForm as getFieldClassName } from '@/utils/form';
 
 interface EditableInsuranceInfoCardProps {
   patientId: string;

@@ -2,27 +2,11 @@ import { describe, it, expect } from 'vitest';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '@/test/utils';
-import { useForm, FormProvider } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { createFormWithSubmit } from '@/test/form-test-utils';
 import { MedicalInfoForm } from '../MedicalInfoForm';
-import { patientCreateSchema } from '../schemas';
-import type { PatientCreateFormData } from '../schemas';
-import type { PatientCreateFormApi } from '../types';
+import { patientCreateSchema } from '@/schemas/patient';
 
-const FormWrapper = ({ 
-  defaultValues, 
-  children 
-}: { 
-  defaultValues: Partial<PatientCreateFormData>; 
-  children: (form: PatientCreateFormApi) => React.ReactNode;
-}) => {
-  const form = useForm<PatientCreateFormData>({
-    resolver: yupResolver(patientCreateSchema),
-    defaultValues: defaultValues as PatientCreateFormData,
-    mode: 'onChange',
-  }) as PatientCreateFormApi;
-  return <FormProvider {...form}>{children(form)}</FormProvider>;
-};
+const FormWithSubmit = createFormWithSubmit(patientCreateSchema);
 
 describe('MedicalInfoForm', () => {
   const defaultFormValues = {
@@ -51,8 +35,8 @@ describe('MedicalInfoForm', () => {
       groupNumber: undefined,
       effectiveDate: '',
       expirationDate: undefined,
-      copay: 0,
-      deductible: 0,
+      copay: undefined as any,
+      deductible: undefined as any,
     },
     allergies: [],
     conditions: [],
@@ -62,9 +46,9 @@ describe('MedicalInfoForm', () => {
 
   it('renders the form', () => {
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
+      <FormWithSubmit defaultValues={defaultFormValues}>
         {(form) => <MedicalInfoForm control={form.control} />}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     expect(screen.getByText('Medical Information')).toBeInTheDocument();
@@ -73,14 +57,14 @@ describe('MedicalInfoForm', () => {
 
   it('displays form field with initial value', () => {
     render(
-      <FormWrapper
+      <FormWithSubmit
         defaultValues={{
           ...defaultFormValues,
           lastVisit: '2024-01-15',
         }}
       >
         {(form) => <MedicalInfoForm control={form.control} />}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     const lastVisitInput = screen.getByLabelText(/last visit/i) as HTMLInputElement;
@@ -89,9 +73,9 @@ describe('MedicalInfoForm', () => {
 
   it('allows last visit to be optional', () => {
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
+      <FormWithSubmit defaultValues={defaultFormValues}>
         {(form) => <MedicalInfoForm control={form.control} />}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     const lastVisitInput = screen.getByLabelText(/last visit/i) as HTMLInputElement;
@@ -101,9 +85,9 @@ describe('MedicalInfoForm', () => {
   it('updates form value when user selects date', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
+      <FormWithSubmit defaultValues={defaultFormValues}>
         {(form) => <MedicalInfoForm control={form.control} />}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     const lastVisitInput = screen.getByLabelText(/last visit/i) as HTMLInputElement;
@@ -115,9 +99,9 @@ describe('MedicalInfoForm', () => {
   it('handles date input correctly', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper defaultValues={defaultFormValues}>
+      <FormWithSubmit defaultValues={defaultFormValues}>
         {(form) => <MedicalInfoForm control={form.control} />}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     const lastVisitInput = screen.getByLabelText(/last visit/i) as HTMLInputElement;
@@ -130,14 +114,14 @@ describe('MedicalInfoForm', () => {
   it('allows clearing the date field', async () => {
     const user = userEvent.setup();
     render(
-      <FormWrapper
+      <FormWithSubmit
         defaultValues={{
           ...defaultFormValues,
           lastVisit: '2024-01-15',
         }}
       >
         {(form) => <MedicalInfoForm control={form.control} />}
-      </FormWrapper>
+      </FormWithSubmit>
     );
 
     const lastVisitInput = screen.getByLabelText(/last visit/i) as HTMLInputElement;

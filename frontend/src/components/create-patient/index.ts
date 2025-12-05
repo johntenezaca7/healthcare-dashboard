@@ -4,4 +4,3 @@ export { InsuranceForm } from './InsuranceForm';
 export { MedicalInfoForm } from './MedicalInfoForm';
 export type { PatientCreateFormApi, FormComponentProps } from './types';
 export { patientCreateSchema, type PatientCreateFormData } from './schemas';
-export { getFieldError, hasFieldError, getFieldClassName } from './utils';

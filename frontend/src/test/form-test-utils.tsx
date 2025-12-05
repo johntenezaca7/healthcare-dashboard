@@ -1,5 +1,5 @@
 import React from 'react';
-import { useForm, UseFormReturn } from 'react-hook-form';
+import { useForm, UseFormReturn, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
@@ -23,8 +23,8 @@ export function createFormWrapper<T extends yup.AnyObjectSchema>(
     const form = useForm<yup.InferType<T>>({
       resolver: yupResolver(schema),
       defaultValues: defaultValues as yup.InferType<T>,
-      mode: defaultOptions?.mode || 'onSubmit',
-      reValidateMode: defaultOptions?.reValidateMode || 'onChange',
+      mode: defaultOptions?.mode || 'onBlur',
+      reValidateMode: (defaultOptions?.reValidateMode === 'all' ? 'onChange' : defaultOptions?.reValidateMode) || 'onChange',
       criteriaMode: 'all',
     });
 
@@ -54,8 +54,8 @@ export function createFormWithSubmit<T extends yup.AnyObjectSchema>(
     const form = useForm<yup.InferType<T>>({
       resolver: yupResolver(schema),
       defaultValues: defaultValues as yup.InferType<T>,
-      mode: defaultOptions?.mode || 'onSubmit',
-      reValidateMode: defaultOptions?.reValidateMode || 'onChange',
+      mode: defaultOptions?.mode || 'onBlur',
+      reValidateMode: (defaultOptions?.reValidateMode === 'all' ? 'onChange' : defaultOptions?.reValidateMode) || 'onChange',
       criteriaMode: 'all',
     });
 
@@ -70,17 +70,19 @@ export function createFormWithSubmit<T extends yup.AnyObjectSchema>(
     );
 
     return (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          handleSubmit(e);
-        }}
-        noValidate
-      >
-        {children(form)}
-        <button type="submit">Submit</button>
-      </form>
+      <FormProvider {...form}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleSubmit(e);
+          }}
+          noValidate
+        >
+          {children(form)}
+          <button type="submit">Submit</button>
+        </form>
+      </FormProvider>
     );
   };
 }

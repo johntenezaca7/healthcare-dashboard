@@ -6,7 +6,7 @@ import { useUpdatePatientEmergencyContact, type EmergencyContactUpdate } from '@
 import { Patient } from '@/types';
 import { defaultNA } from '../constants';
 import type { EmergencyContactFormData } from './types';
-import { getFieldError, hasFieldError, getFieldClassName } from './utils';
+import { getFieldErrorFromForm as getFieldError, hasFieldErrorFromForm as hasFieldError, getFieldClassNameFromForm as getFieldClassName } from '@/utils/form';
 
 interface EditableEmergencyContactCardProps {
   patientId: string;

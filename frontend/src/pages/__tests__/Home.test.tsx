@@ -13,7 +13,14 @@ describe('Home', () => {
 
   it('renders welcome banner with user name', () => {
     vi.mocked(useAuth).mockReturnValue({
-      user: { name: 'John Doe', role: 'admin' },
+      user: { name: 'John Doe', role: 'admin', email: 'john@example.com' },
+      loading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+      refreshCredentials: vi.fn(),
+      isAuthenticated: true,
+      sessionExpired: false,
+      setSessionExpired: vi.fn(),
     });
 
     render(<Home />);
@@ -22,7 +29,14 @@ describe('Home', () => {
 
   it('renders metrics cards', () => {
     vi.mocked(useAuth).mockReturnValue({
-      user: { name: 'John Doe', role: 'admin' },
+      user: { name: 'John Doe', role: 'admin', email: 'john@example.com' },
+      loading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+      refreshCredentials: vi.fn(),
+      isAuthenticated: true,
+      sessionExpired: false,
+      setSessionExpired: vi.fn(),
     });
 
     render(<Home />);
@@ -34,7 +48,14 @@ describe('Home', () => {
 
   it('hides pending reports for nurses', () => {
     vi.mocked(useAuth).mockReturnValue({
-      user: { name: 'Jane Nurse', role: 'nurse' },
+      user: { name: 'Jane Nurse', role: 'nurse', email: 'jane@example.com' },
+      loading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+      refreshCredentials: vi.fn(),
+      isAuthenticated: true,
+      sessionExpired: false,
+      setSessionExpired: vi.fn(),
     });
 
     render(<Home />);
@@ -44,7 +65,14 @@ describe('Home', () => {
 
   it('renders quick actions', () => {
     vi.mocked(useAuth).mockReturnValue({
-      user: { name: 'John Doe', role: 'admin' },
+      user: { name: 'John Doe', role: 'admin', email: 'john@example.com' },
+      loading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+      refreshCredentials: vi.fn(),
+      isAuthenticated: true,
+      sessionExpired: false,
+      setSessionExpired: vi.fn(),
     });
 
     render(<Home />);
@@ -56,7 +84,14 @@ describe('Home', () => {
 
   it('hides reports quick action for nurses', () => {
     vi.mocked(useAuth).mockReturnValue({
-      user: { name: 'Jane Nurse', role: 'nurse' },
+      user: { name: 'Jane Nurse', role: 'nurse', email: 'jane@example.com' },
+      loading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+      refreshCredentials: vi.fn(),
+      isAuthenticated: true,
+      sessionExpired: false,
+      setSessionExpired: vi.fn(),
     });
 
     render(<Home />);
@@ -67,7 +102,14 @@ describe('Home', () => {
 
   it('renders dashboard charts', () => {
     vi.mocked(useAuth).mockReturnValue({
-      user: { name: 'John Doe', role: 'admin' },
+      user: { name: 'John Doe', role: 'admin', email: 'john@example.com' },
+      loading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+      refreshCredentials: vi.fn(),
+      isAuthenticated: true,
+      sessionExpired: false,
+      setSessionExpired: vi.fn(),
     });
 
     render(<Home />);

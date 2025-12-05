@@ -39,6 +39,7 @@ const InsuranceForm = memo(({ control }: InsuranceFormProps) => {
   } = useController({
     name: 'insurance.copay',
     control,
+    defaultValue: undefined,
   });
 
   const {
@@ -47,6 +48,7 @@ const InsuranceForm = memo(({ control }: InsuranceFormProps) => {
   } = useController({
     name: 'insurance.deductible',
     control,
+    defaultValue: undefined,
   });
   return (
     <Card>
@@ -143,7 +145,7 @@ const InsuranceForm = memo(({ control }: InsuranceFormProps) => {
               step="0.01"
               min="0"
               {...deductibleField}
-              value={deductibleField.value ?? ''}
+              value={deductibleField.value == null ? '' : deductibleField.value}
               onChange={e => {
                 const value = e.target.value === '' ? undefined : parseFloat(e.target.value);
                 deductibleField.onChange(isNaN(value as number) ? undefined : value);

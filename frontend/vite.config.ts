@@ -13,6 +13,37 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // React core libraries
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          // TanStack libraries
+          'tanstack-vendor': ['@tanstack/react-query', '@tanstack/react-table'],
+          // Form libraries
+          'form-vendor': ['react-hook-form', '@hookform/resolvers', 'yup'],
+          // UI component libraries (Radix UI)
+          'radix-vendor': [
+            '@radix-ui/react-checkbox',
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-label',
+            '@radix-ui/react-popover',
+            '@radix-ui/react-select',
+            '@radix-ui/react-slot',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-tooltip',
+          ],
+          // Chart library (large)
+          'chart-vendor': ['recharts'],
+          // Icon library (large)
+          'icons-vendor': ['lucide-react'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 600,
+  },
   server: {
     port: 5173,
     host: '0.0.0.0',

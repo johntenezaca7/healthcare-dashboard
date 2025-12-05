@@ -21,7 +21,7 @@ import { formatDate, calculateAge } from '@/utils/date';
 import { bloodTypes, defaultNA } from '../constants';
 import { extractDatePart } from '../patients-list/utils';
 import type { PersonalInfoFormData } from './types';
-import { getFieldError, hasFieldError, getFieldClassName } from './utils';
+import { getFieldErrorFromForm as getFieldError, hasFieldErrorFromForm as hasFieldError, getFieldClassNameFromForm as getFieldClassName } from '@/utils/form';
 
 interface EditablePersonalInfoCardProps {
   patientId: string;

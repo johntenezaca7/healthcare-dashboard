@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { screen } from '@testing-library/react';
 import { render } from '@/test/utils';
 import { PatientHeaderCard } from '../PatientHeaderCard';
+import type { PatientDataUnion } from '../types';
 
 describe('PatientHeaderCard', () => {
   const mockPatient = {
@@ -13,7 +14,7 @@ describe('PatientHeaderCard', () => {
     phone: '555-1234',
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-15T00:00:00Z',
-  };
+  } as PatientDataUnion;
 
   const mockMedicalInfo = {
     allergies: [],
@@ -55,7 +56,7 @@ describe('PatientHeaderCard', () => {
       phone: '555-5678',
       created_at: '2024-02-01T00:00:00Z',
       updated_at: '2024-02-15T00:00:00Z',
-    };
+    } as unknown as PatientDataUnion;
 
     render(<PatientHeaderCard patient={snakeCasePatient} medicalInfo={mockMedicalInfo} />);
 
@@ -69,7 +70,7 @@ describe('PatientHeaderCard', () => {
     const patientWithNumericId = {
       ...mockPatient,
       id: 789,
-    };
+    } as PatientDataUnion;
 
     render(<PatientHeaderCard patient={patientWithNumericId} medicalInfo={mockMedicalInfo} />);
 
@@ -122,7 +123,7 @@ describe('PatientHeaderCard', () => {
   it('handles missing patient fields gracefully', () => {
     const minimalPatient = {
       id: 'minimal-123',
-    };
+    } as PatientDataUnion;
 
     render(<PatientHeaderCard patient={minimalPatient} medicalInfo={mockMedicalInfo} />);
 
@@ -138,7 +139,7 @@ describe('PatientHeaderCard', () => {
   });
 
   it('renders clipboard button', () => {
-    const { container } = render(<PatientHeaderCard patient={mockPatient} medicalInfo={mockMedicalInfo} />);
+    render(<PatientHeaderCard patient={mockPatient} medicalInfo={mockMedicalInfo} />);
 
     // Clipboard button contains an icon, find it by looking for the button with Clipboard icon
     const buttons = screen.getAllByRole('button');
@@ -153,7 +154,7 @@ describe('PatientHeaderCard', () => {
       lastName: '',
       email: '',
       phone: '',
-    };
+    } as PatientDataUnion;
 
     render(<PatientHeaderCard patient={patientWithEmptyStrings} medicalInfo={mockMedicalInfo} />);
 
@@ -169,7 +170,7 @@ describe('PatientHeaderCard', () => {
       dateOfBirth: '1990-01-01',
       email: 'mixed@example.com',
       created_at: '2024-01-01T00:00:00Z',
-    };
+    } as unknown as PatientDataUnion;
 
     render(<PatientHeaderCard patient={mixedPatient} medicalInfo={mockMedicalInfo} />);
 

@@ -7,7 +7,7 @@ import {
   getStatusVariant,
   usePatientHeaderData,
 } from '../utils';
-import type { PatientData, MedicalInfoData } from '../types';
+import type { PatientData, MedicalInfoData, PatientDataUnion } from '../types';
 
 describe('utils', () => {
   describe('getPatientField', () => {
@@ -126,7 +126,7 @@ describe('utils', () => {
 
   describe('usePatientHeaderData', () => {
     it('extracts and normalizes patient data correctly', () => {
-      const patient: PatientData = {
+      const patient = {
         id: 'patient-123',
         firstName: 'John',
         lastName: 'Doe',
@@ -135,10 +135,13 @@ describe('utils', () => {
         phone: '555-1234',
         createdAt: '2024-01-01T00:00:00Z',
         updatedAt: '2024-01-15T00:00:00Z',
-      };
+      } as PatientDataUnion;
 
-      const medicalInfo: MedicalInfoData = {
-        status: 'active',
+      const medicalInfo = {
+        allergies: [],
+        conditions: [],
+        currentMedications: [],
+        status: 'active' as const,
       };
 
       const { result } = renderHook(() => usePatientHeaderData(patient, medicalInfo));
@@ -164,10 +167,13 @@ describe('utils', () => {
         phone: '555-5678',
         created_at: '2024-02-01T00:00:00Z',
         updated_at: '2024-02-15T00:00:00Z',
-      };
+      } as unknown as PatientDataUnion;
 
-      const medicalInfo: MedicalInfoData = {
-        status: 'critical',
+      const medicalInfo = {
+        allergies: [],
+        conditions: [],
+        currentMedications: [],
+        status: 'critical' as const,
       };
 
       const { result } = renderHook(() => usePatientHeaderData(patient, medicalInfo));
@@ -180,13 +186,13 @@ describe('utils', () => {
     });
 
     it('defaults status to active when not provided', () => {
-      const patient: PatientData = {
+      const patient = {
         id: 'patient-123',
         firstName: 'John',
         lastName: 'Doe',
-      };
+      } as PatientDataUnion;
 
-      const medicalInfo = {};
+      const medicalInfo = null;
 
       const { result } = renderHook(() => usePatientHeaderData(patient, medicalInfo));
 
@@ -195,16 +201,19 @@ describe('utils', () => {
     });
 
     it('handles empty strings gracefully', () => {
-      const patient: PatientData = {
+      const patient = {
         id: 'patient-123',
         firstName: '',
         lastName: '',
         email: '',
         phone: '',
-      };
+      } as PatientDataUnion;
 
-      const medicalInfo: MedicalInfoData = {
-        status: 'active',
+      const medicalInfo = {
+        allergies: [],
+        conditions: [],
+        currentMedications: [],
+        status: 'active' as const,
       };
 
       const { result } = renderHook(() => usePatientHeaderData(patient, medicalInfo));
@@ -217,40 +226,43 @@ describe('utils', () => {
     });
 
     it('generates initials correctly', () => {
-      const patient1: PatientData = {
+      const patient1 = {
         id: 'patient-1',
         firstName: 'John',
         lastName: 'Doe',
-      };
+      } as PatientDataUnion;
 
       const { result: result1 } = renderHook(() =>
-        usePatientHeaderData(patient1, { status: 'active' })
+        usePatientHeaderData(patient1, { allergies: [], conditions: [], currentMedications: [], status: 'active' as const })
       );
 
       expect(result1.current.initials).toBe('JD');
 
-      const patient2: PatientData = {
+      const patient2 = {
         id: 'patient-2',
         firstName: 'Mary',
         lastName: 'Jane',
-      };
+      } as PatientDataUnion;
 
       const { result: result2 } = renderHook(() =>
-        usePatientHeaderData(patient2, { status: 'active' })
+        usePatientHeaderData(patient2, { allergies: [], conditions: [], currentMedications: [], status: 'active' as const })
       );
 
       expect(result2.current.initials).toBe('MJ');
     });
 
     it('handles numeric patient ID', () => {
-      const patient: PatientData = {
+      const patient = {
         id: 789,
         firstName: 'Test',
         lastName: 'User',
-      };
+      } as PatientDataUnion;
 
-      const medicalInfo: MedicalInfoData = {
-        status: 'active',
+      const medicalInfo = {
+        allergies: [],
+        conditions: [],
+        currentMedications: [],
+        status: 'active' as const,
       };
 
       const { result } = renderHook(() => usePatientHeaderData(patient, medicalInfo));
@@ -259,14 +271,17 @@ describe('utils', () => {
     });
 
     it('memoizes result correctly', () => {
-      const patient: PatientData = {
+      const patient = {
         id: 'patient-123',
         firstName: 'John',
         lastName: 'Doe',
-      };
+      } as PatientDataUnion;
 
-      const medicalInfo: MedicalInfoData = {
-        status: 'active',
+      const medicalInfo = {
+        allergies: [],
+        conditions: [],
+        currentMedications: [],
+        status: 'active' as const,
       };
 
       const { result, rerender } = renderHook(

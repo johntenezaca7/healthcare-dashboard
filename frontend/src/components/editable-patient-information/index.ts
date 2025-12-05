@@ -13,5 +13,4 @@ export type {
   EditablePatientFormApi,
   FormComponentProps,
 } from './types';
-export { getFieldError, hasFieldError, getFieldClassName } from './utils';
 

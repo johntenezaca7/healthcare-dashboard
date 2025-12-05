@@ -33,7 +33,11 @@ describe('PatientTable', () => {
     },
   ];
 
-  const columns = createPatientsColumns(() => {});
+  const columns = createPatientsColumns({
+    onSortChange: () => {},
+    currentSortBy: undefined,
+    currentSortOrder: undefined,
+  });
 
   it('renders table with data', () => {
     render(<PatientTable data={mockPatients} columns={columns} />);

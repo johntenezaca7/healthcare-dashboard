@@ -8,6 +8,8 @@ import {
   useUpdatePatientEmergencyContact,
 } from '../Patients';
 
+type ResponseType = 'basic' | 'cors' | 'error' | 'opaque' | 'opaqueredirect';
+
 vi.mock('../../utils', () => ({
   createAuthHeaders: vi.fn(() => ({ Authorization: 'Bearer test-token' })),
   handleApiError: vi.fn(async (response: Response) => {
@@ -41,8 +43,22 @@ describe('useCreatePatient', () => {
 
     vi.mocked(global.fetch).mockResolvedValueOnce({
       ok: true,
+      status: 200,
+      statusText: 'OK',
       json: async () => mockPatient,
-    });
+      headers: new Headers(),
+      redirected: false,
+      type: 'default' as ResponseType,
+      url: '',
+      clone: vi.fn(),
+      body: null,
+      bodyUsed: false,
+      arrayBuffer: vi.fn(),
+      blob: vi.fn(),
+      formData: vi.fn(),
+      text: vi.fn(),
+      bytes: vi.fn(),
+    } as unknown as Response);
 
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
@@ -96,8 +112,21 @@ describe('useCreatePatient', () => {
     vi.mocked(global.fetch).mockResolvedValueOnce({
       ok: false,
       status: 400,
+      statusText: 'Bad Request',
       json: async () => ({ detail: 'Validation error' }),
-    });
+      headers: new Headers(),
+      redirected: false,
+      type: 'default' as ResponseType,
+      url: '',
+      clone: vi.fn(),
+      body: null,
+      bodyUsed: false,
+      arrayBuffer: vi.fn(),
+      blob: vi.fn(),
+      formData: vi.fn(),
+      text: vi.fn(),
+      bytes: vi.fn(),
+    } as unknown as Response);
 
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
@@ -159,8 +188,22 @@ describe('useUpdatePatientPersonalInfo', () => {
 
     vi.mocked(global.fetch).mockResolvedValueOnce({
       ok: true,
+      status: 200,
+      statusText: 'OK',
       json: async () => mockUpdatedPatient,
-    });
+      headers: new Headers(),
+      redirected: false,
+      type: 'default' as ResponseType,
+      url: '',
+      clone: vi.fn(),
+      body: null,
+      bodyUsed: false,
+      arrayBuffer: vi.fn(),
+      blob: vi.fn(),
+      formData: vi.fn(),
+      text: vi.fn(),
+      bytes: vi.fn(),
+    } as unknown as Response);
 
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
@@ -213,8 +256,22 @@ describe('useUpdatePatientEmergencyContact', () => {
 
     vi.mocked(global.fetch).mockResolvedValueOnce({
       ok: true,
+      status: 200,
+      statusText: 'OK',
       json: async () => mockUpdatedPatient,
-    });
+      headers: new Headers(),
+      redirected: false,
+      type: 'default' as ResponseType,
+      url: '',
+      clone: vi.fn(),
+      body: null,
+      bodyUsed: false,
+      arrayBuffer: vi.fn(),
+      blob: vi.fn(),
+      formData: vi.fn(),
+      text: vi.fn(),
+      bytes: vi.fn(),
+    } as unknown as Response);
 
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>

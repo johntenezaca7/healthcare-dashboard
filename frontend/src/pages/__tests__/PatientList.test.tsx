@@ -45,7 +45,14 @@ describe('PatientList', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useAuth).mockReturnValue({
-      user: { name: 'Test User', role: 'admin' },
+      user: { name: 'Test User', role: 'admin', email: 'test@example.com' },
+      loading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+      refreshCredentials: vi.fn(),
+      isAuthenticated: true,
+      sessionExpired: false,
+      setSessionExpired: vi.fn(),
     });
   });
 
@@ -61,7 +68,28 @@ describe('PatientList', () => {
       isLoading: false,
       isError: false,
       error: null,
-    });
+      isPending: false,
+      isSuccess: true,
+      isFetching: false,
+      isRefetching: false,
+      isLoadingError: false,
+      isRefetchError: false,
+      refetch: vi.fn(),
+      status: 'success',
+      dataUpdatedAt: Date.now(),
+      errorUpdatedAt: 0,
+      failureCount: 0,
+      failureReason: null,
+      errorUpdateCount: 0,
+      isFetched: true,
+      isFetchedAfterMount: true,
+      isInitialLoading: false,
+      isPaused: false,
+      isPlaceholderData: false,
+      isPreviousData: false,
+      isStale: false,
+      fetchStatus: 'idle',
+    } as any);
 
     render(<PatientList />);
     // Check for the main "Patients" heading (h2)
@@ -74,7 +102,28 @@ describe('PatientList', () => {
       isLoading: true,
       isError: false,
       error: null,
-    });
+      isPending: true,
+      isSuccess: false,
+      isFetching: true,
+      isRefetching: false,
+      isLoadingError: false,
+      isRefetchError: false,
+      refetch: vi.fn(),
+      status: 'pending',
+      dataUpdatedAt: 0,
+      errorUpdatedAt: 0,
+      failureCount: 0,
+      failureReason: null,
+      errorUpdateCount: 0,
+      isFetched: false,
+      isFetchedAfterMount: false,
+      isInitialLoading: true,
+      isPaused: false,
+      isPlaceholderData: false,
+      isPreviousData: false,
+      isStale: false,
+      fetchStatus: 'fetching',
+    } as any);
 
     render(<PatientList />);
     expect(screen.getByText('Name')).toBeInTheDocument();
@@ -89,8 +138,9 @@ describe('PatientList', () => {
         firstName: 'John',
         lastName: 'Doe',
         dateOfBirth: '1994-01-01',
+        email: 'john@example.com',
         phone: '123-456-7890',
-        status: 'active',
+        status: 'active' as const,
         lastVisit: '2024-01-15',
         insuranceProvider: 'Aetna',
       },
@@ -107,7 +157,28 @@ describe('PatientList', () => {
       isLoading: false,
       isError: false,
       error: null,
-    });
+      isPending: false,
+      isSuccess: true,
+      isFetching: false,
+      isRefetching: false,
+      isLoadingError: false,
+      isRefetchError: false,
+      refetch: vi.fn(),
+      status: 'success',
+      dataUpdatedAt: Date.now(),
+      errorUpdatedAt: 0,
+      failureCount: 0,
+      failureReason: null,
+      errorUpdateCount: 0,
+      isFetched: true,
+      isFetchedAfterMount: true,
+      isInitialLoading: false,
+      isPaused: false,
+      isPlaceholderData: false,
+      isPreviousData: false,
+      isStale: false,
+      fetchStatus: 'idle',
+    } as any);
 
     render(<PatientList />);
     // Check that table headers are present (indicating table is rendered)
@@ -129,7 +200,28 @@ describe('PatientList', () => {
       isLoading: false,
       isError: false,
       error: null,
-    });
+      isPending: false,
+      isSuccess: true,
+      isFetching: false,
+      isRefetching: false,
+      isLoadingError: false,
+      isRefetchError: false,
+      refetch: vi.fn(),
+      status: 'success',
+      dataUpdatedAt: Date.now(),
+      errorUpdatedAt: 0,
+      failureCount: 0,
+      failureReason: null,
+      errorUpdateCount: 0,
+      isFetched: true,
+      isFetchedAfterMount: true,
+      isInitialLoading: false,
+      isPaused: false,
+      isPlaceholderData: false,
+      isPreviousData: false,
+      isStale: false,
+      fetchStatus: 'idle',
+    } as any);
 
     render(<PatientList />);
     // When patients.length === 0 and hasActiveFilters is false, EmptyStateCard should render
@@ -148,8 +240,9 @@ describe('PatientList', () => {
             firstName: 'Test',
             lastName: 'Patient',
             dateOfBirth: '2000-01-01',
+            email: 'test@example.com',
             phone: '123',
-            status: 'active',
+            status: 'active' as const,
             insuranceProvider: 'Aetna',
           },
         ],
@@ -161,7 +254,28 @@ describe('PatientList', () => {
       isLoading: false,
       isError: true,
       error, // error must be truthy for ErrorCard to render it
-    });
+      isPending: false,
+      isSuccess: false,
+      isFetching: false,
+      isRefetching: false,
+      isLoadingError: true,
+      isRefetchError: false,
+      refetch: vi.fn(),
+      status: 'error',
+      dataUpdatedAt: Date.now(),
+      errorUpdatedAt: Date.now(),
+      failureCount: 1,
+      failureReason: error,
+      errorUpdateCount: 1,
+      isFetched: true,
+      isFetchedAfterMount: true,
+      isInitialLoading: false,
+      isPaused: false,
+      isPlaceholderData: false,
+      isPreviousData: false,
+      isStale: false,
+      fetchStatus: 'idle',
+    } as any);
 
     render(<PatientList />);
     // ErrorCard should be rendered - check for error message text in CardDescription
@@ -183,7 +297,28 @@ describe('PatientList', () => {
       isLoading: false,
       isError: false,
       error: null,
-    });
+      isPending: false,
+      isSuccess: true,
+      isFetching: false,
+      isRefetching: false,
+      isLoadingError: false,
+      isRefetchError: false,
+      refetch: vi.fn(),
+      status: 'success',
+      dataUpdatedAt: Date.now(),
+      errorUpdatedAt: 0,
+      failureCount: 0,
+      failureReason: null,
+      errorUpdateCount: 0,
+      isFetched: true,
+      isFetchedAfterMount: true,
+      isInitialLoading: false,
+      isPaused: false,
+      isPlaceholderData: false,
+      isPreviousData: false,
+      isStale: false,
+      fetchStatus: 'idle',
+    } as any);
 
     render(<PatientList />);
     expect(screen.getByPlaceholderText(/search by name/i)).toBeInTheDocument();
@@ -201,7 +336,28 @@ describe('PatientList', () => {
       isLoading: false,
       isError: false,
       error: null,
-    });
+      isPending: false,
+      isSuccess: true,
+      isFetching: false,
+      isRefetching: false,
+      isLoadingError: false,
+      isRefetchError: false,
+      refetch: vi.fn(),
+      status: 'success',
+      dataUpdatedAt: Date.now(),
+      errorUpdatedAt: 0,
+      failureCount: 0,
+      failureReason: null,
+      errorUpdateCount: 0,
+      isFetched: true,
+      isFetchedAfterMount: true,
+      isInitialLoading: false,
+      isPaused: false,
+      isPlaceholderData: false,
+      isPreviousData: false,
+      isStale: false,
+      fetchStatus: 'idle',
+    } as any);
 
     render(<PatientList />);
     expect(screen.getAllByRole('combobox').length).toBeGreaterThan(0);

@@ -15,15 +15,33 @@ describe('Login', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useAuth).mockReturnValue({
+      user: null,
+      loading: false,
       login: vi.fn(),
+      logout: vi.fn(),
+      refreshCredentials: vi.fn(),
+      isAuthenticated: false,
+      sessionExpired: false,
+      setSessionExpired: vi.fn(),
     });
     vi.mocked(useLogin).mockReturnValue({
       mutateAsync: vi.fn().mockResolvedValue({ access_token: 'test-token' }),
+      mutate: vi.fn(),
       isPending: false,
       isError: false,
       error: null,
       reset: vi.fn(),
-    });
+      data: undefined,
+      variables: undefined,
+      isIdle: true,
+      isSuccess: false,
+      isPaused: false,
+      status: 'idle',
+      failureCount: 0,
+      failureReason: null,
+      submittedAt: 0,
+      context: undefined,
+    } as any);
   });
 
   it('renders login form', () => {
@@ -55,11 +73,22 @@ describe('Login', () => {
     const mockMutateAsync = vi.fn().mockResolvedValue({ access_token: 'test-token' });
     vi.mocked(useLogin).mockReturnValue({
       mutateAsync: mockMutateAsync,
+      mutate: vi.fn(),
       isPending: false,
       isError: false,
       error: null,
       reset: vi.fn(),
-    });
+      data: undefined,
+      variables: undefined,
+      isIdle: true,
+      isSuccess: false,
+      isPaused: false,
+      status: 'idle',
+      failureCount: 0,
+      failureReason: null,
+      submittedAt: 0,
+      context: undefined,
+    } as any);
 
     render(<Login />);
 
@@ -82,11 +111,22 @@ describe('Login', () => {
   it('displays error message on login failure', () => {
     vi.mocked(useLogin).mockReturnValue({
       mutateAsync: vi.fn(),
+      mutate: vi.fn(),
       isPending: false,
       isError: true,
       error: new Error('Invalid credentials'),
       reset: vi.fn(),
-    });
+      data: undefined,
+      variables: undefined,
+      isIdle: false,
+      isSuccess: false,
+      isPaused: false,
+      status: 'error',
+      failureCount: 1,
+      failureReason: new Error('Invalid credentials'),
+      submittedAt: 0,
+      context: undefined,
+    } as any);
 
     render(<Login />);
     expect(screen.getByText(/invalid credentials/i)).toBeInTheDocument();
@@ -95,11 +135,22 @@ describe('Login', () => {
   it('shows loading state during login', () => {
     vi.mocked(useLogin).mockReturnValue({
       mutateAsync: vi.fn(),
+      mutate: vi.fn(),
       isPending: true,
       isError: false,
       error: null,
       reset: vi.fn(),
-    });
+      data: undefined,
+      variables: undefined,
+      isIdle: false,
+      isSuccess: false,
+      isPaused: false,
+      status: 'pending',
+      failureCount: 0,
+      failureReason: null,
+      submittedAt: Date.now(),
+      context: undefined,
+    } as any);
 
     render(<Login />);
     expect(screen.getByRole('button', { name: /logging in/i })).toBeInTheDocument();
