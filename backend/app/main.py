@@ -56,6 +56,7 @@ async def root():
 @app.on_event("startup")
 async def startup_event():
     """Log database status on startup"""
+    logger.info(f"CORS origins configured: {settings.CORS_ORIGINS}")
     db = SessionLocal()
     try:
         patient_count = db.query(models.Patient).count()
