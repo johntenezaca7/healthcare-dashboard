@@ -1,7 +1,6 @@
 import { memo } from 'react';
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui';
-import { Skeleton } from '@/components/ui';
+import { Skeleton, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui';
 
 const PatientTableSkeleton = memo(() => {
   return (

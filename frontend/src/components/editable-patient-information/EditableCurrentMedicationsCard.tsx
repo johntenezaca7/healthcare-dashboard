@@ -7,8 +7,6 @@ import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label } from '
 import { type MedicationsUpdate, useUpdatePatientMedications } from '@/hooks';
 import { formatDate } from '@/utils/date';
 
-import { Patient } from '@/types';
-
 import { extractDatePart } from '../patients-list/utils';
 import type { MedicationsFormData } from './types';
 
@@ -30,7 +28,7 @@ interface Medication {
 interface EditableCurrentMedicationsCardProps {
   patientId: string;
   medications: Medication[];
-  onUpdate: (updatedPatient: Patient) => void;
+  onUpdate: () => void;
 }
 
 const EditableCurrentMedicationsCard = memo(
@@ -102,7 +100,7 @@ const EditableCurrentMedicationsCard = memo(
 
         await updateMutation.mutateAsync({ id: patientId, data: updateData });
         setIsEditing(false);
-        onUpdate({} as Patient);
+        onUpdate();
       } catch (err) {
         // Error is handled by mutation
       }

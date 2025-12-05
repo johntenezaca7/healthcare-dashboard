@@ -16,8 +16,6 @@ import {
 import { type MedicalInfoUpdate, useUpdatePatientMedicalInfo } from '@/hooks';
 import { formatDate } from '@/utils/date';
 
-import { Patient } from '@/types';
-
 import { defaultNA } from '../constants';
 import { extractDatePart } from '../patients-list/utils';
 import type { MedicalInfoFormData } from './types';
@@ -27,7 +25,7 @@ interface EditableMedicalInfoCardProps {
   allergies: string[];
   conditions: string[];
   lastVisit: string | null;
-  onUpdate: (updatedPatient: Patient) => void;
+  onUpdate: () => void;
 }
 
 const EditableMedicalInfoCard = memo(
@@ -79,7 +77,7 @@ const EditableMedicalInfoCard = memo(
 
         await updateMutation.mutateAsync({ id: patientId, data: updateData });
         setIsEditing(false);
-        onUpdate({} as Patient);
+        onUpdate();
       } catch (err) {
         // Error is handled by mutation
       }

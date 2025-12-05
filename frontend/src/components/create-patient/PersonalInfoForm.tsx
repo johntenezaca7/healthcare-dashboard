@@ -1,6 +1,5 @@
 import { memo } from 'react';
-import type { Control } from 'react-hook-form';
-import { useController } from 'react-hook-form';
+import { type Control, useController } from 'react-hook-form';
 
 import {
   Card,

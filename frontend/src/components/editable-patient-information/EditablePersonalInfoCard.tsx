@@ -1,24 +1,10 @@
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
-import { Edit, Mail, MapPin, Phone } from 'lucide-react';
+import { Mail, MapPin, Phone } from 'lucide-react';
 
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Input,
-  Label,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui';
+import { Card, CardContent, Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
 
-import type { PersonalInfoUpdate } from '@/hooks';
-import { useUpdatePatientPersonalInfo } from '@/hooks';
+import { type PersonalInfoUpdate, useUpdatePatientPersonalInfo } from '@/hooks';
 import { calculateAge, formatDate } from '@/utils/date';
 import {
   getFieldClassNameFromForm as getFieldClassName,
@@ -26,10 +12,10 @@ import {
   hasFieldErrorFromForm as hasFieldError,
 } from '@/utils/form';
 
-import { Patient } from '@/types';
-
 import { bloodTypes, defaultNA } from '../constants';
 import { extractDatePart } from '../patients-list/utils';
+import { EditableCardHeader, MutationErrorBanner } from './components';
+import { useEditableCard } from './hooks';
 import type { PersonalInfoFormData } from './types';
 
 interface EditablePersonalInfoCardProps {
@@ -48,7 +34,7 @@ interface EditablePersonalInfoCardProps {
     zip_code?: string;
     country?: string;
   };
-  onUpdate: (updatedPatient: Patient) => void;
+  onUpdate: () => void;
 }
 
 const EditablePersonalInfoCard = memo(
@@ -63,7 +49,6 @@ const EditablePersonalInfoCard = memo(
     address: initialAddress,
     onUpdate,
   }: EditablePersonalInfoCardProps) => {
-    const [isEditing, setIsEditing] = useState(false);
     const updateMutation = useUpdatePatientPersonalInfo();
 
     const defaultValues = useMemo(
@@ -98,17 +83,11 @@ const EditablePersonalInfoCard = memo(
       mode: 'onChange',
     });
 
-    // Reset form when initial values change and not editing
-    useEffect(() => {
-      if (!isEditing) {
-        form.reset(defaultValues);
-      }
-    }, [defaultValues, isEditing, form]);
-
-    const handleCancel = () => {
-      form.reset(defaultValues);
-      setIsEditing(false);
-    };
+    const { isEditing, handleCancel, handleEdit, handleSuccess } = useEditableCard(
+      defaultValues,
+      form,
+      onUpdate
+    );
 
     const onSubmit = async (data: PersonalInfoFormData) => {
       try {
@@ -129,8 +108,7 @@ const EditablePersonalInfoCard = memo(
         };
 
         await updateMutation.mutateAsync({ id: patientId, data: updateData });
-        onUpdate({} as Patient);
-        setIsEditing(false);
+        handleSuccess();
       } catch (err) {
         // Error is handled by mutation
       }
@@ -138,47 +116,20 @@ const EditablePersonalInfoCard = memo(
 
     return (
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle>Personal Information</CardTitle>
-          {!isEditing ? (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsEditing(true)}
-              className="h-8 w-8"
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-          ) : (
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCancel}
-                disabled={updateMutation.isPending}
-              >
-                Cancel
-              </Button>
-              <Button
-                size="sm"
-                onClick={form.handleSubmit(onSubmit)}
-                disabled={
-                  !form.formState.isValid || updateMutation.isPending || form.formState.isSubmitting
-                }
-              >
-                Save
-              </Button>
-            </div>
-          )}
-        </CardHeader>
+        <EditableCardHeader
+          title="Personal Information"
+          isEditing={isEditing}
+          onEdit={handleEdit}
+          onCancel={handleCancel}
+          onSubmit={form.handleSubmit(onSubmit)}
+          isSubmitting={updateMutation.isPending}
+          isValid={form.formState.isValid && !form.formState.isSubmitting}
+        />
         <CardContent className="space-y-4">
-          {updateMutation.isError && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-              {updateMutation.error instanceof Error
-                ? updateMutation.error.message
-                : 'Failed to update patient information'}
-            </div>
-          )}
+          <MutationErrorBanner
+            error={updateMutation.error}
+            fallbackMessage="Failed to update patient information"
+          />
 
           {!isEditing ? (
             <>

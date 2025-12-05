@@ -3,4 +3,3 @@ export { InsuranceForm } from './InsuranceForm';
 export { MedicalInfoForm } from './MedicalInfoForm';
 export { PersonalInfoForm } from './PersonalInfoForm';
 export { type PatientCreateFormData, patientCreateSchema } from './schemas';
-export type { FormComponentProps, PatientCreateFormApi } from './types';

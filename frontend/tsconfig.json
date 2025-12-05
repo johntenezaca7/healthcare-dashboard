@@ -23,7 +23,8 @@
     /* Path aliases */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/router": ["./src/router"]
     }
   },
   "include": ["src", "src/vitest.d.ts"],

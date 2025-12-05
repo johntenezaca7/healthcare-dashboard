@@ -68,23 +68,6 @@ export interface NormalizedMedicalInfo {
   status: 'active' | 'inactive' | 'critical';
 }
 
-// Legacy types for backward compatibility with tests
-export type PatientData = Partial<
-  Pick<ApiPatient, 'first_name' | 'last_name' | 'date_of_birth' | 'email' | 'phone'>
-> &
-  Partial<
-    Pick<
-      Patient,
-      'firstName' | 'lastName' | 'dateOfBirth' | 'email' | 'phone' | 'createdAt' | 'updatedAt'
-    >
-  > & {
-    id?: string | number;
-    created_at?: string;
-    updated_at?: string;
-  };
-
-export type MedicalInfoData = Partial<Pick<NormalizedMedicalInfo, 'status'>>;
-
 export interface PatientHeaderCardProps {
   patient: PatientDataUnion;
   medicalInfo: NormalizedMedicalInfo | null;

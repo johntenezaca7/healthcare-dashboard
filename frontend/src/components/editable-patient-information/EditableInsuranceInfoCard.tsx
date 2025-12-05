@@ -25,8 +25,6 @@ import {
   hasFieldErrorFromForm as hasFieldError,
 } from '@/utils/form';
 
-import { Patient } from '@/types';
-
 import { defaultNA, insuranceProviders } from '../constants';
 import { extractDatePart } from '../patients-list/utils';
 import type { InsuranceInfoFormData } from './types';
@@ -40,7 +38,7 @@ interface EditableInsuranceInfoCardProps {
   expirationDate?: string | null;
   copay: number;
   deductible: number;
-  onUpdate: (updatedPatient: Patient) => void;
+  onUpdate: () => void;
 }
 
 const EditableInsuranceInfoCard = memo(
@@ -110,7 +108,7 @@ const EditableInsuranceInfoCard = memo(
 
         await updateMutation.mutateAsync({ id: patientId, data: updateData });
         setIsEditing(false);
-        onUpdate({} as Patient);
+        onUpdate();
       } catch (err) {
         // Error is handled by mutation
       }

@@ -1,11 +1,18 @@
 import { useState } from 'react';
 import { ChevronDown, X } from 'lucide-react';
 
-import { Button } from '@/components/ui';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui';
-import { Checkbox } from '@/components/ui';
-import { Badge } from '@/components/ui';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui';
+import {
+  Badge,
+  Button,
+  Checkbox,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui';
 
 import { cn } from '@/styles/utils';
 

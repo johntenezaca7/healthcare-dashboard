@@ -22,40 +22,11 @@ import type {
   NormalizedPatientData,
   PatientDataUnion,
 } from './types';
-import type { MedicalInfoData, PatientData } from './types';
 
 // Helper to get string value from either camelCase or snake_case
 const getStringField = (obj: unknown, camelKey: string, snakeKey: string): string => {
   const o = obj as Record<string, unknown>;
   return (o[camelKey] as string | undefined) || (o[snakeKey] as string | undefined) || '';
-};
-
-// Legacy helper functions for backward compatibility with tests
-export const getPatientField = (
-  patient: PatientData | Record<string, unknown>,
-  camelCaseField: keyof PatientData,
-  snakeCaseField?: string
-): string => {
-  const patientData = patient as PatientData & Record<string, unknown>;
-  const camelValue = patientData[camelCaseField] as string | undefined;
-  const snakeValue = snakeCaseField
-    ? (patientData[snakeCaseField] as string | undefined)
-    : undefined;
-  return camelValue || snakeValue || '';
-};
-
-export const getMedicalInfoField = (
-  medicalInfo: MedicalInfoData | Record<string, unknown>,
-  field: keyof MedicalInfoData
-): string => {
-  const medicalInfoData = medicalInfo as MedicalInfoData & Record<string, unknown>;
-  return (medicalInfoData[field] as string | undefined) || '';
-};
-
-export const getPatientId = (patient: PatientData | Record<string, unknown>): string => {
-  const patientData = patient as PatientData & Record<string, unknown>;
-  const idRaw = patientData.id;
-  return idRaw !== undefined ? String(idRaw) : '';
 };
 
 // Helper to get optional string value

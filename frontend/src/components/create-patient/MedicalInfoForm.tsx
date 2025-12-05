@@ -1,8 +1,7 @@
 import { memo } from 'react';
 import type { Control } from 'react-hook-form';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
-import { ControlledInput } from '@/components/ui';
+import { Card, CardContent, CardHeader, CardTitle, ControlledInput } from '@/components/ui';
 
 import type { PatientCreateFormData } from '@/schemas/patient';
 

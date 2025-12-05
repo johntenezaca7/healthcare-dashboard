@@ -30,8 +30,10 @@ export function getDefaultPatientFormValues(): PatientCreateFormData {
       groupNumber: undefined,
       effectiveDate: '',
       expirationDate: undefined,
-      copay: undefined as any,
-      deductible: undefined as any,
+      // These are undefined initially but will be validated as numbers by the schema
+      // The schema transform handles empty/undefined values before validation
+      copay: undefined as unknown as number,
+      deductible: undefined as unknown as number,
     },
     allergies: [],
     conditions: [],

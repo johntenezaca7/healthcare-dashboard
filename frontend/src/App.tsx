@@ -6,7 +6,7 @@ import { AuthProvider } from '@/context/auth';
 import { queryClient } from '@/lib/queryClient';
 import { ThemeProvider } from '@/theme';
 
-import { AppRouter } from './AppRouter';
+import { AppRouter } from '@/router';
 
 import './styles/globals.css';
 

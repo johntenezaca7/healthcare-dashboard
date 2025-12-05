@@ -11,8 +11,6 @@ import {
   hasFieldErrorFromForm as hasFieldError,
 } from '@/utils/form';
 
-import { Patient } from '@/types';
-
 import { defaultNA } from '../constants';
 import type { EmergencyContactFormData } from './types';
 
@@ -22,7 +20,7 @@ interface EditableEmergencyContactCardProps {
   relationship: string;
   phone: string;
   email?: string | null;
-  onUpdate: (updatedPatient: Patient) => void;
+  onUpdate: () => void;
 }
 
 const EditableEmergencyContactCard = memo(
@@ -75,7 +73,7 @@ const EditableEmergencyContactCard = memo(
 
         await updateMutation.mutateAsync({ id: patientId, data: updateData });
         setIsEditing(false);
-        onUpdate({} as Patient);
+        onUpdate();
       } catch (err) {
         // Error is handled by mutation
       }
